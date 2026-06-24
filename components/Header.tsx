@@ -3,80 +3,89 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { usePathname } from "next/navigation"; // 👈 Active মেনু ট্র্যাক করার জন্য
-import { Moon, Sun, Music, Menu, X, Play, Pause, Disc3, Code2, ArrowUpRight } from "lucide-react";
+import { usePathname } from "next/navigation"; 
+import { Moon, Sun, Music, Menu, X, Play, Pause, Disc3, Code2, ArrowUpRight, Volume2 } from "lucide-react";
 
-export default function Header() {
+interface TrackType {
+  _id: string;
+  title: string;
+  artist: string;
+  cover: string;
+  audioUrl: string;
+}
+
+interface HeaderProps {
+  settings: any;
+  tracks: TrackType[];
+}
+
+export default function Header({ settings, tracks }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const [isMusicOpen, setIsMusicOpen] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const pathname = usePathname(); // 👈 বর্তমান URL বের করার হুক
+  
+  // 🎵 Audio Player States
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const pathname = usePathname(); 
   const musicRef = useRef<HTMLDivElement>(null);
 
-  // ==========================================
-  // 🗄️ DYNAMIC BACKEND DATA (Admin Panel Ready)
-  // ==========================================
-  const siteData = {
-    logoName: "Nazmus.",
-    navLinks: [
-      { name: "Home", href: "/" },
-      { name: "About", href: "/#about" }, // 👈 Contact পেজ থেকে কাজ করার জন্য /#about দেওয়া হয়েছে
-      { name: "Skills", href: "/#skills" },
-      { name: "Projects", href: "/#projects" },
-      { name: "Contact", href: "/contact" },
-    ],
-    socialLinks: [
-      { name: "GitHub", href: "#" },
-      { name: "LinkedIn", href: "#" },
-      { name: "Twitter", href: "#" },
-    ],
-    musicTracks: [
-      { id: 1, title: "Lofi Chill Vibes", artist: "Developer Beats", cover: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=100&auto=format&fit=crop" },
-      { id: 2, title: "Deep Focus Coding", artist: "Synthwave", cover: "https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=100&auto=format&fit=crop" },
-    ]
-  };
+  const fallbackTracks = [
+    { _id: "1", title: "Lofi Chill Vibes", artist: "Developer Beats", cover: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=100&auto=format&fit=crop", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+    { _id: "2", title: "Deep Focus Coding", artist: "Synthwave", cover: "https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=100&auto=format&fit=crop", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+  ];
+
+  const displayTracks = tracks && tracks.length > 0 ? tracks : fallbackTracks;
+  const logoText = settings?.developerName ? settings.developerName.split(" ")[0] + "." : "Nazmus.";
+
+  // 📌 Base Navigation Links (Contact ছাড়া বাকিগুলো)
+  const baseNavLinks = [
+    { name: "Home", href: "/" },
+    { name: "About", href: "/#about" },
+    { name: "Skills", href: "/#skills" },
+    { name: "Projects", href: "/#projects" },
+  ];
+
+  // ⚙️ ️লজিক: শুধুমাত্র Contact পেজে আসলেই মেনুতে 'Contact' অপশনটি অ্যাড হবে
+  const navLinks = pathname === "/contact" 
+    ? [...baseNavLinks, { name: "Contact", href: "/contact" }] 
+    : baseNavLinks;
+
+  const socialLinks = [
+    { name: "GitHub", href: "#" },
+    { name: "LinkedIn", href: "#" },
+    { name: "Twitter", href: "#" },
+  ];
 
   // Scroll Logic
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 30);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Global Dark Mode Logic with LocalStorage
+  // Theme Logic
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
     if (storedTheme === "dark" || (!storedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
       setIsDark(true);
       document.documentElement.classList.add("dark");
-      document.documentElement.setAttribute("data-theme", "dark");
     } else {
       setIsDark(false);
       document.documentElement.classList.remove("dark");
-      document.documentElement.setAttribute("data-theme", "light");
     }
   }, []);
 
   const toggleTheme = () => {
-    if (isDark) {
-      document.documentElement.classList.remove("dark");
-      document.documentElement.setAttribute("data-theme", "light");
-      localStorage.setItem("theme", "light");
-      setIsDark(false);
-    } else {
-      document.documentElement.classList.add("dark");
-      document.documentElement.setAttribute("data-theme", "dark");
-      localStorage.setItem("theme", "dark");
-      setIsDark(true);
-    }
+    const newTheme = isDark ? "light" : "dark";
+    setIsDark(!isDark);
+    document.documentElement.classList.toggle("dark");
+    localStorage.setItem("theme", newTheme);
   };
 
-  // Outside Click Handle for Music Player
+  // Click Outside Music Dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (musicRef.current && !musicRef.current.contains(event.target as Node)) {
@@ -87,56 +96,91 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Close mobile menu when screen size increases
+  // Mobile Menu Resize Fix
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        setIsMobileMenuOpen(false);
-      }
+      if (window.innerWidth >= 768) setIsMobileMenuOpen(false);
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // 🎵 Play/Pause Logic
+  const togglePlay = (index: number) => {
+    if (!audioRef.current) return;
+    
+    if (currentTrackIndex === index) {
+      if (isPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        audioRef.current.play();
+        setIsPlaying(true);
+      }
+    } else {
+      setCurrentTrackIndex(index);
+      setIsPlaying(true);
+      setTimeout(() => {
+        if (audioRef.current) {
+          audioRef.current.play().catch(e => console.log("Audio play blocked:", e));
+        }
+      }, 50);
+    }
+  };
+
   return (
     <>
+      <audio 
+        ref={audioRef} 
+        src={displayTracks[currentTrackIndex]?.audioUrl} 
+        onEnded={() => setIsPlaying(false)}
+      />
+
       {/* ================= DESKTOP & MOBILE HEADER ================= */}
       <motion.div 
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ type: "spring", stiffness: 80, damping: 20 }}
-        className="fixed top-0 left-0 w-full z-50 px-4 pt-4 flex justify-center pointer-events-none"
+        className="fixed top-0 left-0 w-full z-50 px-4 md:px-6 pt-4 flex justify-center pointer-events-none"
       >
         <header 
-          className={`pointer-events-auto w-full max-w-5xl rounded-full transition-all duration-500 ease-in-out border flex items-center justify-between px-6 md:px-8 py-2.5 md:py-3
+          className={`pointer-events-auto w-full max-w-5xl rounded-full transition-all duration-500 ease-in-out border flex items-center justify-between px-5 md:px-6 py-2.5 md:py-3
           ${isScrolled 
-            ? "bg-white/85 dark:bg-[#0a0a0a]/85 backdrop-blur-2xl border-gray-200/80 dark:border-gray-800/80 shadow-md" 
-            : "bg-transparent border-transparent"}`}
+            ? "bg-white/75 dark:bg-[#0a0a0a]/75 backdrop-blur-2xl border-gray-200/40 dark:border-gray-800/40 shadow-[0_12px_40px_rgba(0,0,0,0.03)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.3)]" 
+            : "bg-white/30 dark:bg-[#0a0a0a]/30 backdrop-blur-sm border-transparent"}`}
         >
-          {/* Logo */}
-          <Link href="/" className="font-extrabold text-xl md:text-2xl tracking-tighter text-black dark:text-white flex items-center gap-2.5 group">
-            <span className="w-8 h-8 rounded-full bg-black dark:bg-white flex items-center justify-center text-white dark:text-black shadow-sm group-hover:scale-110 transition-transform duration-500">
-              <Code2 className="w-4 h-4" />
-            </span>
-            {siteData.logoName}
-          </Link>
+          {/* Dynamic Logo */}
+          <div className="flex items-center gap-3">
+            <Link href="/" className="font-extrabold text-lg md:text-xl tracking-tighter text-black dark:text-white flex items-center gap-2.5 group">
+              {settings?.siteLogo ? (
+                <img src={settings.siteLogo} alt="Logo" className="w-8 h-8 rounded-full object-cover shadow-sm group-hover:scale-105 transition-transform duration-500 border border-gray-200 dark:border-gray-800" />
+              ) : (
+                <span className="w-8 h-8 rounded-full bg-black dark:bg-white flex items-center justify-center text-white dark:text-black shadow-sm group-hover:scale-105 transition-transform duration-500">
+                  <Code2 className="w-4 h-4" />
+                </span>
+              )}
+              {logoText}
+            </Link>
+          </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8 text-[14px] font-semibold text-gray-600 dark:text-gray-300">
-            {siteData.navLinks.map((link, idx) => {
-              // 👈 Active Menu লজিক
-              // যদি বর্তমান পাথ আর লিংকের পাথ সমান হয়, অথবা হোমপেজে থাকলে হোম অ্যাকটিভ হবে
+          {/* Desktop Navigation with Premium Fluid Border Animation */}
+          <nav className="hidden md:flex items-center gap-8 text-[13px] font-bold text-gray-500 dark:text-gray-400 relative">
+            {navLinks.map((link, idx) => {
               const isActive = pathname === link.href || (pathname === "/" && link.href === "/");
-
               return (
                 <Link 
                   key={idx} 
                   href={link.href} 
-                  className={`transition-colors relative group py-1 ${isActive ? "text-black dark:text-white font-bold" : "hover:text-black dark:hover:text-white"}`}
+                  className={`transition-colors relative py-1 ${isActive ? "text-black dark:text-white" : "hover:text-black dark:hover:text-white"}`}
                 >
-                  {link.name}
-                  {/* 👈 Active হলে আন্ডারলাইন পুরোটাই দেখাবে */}
-                  <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] bg-black dark:bg-white transition-all duration-300 rounded-full ${isActive ? "w-full" : "w-0 group-hover:w-full"}`}></span>
+                  <span className="relative z-10">{link.name}</span>
+                  {isActive && (
+                    <motion.span
+                      layoutId="headerActiveLine"
+                      className="absolute bottom-0 left-0 w-full h-[2.5px] bg-blue-600 dark:bg-white rounded-full z-0"
+                      transition={{ type: "spring", stiffness: 350, damping: 28 }}
+                    />
+                  )}
                 </Link>
               );
             })}
@@ -145,20 +189,31 @@ export default function Header() {
           {/* Right Action Buttons */}
           <div className="flex items-center gap-2 md:gap-3">
             
-            {/* Music Player Button & Dropdown */}
+            {/* 📌 লজিক: কন্টাক্ট পেজ ছাড়া বাকি সব পেজে 'Let's Talk' বাটনটি দেখাবে */}
+            {pathname !== "/contact" && (
+              <Link href="/contact" className="hidden md:flex items-center gap-1.5 bg-black dark:bg-white text-white dark:text-black px-4 py-2 rounded-full text-xs font-bold hover:scale-[1.04] active:scale-95 transition-all shadow-sm border border-black/10 dark:border-white/10">
+                Let's Talk <ArrowUpRight className="w-3.5 h-3.5 opacity-80" />
+              </Link>
+            )}
+
+            <div className="w-px h-5 bg-gray-200 dark:bg-gray-800 hidden md:block mx-1"></div>
+            
+            {/* 🎵 Dynamic Music Player */}
             <div className="relative" ref={musicRef}>
               <button 
                 onClick={() => setIsMusicOpen(!isMusicOpen)}
                 className={`w-9 h-9 md:w-10 md:h-10 rounded-full transition-all flex items-center justify-center relative overflow-hidden group border
                   ${isMusicOpen 
                     ? "bg-black border-black text-white dark:bg-white dark:border-white dark:text-black shadow-sm" 
-                    : "bg-white border-gray-200 text-gray-600 dark:bg-[#111] dark:border-gray-800 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-700 shadow-sm"}`}
+                    : "bg-white border-gray-200/80 text-gray-600 dark:bg-[#111] dark:border-gray-800/80 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-700 shadow-sm"}`}
               >
                 {isPlaying && <span className="absolute inset-0 bg-blue-500/20 animate-ping rounded-full"></span>}
-                <Music className={`w-3.5 h-3.5 md:w-4 md:h-4 relative z-10 ${isPlaying ? "animate-pulse text-blue-500 dark:text-blue-600" : ""} group-hover:scale-110 transition-transform`} />
+                {isPlaying 
+                  ? <Volume2 className="w-3.5 h-3.5 md:w-4 md:h-4 relative z-10 text-blue-600 dark:text-blue-400 animate-pulse" /> 
+                  : <Music className="w-3.5 h-3.5 md:w-4 md:h-4 relative z-10 group-hover:scale-110 transition-transform" />
+                }
               </button>
 
-              {/* Music Dropdown */}
               <AnimatePresence>
                 {isMusicOpen && (
                   <motion.div 
@@ -166,28 +221,43 @@ export default function Header() {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute right-0 top-[50px] md:top-[56px] w-[300px] bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-[1.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-4 origin-top-right overflow-hidden"
+                    className="absolute right-[-40px] sm:right-0 top-[50px] md:top-[56px] w-[280px] sm:w-[320px] bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 rounded-[1.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-4 origin-top-right overflow-hidden"
                   >
                     <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-blue-500/10 to-purple-500/10 blur-[40px] rounded-full pointer-events-none"></div>
                     
-                    <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-4 flex items-center gap-2">
-                      <Disc3 className={`w-3.5 h-3.5 ${isPlaying ? "animate-spin text-blue-500" : ""}`} /> 
-                      Dynamic Vibes
-                    </h4>
+                    <div className="flex items-center justify-between mb-4 relative z-10">
+                      <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 flex items-center gap-2">
+                        <Disc3 className={`w-3.5 h-3.5 ${isPlaying ? "animate-spin text-blue-500" : ""}`} /> 
+                        {isPlaying ? "Now Playing" : "Vibe Station"}
+                      </h4>
+                      {isPlaying && <div className="flex gap-1">
+                        <span className="w-1 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                        <span className="w-1 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                        <span className="w-1 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                      </div>}
+                    </div>
                     
-                    <div className="flex flex-col gap-2">
-                      {siteData.musicTracks.map((track, idx) => (
-                        <div key={track.id} className="group flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 dark:hover:bg-[#111] transition-colors cursor-pointer border border-transparent hover:border-gray-200/50 dark:hover:border-gray-800/50">
-                          <img src={track.cover} alt={track.title} className="w-12 h-12 rounded-xl object-cover shadow-sm group-hover:scale-105 transition-transform" />
-                          <div className="flex-1 overflow-hidden">
-                            <h5 className="text-[14px] font-semibold text-black dark:text-white leading-tight truncate">{track.title}</h5>
-                            <p className="text-[11px] text-gray-500 truncate mt-0.5">{track.artist}</p>
+                    <div className="flex flex-col gap-2 relative z-10 max-h-[250px] overflow-y-auto pr-1">
+                      {displayTracks.map((track, idx) => {
+                        const isThisPlaying = currentTrackIndex === idx && isPlaying;
+                        return (
+                          <div key={track._id} onClick={() => togglePlay(idx)} className={`group flex items-center gap-3 p-2 rounded-xl transition-all cursor-pointer border ${isThisPlaying ? 'bg-blue-50 dark:bg-blue-900/10 border-blue-200 dark:border-blue-800/30' : 'border-transparent hover:bg-gray-50 dark:hover:bg-[#111] hover:border-gray-200/50 dark:hover:border-gray-800/50'}`}>
+                            <div className="relative">
+                              <img src={track.cover} alt={track.title} className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform" />
+                              {isThisPlaying && <div className="absolute inset-0 bg-black/40 rounded-lg flex items-center justify-center backdrop-blur-[2px]">
+                                <Pause className="w-4 h-4 text-white" />
+                              </div>}
+                            </div>
+                            <div className="flex-1 overflow-hidden">
+                              <h5 className={`text-[12px] sm:text-[13px] font-bold leading-tight truncate ${isThisPlaying ? 'text-blue-600 dark:text-blue-400' : 'text-black dark:text-white'}`}>{track.title}</h5>
+                              <p className="text-[10px] sm:text-[11px] font-medium text-gray-500 truncate mt-0.5">{track.artist}</p>
+                            </div>
+                            <button className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-colors shrink-0 shadow-sm ${isThisPlaying ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black'}`}>
+                              {isThisPlaying ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3 ml-0.5" />}
+                            </button>
                           </div>
-                          <button onClick={() => setIsPlaying(!isPlaying)} className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors shrink-0 shadow-sm">
-                            {idx === 0 && isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 ml-0.5" />}
-                          </button>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </motion.div>
                 )}
@@ -197,7 +267,7 @@ export default function Header() {
             {/* Dark Mode Toggle */}
             <button 
               onClick={toggleTheme}
-              className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white border border-gray-200 text-gray-600 dark:bg-[#111] dark:border-gray-800 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-700 transition-all overflow-hidden relative flex items-center justify-center group shadow-sm"
+              className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white border border-gray-200/80 text-gray-600 dark:bg-[#111] dark:border-gray-800/80 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-700 transition-all overflow-hidden relative flex items-center justify-center group shadow-sm"
             >
               <AnimatePresence mode="wait">
                 <motion.div
@@ -243,26 +313,19 @@ export default function Header() {
             transition={{ duration: 0.4 }}
             className="fixed inset-0 z-40 bg-white/95 dark:bg-[#050505]/95 backdrop-blur-3xl md:hidden flex flex-col justify-between"
           >
-            {/* Top decorative gradient */}
             <div className="absolute top-0 left-0 w-full h-40 bg-gradient-to-b from-gray-100/50 dark:from-gray-900/50 to-transparent pointer-events-none"></div>
 
-            <div className="flex flex-col pt-32 px-8 gap-5 relative z-10">
-              <p className="text-[10px] font-mono tracking-[0.3em] text-gray-400 uppercase mb-4">Navigation</p>
+            <div className="flex flex-col pt-28 px-8 gap-5 relative z-10">
+              <p className="text-[10px] font-mono tracking-[0.3em] text-gray-400 uppercase mb-2">Navigation</p>
               
-              {siteData.navLinks.map((link, idx) => {
+              {navLinks.map((link, idx) => {
                 const isActive = pathname === link.href || (pathname === "/" && link.href === "/");
-
                 return (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: idx * 0.1, duration: 0.4 }}
-                  >
+                  <motion.div key={idx} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.1, duration: 0.4 }}>
                     <Link 
                       href={link.href}
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className={`text-3xl sm:text-4xl font-bold tracking-tight flex items-center justify-between group transition-colors ${isActive ? "text-blue-600 dark:text-blue-400" : "text-black dark:text-white"}`}
+                      className={`text-3xl font-extrabold tracking-tight flex items-center justify-between group transition-colors ${isActive ? "text-blue-600 dark:text-blue-400" : "text-black dark:text-white"}`}
                     >
                       {link.name}
                       <ArrowUpRight className={`w-5 h-5 transition-all duration-300 ${isActive ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0"} text-gray-400`} />
@@ -280,17 +343,20 @@ export default function Header() {
               className="p-8 pb-10 border-t border-gray-200/50 dark:border-gray-800/50 relative z-10 bg-white/50 dark:bg-[#0a0a0a]/50"
             >
               <p className="text-[10px] font-mono tracking-[0.3em] text-gray-400 uppercase mb-5">Connect</p>
-              <div className="flex items-center gap-5">
-                {siteData.socialLinks.map((social, idx) => (
-                  <Link 
-                    key={idx} 
-                    href={social.href}
-                    className="text-[14px] font-semibold text-black dark:text-white hover:text-gray-500 dark:hover:text-gray-400 transition-colors"
-                  >
+              <div className="flex items-center gap-5 mb-6">
+                {socialLinks.map((social, idx) => (
+                  <Link key={idx} href={social.href} className="text-[14px] font-bold text-black dark:text-white hover:text-blue-600 transition-colors">
                     {social.name}
                   </Link>
                 ))}
               </div>
+              
+              {/* 📌 লজিক: কন্টাক্ট পেজ ছাড়া মোবাইল ড্রয়ারের নিচেও এই টক বাটন দেখাবে */}
+              {pathname !== "/contact" && (
+                <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="w-full bg-black dark:bg-white text-white dark:text-black py-4 rounded-xl flex items-center justify-center gap-2 font-bold text-sm shadow-xl active:scale-95 transition-transform">
+                  Let's Talk <ArrowUpRight className="w-4 h-4" />
+                </Link>
+              )}
             </motion.div>
           </motion.div>
         )}

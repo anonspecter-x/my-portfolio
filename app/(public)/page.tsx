@@ -9,10 +9,10 @@ async function getPageData() {
     const client = await MongoClient.connect(process.env.MONGODB_URI as string);
     const db = client.db();
     
-    // 📌 ১. ডাটাবেজ থেকে প্রজেক্টগুলো আনা হচ্ছে
+    // ডাটাবেজ থেকে প্রজেক্টগুলো আনা হচ্ছে
     const rawProjects = await db.collection("projects").find({}).sort({ createdAt: -1 }).toArray();
     
-    // 📌 ২. ডাটাবেজ থেকে সেটিংস আনা হচ্ছে
+    // ডাটাবেজ থেকে সেটিংস আনা হচ্ছে
     const settingsData = await db.collection("settings").findOne({});
 
     await client.close();
@@ -32,13 +32,16 @@ async function getPageData() {
         description: p.description || "",
         tech: techArray,
         link: p.link || "#",
+        image: p.image || null, // 📌 ভবিষ্যতে প্রজেক্টের ছবি দেখানোর জন্য
       };
     });
 
-    // 📌 সেটিংস ফরম্যাট করা (যাতে Client Component এ পাস করা যায়)
+    // সেটিংস ফরম্যাট করা
     const formattedSettings = settingsData ? {
       developerName: settingsData.developerName || "Nazmus Shakib",
       developerRole: settingsData.developerRole || "Full Stack Developer",
+      developerPhoto: settingsData.developerPhoto || null, // 📌 আপলোড করা ছবি
+      siteLogo: settingsData.siteLogo || null, // 📌 সাইট লোগো
     } : null;
 
     return { projects: formattedProjects, settings: formattedSettings };
@@ -52,6 +55,6 @@ async function getPageData() {
 export default async function Home() {
   const { projects, settings } = await getPageData();
 
-  // 📌 ডাটাগুলো ক্লায়েন্ট কম্পোনেন্টে পাস করা হচ্ছে
+  // ডাটাগুলো ক্লায়েন্ট কম্পোনেন্টে পাস করা হচ্ছে
   return <HomeClient realProjects={projects} settings={settings} />;
 }

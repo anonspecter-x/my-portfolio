@@ -10,5 +10,7 @@ export interface SettingsType {
   seoTitle: string;
   seoDescription: string;
   seoKeywords: string;
+  developerPhoto?: string; // 📌 Cloudflare R2 image link for your photo
+  siteLogo?: string;       // 📌 Cloudflare R2 image link for website logo
   updatedAt?: Date;
 }

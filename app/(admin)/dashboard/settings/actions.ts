@@ -1,11 +1,12 @@
 "use server";
 
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import { revalidatePath } from "next/cache";
+import { uploadFileToR2 } from "@/lib/r2";
 
-// 📌 সেটিংস আপডেট করার ফাংশন
+// 📌 Global Settings Update korar function
 export async function updateSettings(formData: FormData) {
-  const data = {
+  const data: any = {
     developerName: formData.get("developerName") as string,
     developerRole: formData.get("developerRole") as string,
     developerEmail: formData.get("developerEmail") as string,
@@ -17,19 +18,78 @@ export async function updateSettings(formData: FormData) {
     updatedAt: new Date(),
   };
 
+  const developerPhoto = formData.get("developerPhoto") as File;
+  const siteLogo = formData.get("siteLogo") as File;
+
+  if (developerPhoto && developerPhoto.size > 0) {
+    const photoUrl = await uploadFileToR2(developerPhoto, "settings");
+    data.developerPhoto = photoUrl;
+  }
+
+  if (siteLogo && siteLogo.size > 0) {
+    const logoUrl = await uploadFileToR2(siteLogo, "settings");
+    data.siteLogo = logoUrl;
+  }
+
   const client = await MongoClient.connect(process.env.MONGODB_URI as string);
   const db = client.db();
   
-  // আমরা শুধু একটিমাত্র সেটিংস ডকুমেন্ট রাখব, তাই upsert ব্যবহার করছি
-  await db.collection("settings").updateOne(
-    {}, // সব ডকুমেন্টের জন্য
-    { $set: data }, // ডাটা সেট করা
-    { upsert: true } // যদি আগে থেকে না থাকে, তবে নতুন তৈরি করবে
-  );
-  
+  await db.collection("settings").updateOne({}, { $set: data }, { upsert: true });
   await client.close();
   
-  // পেজ রিফ্রেশ করার জন্য
   revalidatePath("/dashboard/settings");
-  revalidatePath("/"); // হোমপেজও আপডেট হবে
+  revalidatePath("/");
+}
+
+// 📌 1. Noutun Music Track Upload korar function
+export async function addMusicTrack(formData: FormData) {
+  const title = formData.get("title") as string;
+  const artist = formData.get("artist") as string;
+  const coverFile = formData.get("cover") as File;
+  const audioFile = formData.get("audio") as File;
+
+  if (!title || !artist || !audioFile || audioFile.size === 0) {
+    throw new Error("Title, Artist and Audio file are required.");
+  }
+
+  let coverUrl = "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=100&auto=format&fit=crop"; // Default cover
+  let audioUrl = "";
+
+  // Cover image upload hole R2-te jabe
+  if (coverFile && coverFile.size > 0) {
+    coverUrl = await uploadFileToR2(coverFile, "music/covers");
+  }
+
+  // Audio MP3 file upload hole R2-te jabe
+  if (audioFile && audioFile.size > 0) {
+    audioUrl = await uploadFileToR2(audioFile, "music/audio");
+  }
+
+  const client = await MongoClient.connect(process.env.MONGODB_URI as string);
+  const db = client.db();
+  
+  await db.collection("tracks").insertOne({
+    title,
+    artist,
+    cover: coverUrl,
+    audioUrl,
+    createdAt: new Date()
+  });
+
+  await client.close();
+
+  revalidatePath("/dashboard/settings");
+  revalidatePath("/");
+}
+
+// 📌 2. Music Track Delete korar function
+export async function deleteMusicTrack(id: string) {
+  const client = await MongoClient.connect(process.env.MONGODB_URI as string);
+  const db = client.db();
+  
+  await db.collection("tracks").deleteOne({ _id: new ObjectId(id) });
+  await client.close();
+
+  revalidatePath("/dashboard/settings");
+  revalidatePath("/");
 }
