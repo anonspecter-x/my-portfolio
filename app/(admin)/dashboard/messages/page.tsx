@@ -2,15 +2,29 @@ import { MongoClient } from "mongodb";
 import { deleteMessage } from "./actions";
 import { Trash2, Mail, Calendar, User } from "lucide-react";
 
+// TypeScript Interface for Message Data
+interface MessageType {
+  _id: string;
+  name: string;
+  email: string;
+  message: string;
+  createdAt?: string | Date;
+}
+
 // ডাটাবেজ থেকে মেসেজ আনার ফাংশন
-async function getMessages() {
+async function getMessages(): Promise<MessageType[]> {
   const client = await MongoClient.connect(process.env.MONGODB_URI as string);
   const db = client.db();
+  
   // নতুন মেসেজগুলো সবার উপরে দেখানোর জন্য sort করা হয়েছে
   const messages = await db.collection("messages").find().sort({ createdAt: -1 }).toArray();
   await client.close();
   
-  return messages.map((m) => ({ ...m, _id: m._id.toString() }));
+  // TypeScript কে বলে দেওয়া হচ্ছে যে এটি MessageType এর একটি Array
+  return messages.map((m) => ({ 
+    ...m, 
+    _id: m._id.toString() 
+  })) as MessageType[];
 }
 
 export default async function MessagesPage() {

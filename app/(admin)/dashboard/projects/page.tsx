@@ -2,16 +2,31 @@ import { MongoClient } from "mongodb";
 import { addProject, deleteProject } from "./actions";
 import { Plus, Trash2, ExternalLink, GitBranch, Code2 } from "lucide-react";
 
+// 📌 TypeScript Interface for Project Data
+interface ProjectType {
+  _id: string;
+  title: string;
+  description: string;
+  tech: string[];
+  liveLink?: string;
+  githubLink?: string;
+  createdAt?: string | Date;
+}
+
 // ডাটাবেজ থেকে প্রজেক্টগুলো আনার ফাংশন
-async function getProjects() {
+async function getProjects(): Promise<ProjectType[]> {
   const client = await MongoClient.connect(process.env.MONGODB_URI as string);
   const db = client.db();
+  
   // নতুন প্রজেক্টগুলো আগে দেখানোর জন্য sort করা হয়েছে
   const projects = await db.collection("projects").find().sort({ createdAt: -1 }).toArray();
   await client.close();
   
-  // MongoDB এর _id অবজেক্টকে স্ট্রিংয়ে কনভার্ট করা হচ্ছে
-  return projects.map((p) => ({ ...p, _id: p._id.toString() }));
+  // MongoDB এর _id অবজেক্টকে স্ট্রিংয়ে কনভার্ট করা হচ্ছে এবং Type বলে দেওয়া হচ্ছে
+  return projects.map((p) => ({ 
+    ...p, 
+    _id: p._id.toString() 
+  })) as ProjectType[];
 }
 
 export default async function ProjectsPage() {
@@ -83,7 +98,7 @@ export default async function ProjectsPage() {
           </p>
         ) : (
           <div className="grid grid-cols-1 gap-4">
-            {projects.map((project) => (
+            {projects.map((project: ProjectType) => (
               <div key={project._id} className="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 group">
                 <div>
                   <h3 className="text-lg font-bold text-black dark:text-white">{project.title}</h3>

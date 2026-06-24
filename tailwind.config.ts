@@ -1,7 +1,8 @@
 import type { Config } from "tailwindcss";
 
-const config: Config = {
-  darkMode: "class", // 🌙 ডার্ক মোড কাজ করার জন্য এই লাইনটি সবচেয়ে জরুরি
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const config = {
+  darkMode: "class",
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -12,7 +13,8 @@ const config: Config = {
   },
   plugins: [require("daisyui")],
   daisyui: {
-    themes: ["light", "dark"], 
+    themes: ["light", "dark"],
   },
-};
+} satisfies Config & { daisyui: any };
+
 export default config;
