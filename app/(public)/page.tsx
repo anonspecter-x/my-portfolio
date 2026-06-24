@@ -4,18 +4,21 @@ import HomeClient from "./HomeClient";
 // প্রতি ৬০ সেকেন্ডে ডাটা আপডেট হবে (ISR), তাই ওয়েবসাইট সুপারফাস্ট থাকবে
 export const revalidate = 60; 
 
-async function getRealProjects() {
+async function getPageData() {
   try {
     const client = await MongoClient.connect(process.env.MONGODB_URI as string);
     const db = client.db();
     
-    // ডাটাবেজের 'projects' কালেকশন থেকে সব প্রজেক্ট আনা হচ্ছে (নতুনগুলো আগে)
+    // 📌 ১. ডাটাবেজ থেকে প্রজেক্টগুলো আনা হচ্ছে
     const rawProjects = await db.collection("projects").find({}).sort({ createdAt: -1 }).toArray();
+    
+    // 📌 ২. ডাটাবেজ থেকে সেটিংস আনা হচ্ছে
+    const settingsData = await db.collection("settings").findOne({});
+
     await client.close();
 
-    // ডাটাগুলো ফ্রন্টএন্ডের জন্য সুন্দরভাবে ফরম্যাট করা হচ্ছে
-    return rawProjects.map((p) => {
-      // যদি tech স্ট্রিং হিসেবে সেভ থাকে (যেমন: "React, Node"), তবে সেটাকে Array করা হচ্ছে
+    // প্রজেক্টগুলো ফরম্যাট করা
+    const formattedProjects = rawProjects.map((p) => {
       let techArray: string[] = [];
       if (Array.isArray(p.tech)) {
         techArray = p.tech;
@@ -31,15 +34,24 @@ async function getRealProjects() {
         link: p.link || "#",
       };
     });
+
+    // 📌 সেটিংস ফরম্যাট করা (যাতে Client Component এ পাস করা যায়)
+    const formattedSettings = settingsData ? {
+      developerName: settingsData.developerName || "Nazmus Shakib",
+      developerRole: settingsData.developerRole || "Full Stack Developer",
+    } : null;
+
+    return { projects: formattedProjects, settings: formattedSettings };
+
   } catch (error) {
-    console.error("Failed to fetch projects:", error);
-    return [];
+    console.error("Failed to fetch data:", error);
+    return { projects: [], settings: null };
   }
 }
 
 export default async function Home() {
-  const projects = await getRealProjects();
+  const { projects, settings } = await getPageData();
 
-  // ডাটাগুলো ক্লায়েন্ট কম্পোনেন্টে পাস করা হচ্ছে
-  return <HomeClient realProjects={projects} />;
+  // 📌 ডাটাগুলো ক্লায়েন্ট কম্পোনেন্টে পাস করা হচ্ছে
+  return <HomeClient realProjects={projects} settings={settings} />;
 }

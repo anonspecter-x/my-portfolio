@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { usePathname } from "next/navigation"; // 👈 Active মেনু ট্র্যাক করার জন্য
 import { Moon, Sun, Music, Menu, X, Play, Pause, Disc3, Code2, ArrowUpRight } from "lucide-react";
 
 export default function Header() {
@@ -12,7 +13,7 @@ export default function Header() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Ref for closing music player on outside click
+  const pathname = usePathname(); // 👈 বর্তমান URL বের করার হুক
   const musicRef = useRef<HTMLDivElement>(null);
 
   // ==========================================
@@ -22,9 +23,9 @@ export default function Header() {
     logoName: "Nazmus.",
     navLinks: [
       { name: "Home", href: "/" },
-      { name: "About", href: "#about" },
-      { name: "Skills", href: "#skills" },
-      { name: "Projects", href: "#projects" },
+      { name: "About", href: "/#about" }, // 👈 Contact পেজ থেকে কাজ করার জন্য /#about দেওয়া হয়েছে
+      { name: "Skills", href: "/#skills" },
+      { name: "Projects", href: "/#projects" },
       { name: "Contact", href: "/contact" },
     ],
     socialLinks: [
@@ -122,16 +123,23 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8 text-[14px] font-semibold text-gray-600 dark:text-gray-300">
-            {siteData.navLinks.map((link, idx) => (
-              <Link 
-                key={idx} 
-                href={link.href} 
-                className="hover:text-black dark:hover:text-white transition-colors relative group py-1"
-              >
-                {link.name}
-                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-black dark:bg-white transition-all duration-300 group-hover:w-full rounded-full"></span>
-              </Link>
-            ))}
+            {siteData.navLinks.map((link, idx) => {
+              // 👈 Active Menu লজিক
+              // যদি বর্তমান পাথ আর লিংকের পাথ সমান হয়, অথবা হোমপেজে থাকলে হোম অ্যাকটিভ হবে
+              const isActive = pathname === link.href || (pathname === "/" && link.href === "/");
+
+              return (
+                <Link 
+                  key={idx} 
+                  href={link.href} 
+                  className={`transition-colors relative group py-1 ${isActive ? "text-black dark:text-white font-bold" : "hover:text-black dark:hover:text-white"}`}
+                >
+                  {link.name}
+                  {/* 👈 Active হলে আন্ডারলাইন পুরোটাই দেখাবে */}
+                  <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] bg-black dark:bg-white transition-all duration-300 rounded-full ${isActive ? "w-full" : "w-0 group-hover:w-full"}`}></span>
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Right Action Buttons */}
@@ -241,23 +249,27 @@ export default function Header() {
             <div className="flex flex-col pt-32 px-8 gap-5 relative z-10">
               <p className="text-[10px] font-mono tracking-[0.3em] text-gray-400 uppercase mb-4">Navigation</p>
               
-              {siteData.navLinks.map((link, idx) => (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: idx * 0.1, duration: 0.4 }}
-                >
-                  <Link 
-                    href={link.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-3xl sm:text-4xl font-bold tracking-tight text-black dark:text-white flex items-center justify-between group"
+              {siteData.navLinks.map((link, idx) => {
+                const isActive = pathname === link.href || (pathname === "/" && link.href === "/");
+
+                return (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.1, duration: 0.4 }}
                   >
-                    {link.name}
-                    <ArrowUpRight className="w-5 h-5 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-gray-400" />
-                  </Link>
-                </motion.div>
-              ))}
+                    <Link 
+                      href={link.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`text-3xl sm:text-4xl font-bold tracking-tight flex items-center justify-between group transition-colors ${isActive ? "text-blue-600 dark:text-blue-400" : "text-black dark:text-white"}`}
+                    >
+                      {link.name}
+                      <ArrowUpRight className={`w-5 h-5 transition-all duration-300 ${isActive ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0"} text-gray-400`} />
+                    </Link>
+                  </motion.div>
+                );
+              })}
             </div>
 
             {/* Bottom Mobile Footer */}

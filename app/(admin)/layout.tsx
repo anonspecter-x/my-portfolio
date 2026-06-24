@@ -1,7 +1,7 @@
 import "../globals.css";
 import { signOut } from "@/auth";
 import Link from "next/link";
-import { LayoutDashboard, Briefcase, MessageSquare, Code2, LogOut } from "lucide-react";
+import { LayoutDashboard, Briefcase, MessageSquare, Code2, LogOut, Settings } from "lucide-react";
 
 export const metadata = {
   title: "Admin Dashboard | Nazmus",
@@ -42,6 +42,11 @@ export default function AdminLayout({
 
           <Link href="/dashboard/messages" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-[#111] transition-colors font-medium text-sm text-gray-700 dark:text-gray-300">
             <MessageSquare className="w-4 h-4" /> Inbox (Messages)
+          </Link>
+
+          {/* 👈 Settings Link Added Here */}
+          <Link href="/dashboard/settings" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-[#111] transition-colors font-medium text-sm text-gray-700 dark:text-gray-300">
+            <Settings className="w-4 h-4" /> Settings
           </Link>
         </nav>
 
