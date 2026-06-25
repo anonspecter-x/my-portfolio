@@ -1,8 +1,19 @@
 import Link from "next/link";
 import { MongoClient } from "mongodb";
-import { ArrowUpRight, ArrowUp, Code2, Mail, Send, Award, Briefcase, CheckCircle2, Users } from "lucide-react";
+import { ArrowUpRight, Code2, Mail, Send, Award, Briefcase, CheckCircle2, Users } from "lucide-react";
 import { iconMap } from "@/lib/iconMap";
 import FooterActiveLink from "./FooterActiveLink";
+
+// ==========================================
+// 📌 CUSTOM SVG ICONS FOR SOCIAL BRANDS
+// ==========================================
+const GithubIcon = ({ className }: { className?: string }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.2c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>;
+const LinkedinIcon = ({ className }: { className?: string }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>;
+const TwitterIcon = ({ className }: { className?: string }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>;
+const YoutubeIcon = ({ className }: { className?: string }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></svg>;
+const FacebookIcon = ({ className }: { className?: string }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>;
+const InstagramIcon = ({ className }: { className?: string }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>;
+const WhatsappIcon = ({ className }: { className?: string }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>;
 
 // ==========================================
 // 🗄️ FETCH DYNAMIC DATA FROM MONGODB
@@ -30,18 +41,17 @@ export default async function Footer() {
   // 📌 ডায়নামিক ভ্যালু সেট করা
   const developerName = settings?.developerName || "Md Nazmus Shakib";
   const tagline = settings?.developerRole || "Engineering premium, high-performance web applications.";
-  // নতুন ডেসক্রিপশন ফিল্ড (Settings থেকে আসবে, না থাকলে ডিফল্ট)
   const description = settings?.developerDescription || "Specializing in the MERN stack and modern frameworks to engineer secure, SEO-optimized, and scalable digital solutions for visionary brands.";
 
-  // 📌 সোশ্যাল লিংকস উইথ কাস্টম আইকনস
+  // 📌 সোশ্যাল লিংকস
   const availablePlatforms = [
-    { id: "github", name: "GitHub" },
-    { id: "linkedin", name: "LinkedIn" },
-    { id: "twitter", name: "Twitter" },
-    { id: "whatsapp", name: "WhatsApp" },
-    { id: "youtube", name: "YouTube" },
-    { id: "facebook", name: "Facebook" },
-    { id: "instagram", name: "Instagram" },
+    { id: "github", name: "GitHub", icon: GithubIcon },
+    { id: "linkedin", name: "LinkedIn", icon: LinkedinIcon },
+    { id: "twitter", name: "Twitter", icon: TwitterIcon },
+    { id: "whatsapp", name: "WhatsApp", icon: WhatsappIcon },
+    { id: "youtube", name: "YouTube", icon: YoutubeIcon },
+    { id: "facebook", name: "Facebook", icon: FacebookIcon },
+    { id: "instagram", name: "Instagram", icon: InstagramIcon },
   ];
 
   const dynamicSocials = availablePlatforms
@@ -58,7 +68,7 @@ export default async function Footer() {
     { name: "Contact", url: "/contact" },
   ];
 
-  // 📌 স্ট্যাটস / অ্যাচিভমেন্ট ডেটা
+  // 📌 স্ট্যাটস ডেটা
   const stats = [
     { id: 1, title: "Experience", value: "04+", icon: Briefcase },
     { id: 2, title: "Projects", value: "50+", icon: CheckCircle2 },
@@ -98,8 +108,9 @@ export default async function Footer() {
           </form>
         </div>
 
-        {/* ================= 2. GRID SYSTEM ================= */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-x-6 gap-y-10 pb-12">
+        {/* ================= 2. CUSTOM GRID SYSTEM ================= */}
+        {/* ডেস্কটপে: 1.5fr (Branding) | 0.8fr (Index) | 0.8fr (Projects) | 1.5fr (Stack) | 1.5fr (Connect) */}
+        <div className="grid grid-cols-2 lg:grid-cols-[1.5fr_0.8fr_0.8fr_1.5fr_1.5fr] gap-x-6 gap-y-10 pb-12">
           
           {/* Column 1: Branding (Full width on mobile) */}
           <div className="col-span-2 lg:col-span-1 flex flex-col gap-4">
@@ -122,7 +133,6 @@ export default async function Footer() {
             <p className="text-gray-600 dark:text-gray-300 text-sm font-semibold leading-tight">
               {tagline}
             </p>
-            {/* নতুন ডেসক্রিপশন ফিল্ড */}
             <p className="text-gray-500 dark:text-gray-400 text-xs leading-relaxed font-medium">
               {description}
             </p>
@@ -156,7 +166,7 @@ export default async function Footer() {
             </nav>
           </div>
 
-          {/* Column 4: Tech Stack (Full width on mobile, max 6 per row, centered last row) */}
+          {/* Column 4: Tech Stack */}
           <div className="col-span-2 lg:col-span-1 flex flex-col gap-4">
             <h4 className="font-mono text-[10px] tracking-[0.2em] text-gray-400 dark:text-gray-500 uppercase font-bold text-center lg:text-left">Stack</h4>
             {skills.length > 0 ? (
@@ -180,25 +190,21 @@ export default async function Footer() {
             )}
           </div>
 
-          {/* Column 5: Connect (Full width on mobile, centered content) */}
+          {/* Column 5: Connect */}
           <div className="col-span-2 lg:col-span-1 flex flex-col items-center lg:items-start gap-4">
             <h4 className="font-mono text-[10px] tracking-[0.2em] text-gray-400 dark:text-gray-500 uppercase font-bold">Connect</h4>
             
             <div className="flex flex-wrap justify-center lg:justify-start gap-3">
               {dynamicSocials.map((link, idx) => {
-                const mappedIconKey = link.name.charAt(0).toUpperCase() + link.name.slice(1);
-                const SocialIcon = iconMap[mappedIconKey] || iconMap[link.name] || <ArrowUpRight className="w-4 h-4 text-gray-500" />;
+                const SocialIcon = link.icon;
                 return (
                   <a key={idx} href={link.url} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-gray-100 dark:bg-[#111] hover:bg-gray-200 dark:hover:bg-[#222] hover:-translate-y-1 flex items-center justify-center transition-all duration-300 group">
-                    <span className="w-4 h-4 opacity-70 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      {SocialIcon}
-                    </span>
+                    <SocialIcon className="w-4 h-4 text-gray-500 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
                   </a>
                 );
               })}
             </div>
 
-            {/* Redesigned Clean Start a Project Button */}
             <Link href="/contact" className="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 text-black dark:text-white py-2.5 rounded-xl text-xs font-bold hover:bg-gray-50 dark:hover:bg-[#111] hover:border-gray-300 dark:hover:border-gray-700 hover:-translate-y-0.5 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1.5 mt-2">
               Start a Project <ArrowUpRight className="w-3.5 h-3.5 text-gray-400" />
             </Link>
@@ -224,42 +230,45 @@ export default async function Footer() {
           })}
         </div>
 
-        {/* ================= 4. BOTTOM COPYRIGHT & ELONGATED TOP BUTTON ================= */}
-        <div className="flex flex-row items-end justify-between pt-6 border-t border-gray-200/80 dark:border-gray-800/80 mt-2">
-          
-          {/* Left Aligned Content */}
-          <div className="flex flex-col items-start gap-2 sm:gap-3 text-left">
-            
-            {/* এক লাইনে কপিরাইট (মোবাইল ও ডেস্কটপ উভয়ের জন্য) */}
-            <div className="text-[11px] sm:text-xs font-medium text-gray-500 flex flex-wrap items-center gap-1.5">
-              <span>&copy; {currentYear}. meetsakib.com</span>
-              <span className="mx-1 text-gray-300 dark:text-gray-700">•</span>
-              <span>Crafted with</span>
-              <svg className="w-3.5 h-3.5 text-red-500 fill-current animate-pulse" viewBox="0 0 24 24">
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-              </svg> 
-              <span>by {developerName}</span>
-            </div>
-            
-            {/* লিংকস এবং লম্বালম্বি ডিভাইডার */}
-            <div className="flex items-center gap-3 text-[11px] sm:text-xs font-semibold text-gray-500">
-              <Link href="/sitemap" className="hover:text-black dark:hover:text-white transition-colors">Site Map</Link>
-              <span className="text-gray-300 dark:text-gray-700">|</span>
-              <Link href="/privacy" className="hover:text-black dark:hover:text-white transition-colors">Privacy Policy</Link>
-            </div>
+        {/* ================= 4. BOTTOM COPYRIGHT & LINKS ================= */}
+        {/* Desktop View (flex-row, hidden on mobile) */}
+        <div className="hidden sm:flex flex-row items-center justify-between pt-6 border-t border-gray-200/80 dark:border-gray-800/80 mt-2">
+          <div className="text-[11px] sm:text-xs font-medium text-gray-500 flex flex-wrap items-center gap-1.5">
+            <span>&copy; {currentYear}. meetsakib.com</span>
+            <span className="mx-1 text-gray-300 dark:text-gray-700">•</span>
+            <span>Crafted with</span>
+            <svg className="w-3.5 h-3.5 text-red-500 fill-current animate-pulse" viewBox="0 0 24 24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg> 
+            <span>by {developerName}</span>
           </div>
-
-          {/* Right Aligned: Elongated Top Button (ফ্লোটিং বটম স্পেস দেওয়া হয়েছে চ্যাটবটের জন্য) */}
-          <a 
-            href="#"
-            aria-label="Back to top"
-            className="group flex items-center justify-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-gray-200/60 dark:bg-[#222] rounded-full hover:-translate-y-1 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all duration-300 shadow-sm shrink-0 mb-14 md:mb-0"
-          >
-            <span className="text-[10px] font-bold tracking-wider hidden sm:block">TOP</span>
-            <ArrowUp className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-600 dark:text-gray-400 group-hover:text-current transition-colors" />
-          </a>
-
+          
+          <div className="flex items-center gap-3 text-[11px] sm:text-xs font-semibold text-gray-500">
+            <Link href="/sitemap" className="hover:text-black dark:hover:text-white transition-colors">Site Map</Link>
+            <span className="text-gray-300 dark:text-gray-700">|</span>
+            <Link href="/privacy" className="hover:text-black dark:hover:text-white transition-colors">Privacy Policy</Link>
+          </div>
         </div>
+
+        {/* Mobile View (2 columns, hidden on desktop) */}
+        <div className="flex sm:hidden flex-row justify-between pt-6 border-t border-gray-200/80 dark:border-gray-800/80 mt-2 gap-4">
+          
+          {/* Left Column (Larger) */}
+          <div className="flex flex-col gap-1.5 text-[11px] font-medium text-gray-500 w-[65%] shrink-0">
+            <span className="whitespace-nowrap overflow-hidden text-ellipsis">&copy; {currentYear}. meetsakib.com</span>
+            <span className="flex items-center gap-1 whitespace-nowrap overflow-hidden text-ellipsis">
+              Crafted with <svg className="w-3.5 h-3.5 text-red-500 fill-current shrink-0" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg> by {developerName}
+            </span>
+          </div>
+          
+          {/* Right Column (Smaller) */}
+          <div className="flex flex-col items-end gap-1.5 text-[11px] font-semibold text-gray-500 w-[35%] shrink-0 text-right">
+            <Link href="/sitemap" className="hover:text-black dark:hover:text-white transition-colors whitespace-nowrap">Site Map</Link>
+            <Link href="/privacy" className="hover:text-black dark:hover:text-white transition-colors whitespace-nowrap">Privacy Policy</Link>
+          </div>
+          
+        </div>
+
       </div>
     </footer>
   );
