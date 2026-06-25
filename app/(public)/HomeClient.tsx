@@ -19,7 +19,7 @@ const WhatsappIcon = ({ className }: { className?: string }) => <svg className={
 // ==========================================
 // 📌 SYSTEMATIC ICON MAPPING
 // ==========================================
-// স্কিল আইকন সিস্টেম
+// স্কিল আইকন সিস্টেম (Lucide Icons)
 const iconMap: Record<string, ReactNode> = {
   Code2: <Code2 className="w-4 h-4 md:w-5 md:h-5" />,
   Layout: <Layout className="w-4 h-4 md:w-5 md:h-5" />,
@@ -68,7 +68,6 @@ export default function HomeClient({ realProjects, realSkills, services = [], se
   const displayProjects = realProjects.slice(0, 4);
 
   // 📌 DYNAMIC SOCIAL FETCHING SYSTEM
-  // Settings থেকে চেক করে যেগুলো visible এবং link আছে, শুধু সেগুলোই রিটার্ন করবে
   const activeSocials = socialPlatformSystem
     .filter(platform => 
       settings?.[`social_${platform.id}_visible`] === "true" && settings?.[`social_${platform.id}`]
@@ -246,13 +245,22 @@ export default function HomeClient({ realProjects, realSkills, services = [], se
                 const percentage = skill.percentage;
                 const totalBlocks = 5;
                 
+                // আইকন ফিক্সিং লজিক
+                const isImageIcon = skill.icon && (skill.icon.startsWith("http") || skill.icon.startsWith("/") || skill.icon.startsWith("data:image"));
+                // যদি নামের প্রথম অক্ষর ছোট হাতের থাকে, সেটাকে বড় হাতের করে চেক করা
+                const mappedIconKey = skill.icon ? skill.icon.charAt(0).toUpperCase() + skill.icon.slice(1) : "";
+
                 return (
                   <motion.div key={skill._id} variants={fadeUp} className="relative p-5 md:p-6 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-2xl transition-colors shadow-sm mt-4">
                     
                     <div className="absolute -top-6 -left-2 bg-white dark:bg-[#0a0a0a] p-1.5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm">
-                       <div className="w-10 h-10 rounded-xl bg-black dark:bg-white text-white dark:text-black flex items-center justify-center">
-                         {/* 📌 SYSTEMATIC SKILL ICON RENDERING */}
-                         {iconMap[skill.icon] || <Code2 className="w-5 h-5" />}
+                       <div className="w-10 h-10 rounded-xl bg-black dark:bg-white text-white dark:text-black flex items-center justify-center p-2">
+                         {/* 📌 SYSTEMATIC SKILL ICON RENDERING (FIXED) */}
+                         {isImageIcon ? (
+                           <img src={skill.icon} alt={skill.name} className="w-full h-full object-contain" />
+                         ) : (
+                           iconMap[skill.icon] || iconMap[mappedIconKey] || <Code2 className="w-5 h-5" />
+                         )}
                        </div>
                     </div>
                     
