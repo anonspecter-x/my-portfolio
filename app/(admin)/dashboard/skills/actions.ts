@@ -2,7 +2,13 @@
 
 import { MongoClient, ObjectId } from "mongodb";
 import { revalidatePath } from "next/cache";
-import { uploadFileToR2 } from "@/lib/r2"; // 📌 R2 Uploader (Project এর মতো)
+import { uploadFileToR2 } from "@/lib/r2"; // 📌 R2 Uploader
+
+// MongoDB কানেকশন হেল্পার (কানেকশন পুলিং অপ্টিমাইজ করার জন্য)
+async function connectToDatabase() {
+  const client = await MongoClient.connect(process.env.MONGODB_URI as string);
+  return { client, db: client.db() };
+}
 
 // ==========================================
 // 🛠️ SKILLS ACTIONS
@@ -11,48 +17,52 @@ import { uploadFileToR2 } from "@/lib/r2"; // 📌 R2 Uploader (Project এর �
 export async function saveSkill(formData: FormData) {
   const id = formData.get("id") as string;
   const name = formData.get("name") as string;
-  const subtitle = formData.get("subtitle") as string; // 📌 New Field
+  const subtitle = formData.get("subtitle") as string;
   const percentage = parseInt(formData.get("percentage") as string, 10);
   const icon = formData.get("icon") as string;
 
-  if (!name || !percentage || !icon) {
-    throw new Error("Required fields are missing.");
+  if (!name || isNaN(percentage) || !icon) {
+    throw new Error("Required fields are missing or invalid.");
   }
 
-  const client = await MongoClient.connect(process.env.MONGODB_URI as string);
-  const db = client.db();
+  const { client, db } = await connectToDatabase();
 
-  if (id) {
-    await db.collection("skills").updateOne(
-      { _id: new ObjectId(id) },
-      { $set: { name, subtitle, percentage, icon } }
-    );
-  } else {
-    await db.collection("skills").insertOne({
-      name,
-      subtitle,
-      percentage,
-      icon,
-      createdAt: new Date()
-    });
+  try {
+    if (id && ObjectId.isValid(id)) {
+      await db.collection("skills").updateOne(
+        { _id: new ObjectId(id) },
+        { $set: { name, subtitle, percentage, icon, updatedAt: new Date() } }
+      );
+    } else {
+      await db.collection("skills").insertOne({
+        name,
+        subtitle,
+        percentage,
+        icon,
+        createdAt: new Date()
+      });
+    }
+  } finally {
+    await client.close();
   }
 
-  await client.close();
   revalidatePath("/dashboard/skills");
   revalidatePath("/");
 }
 
 export async function deleteSkill(id: string) {
-  const client = await MongoClient.connect(process.env.MONGODB_URI as string);
-  const db = client.db();
+  if (!id || !ObjectId.isValid(id)) throw new Error("Invalid ID provided.");
   
-  await db.collection("skills").deleteOne({ _id: new ObjectId(id) });
-  await client.close();
+  const { client, db } = await connectToDatabase();
+  try {
+    await db.collection("skills").deleteOne({ _id: new ObjectId(id) });
+  } finally {
+    await client.close();
+  }
 
   revalidatePath("/dashboard/skills");
   revalidatePath("/");
 }
-
 
 // ==========================================
 // 💼 SERVICES / EXPERIENCE ACTIONS
@@ -62,48 +72,52 @@ export async function saveService(formData: FormData) {
   const id = formData.get("id") as string;
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
-  const imageFile = formData.get("image") as File;
+  const imageFile = formData.get("image") as File | null;
 
   if (!title || !description) {
     throw new Error("Title and Description are required.");
   }
 
-  const client = await MongoClient.connect(process.env.MONGODB_URI as string);
-  const db = client.db();
+  const { client, db } = await connectToDatabase();
 
-  let updateData: any = {
-    title,
-    description,
-    updatedAt: new Date(),
-  };
+  try {
+    let updateData: any = {
+      title,
+      description,
+      updatedAt: new Date(),
+    };
 
-  // 📌 যদি নতুন ইমেজ আপলোড করা হয়
-  if (imageFile && imageFile.size > 0) {
-    updateData.image = await uploadFileToR2(imageFile, "services");
+    // 📌 নতুন ইমেজ আপলোড করা হলে
+    if (imageFile && imageFile.size > 0) {
+      updateData.image = await uploadFileToR2(imageFile, "services");
+    }
+
+    if (id && ObjectId.isValid(id)) {
+      await db.collection("services").updateOne(
+        { _id: new ObjectId(id) }, 
+        { $set: updateData }
+      );
+    } else {
+      updateData.createdAt = new Date();
+      await db.collection("services").insertOne(updateData);
+    }
+  } finally {
+    await client.close();
   }
 
-  if (id) {
-    await db.collection("services").updateOne(
-      { _id: new ObjectId(id) }, 
-      { $set: updateData }
-    );
-  } else {
-    updateData.createdAt = new Date();
-    // 📌 নতুন তৈরি করার সময় ইমেজ বাধ্যতামূলক ছিল ফ্রন্টএন্ডে
-    await db.collection("services").insertOne(updateData);
-  }
-
-  await client.close();
   revalidatePath("/dashboard/skills");
   revalidatePath("/");
 }
 
 export async function deleteService(id: string) {
-  const client = await MongoClient.connect(process.env.MONGODB_URI as string);
-  const db = client.db();
-  
-  await db.collection("services").deleteOne({ _id: new ObjectId(id) });
-  await client.close();
+  if (!id || !ObjectId.isValid(id)) throw new Error("Invalid ID provided.");
+
+  const { client, db } = await connectToDatabase();
+  try {
+    await db.collection("services").deleteOne({ _id: new ObjectId(id) });
+  } finally {
+    await client.close();
+  }
 
   revalidatePath("/dashboard/skills");
   revalidatePath("/");

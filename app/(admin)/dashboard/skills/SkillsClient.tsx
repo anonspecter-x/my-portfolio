@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { saveSkill, deleteSkill, saveService, deleteService } from "./actions";
-import { Zap, Plus, Trash2, Code2, Layout, Server, Database, Terminal, Smartphone, Palette, Monitor, Edit2, X, Briefcase, Image as ImageIcon, ChevronDown } from "lucide-react";
+import { 
+  Zap, Plus, Trash2, Code2, Layout, Server, Database, Terminal, 
+  Smartphone, Palette, Monitor, Edit2, X, Briefcase, 
+  Image as ImageIcon, ChevronDown, Loader2, Atom, Layers, Braces, Globe, Cpu, Lock, GitBranch 
+} from "lucide-react";
 
-import React from "react";
-// ... অন্যান্য ইমপোর্ট
-
+// 📌 সব রিকোয়েস্টেড আইকন ম্যাপ
 const iconMap: Record<string, React.ReactNode> = {
   Code2: <Code2 className="w-5 h-5" />,
   Layout: <Layout className="w-5 h-5" />,
@@ -16,12 +18,19 @@ const iconMap: Record<string, React.ReactNode> = {
   Smartphone: <Smartphone className="w-5 h-5" />,
   Palette: <Palette className="w-5 h-5" />,
   Monitor: <Monitor className="w-5 h-5" />,
+  Atom: <Atom className="w-5 h-5" />,         // React.js
+  Layers: <Layers className="w-5 h-5" />,     // Tailwind CSS
+  Braces: <Braces className="w-5 h-5" />,     // JavaScript & TypeScript
+  Globe: <Globe className="w-5 h-5" />,       // Next.js & WordPress
+  Cpu: <Cpu className="w-5 h-5" />,           // Node.js & Express.js
+  Lock: <Lock className="w-5 h-5" />,         // Firebase Auth
+  GitBranch: <GitBranch className="w-5 h-5" /> // GIT
 };
 
 interface Skill {
   _id: string;
   name: string;
-  subtitle?: string; // 📌 New Field for UI Subtitle
+  subtitle?: string;
   percentage: number;
   icon: string;
 }
@@ -38,10 +47,13 @@ export default function SkillsClient({ skills, services }: { skills: Skill[], se
   
   // States for Skills
   const [editSkill, setEditSkill] = useState<Skill | null>(null);
+  const [isSubmittingSkill, setIsSubmittingSkill] = useState(false);
+  const [deletingSkillId, setDeletingSkillId] = useState<string | null>(null);
   
-  // States for Services (Experience Dropdowns)
+  // States for Services
   const [editService, setEditService] = useState<Service | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmittingService, setIsSubmittingService] = useState(false);
+  const [deletingServiceId, setDeletingServiceId] = useState<string | null>(null);
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -71,14 +83,16 @@ export default function SkillsClient({ skills, services }: { skills: Skill[], se
       {/* ================= 🗂️ TABS NAVIGATION ================= */}
       <div className="flex bg-gray-100 dark:bg-[#111] p-1.5 rounded-2xl w-fit border border-gray-200 dark:border-gray-800">
         <button 
+          disabled={isSubmittingSkill || isSubmittingService}
           onClick={() => { setActiveTab("skills"); handleCancelEditService(); }}
-          className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === "skills" ? "bg-white dark:bg-[#222] text-blue-600 dark:text-blue-400 shadow-sm" : "text-gray-500 hover:text-black dark:hover:text-white"}`}
+          className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === "skills" ? "bg-white dark:bg-[#222] text-blue-600 dark:text-blue-400 shadow-sm" : "text-gray-500 hover:text-black dark:hover:text-white"} disabled:opacity-5`}
         >
           <Zap className="w-4 h-4" /> Technical Skills
         </button>
         <button 
+          disabled={isSubmittingSkill || isSubmittingService}
           onClick={() => { setActiveTab("services"); handleCancelEditSkill(); }}
-          className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === "services" ? "bg-white dark:bg-[#222] text-purple-600 dark:text-purple-400 shadow-sm" : "text-gray-500 hover:text-black dark:hover:text-white"}`}
+          className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === "services" ? "bg-white dark:bg-[#222] text-purple-600 dark:text-purple-400 shadow-sm" : "text-gray-500 hover:text-black dark:hover:text-white"} disabled:opacity-5`}
         >
           <Briefcase className="w-4 h-4" /> Experience & Services
         </button>
@@ -97,10 +111,17 @@ export default function SkillsClient({ skills, services }: { skills: Skill[], se
             
             <form 
               ref={formRef} 
+              onSubmit={() => setIsSubmittingSkill(true)}
               action={async (formData) => {
-                await saveSkill(formData);
-                setEditSkill(null);
-                formRef.current?.reset();
+                try {
+                  await saveSkill(formData);
+                  setEditSkill(null);
+                  formRef.current?.reset();
+                } catch (err) {
+                  console.error(err);
+                } finally {
+                  setIsSubmittingSkill(false);
+                }
               }} 
               className="space-y-5"
             >
@@ -111,7 +132,6 @@ export default function SkillsClient({ skills, services }: { skills: Skill[], se
                 <input type="text" name="name" defaultValue={editSkill?.name || ""} required key={editSkill?._id + 'name'} placeholder="e.g. React.js" className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-2.5 outline-none focus:border-blue-500 transition-colors" />
               </div>
 
-              {/* 📌 New Subtitle Field */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold uppercase tracking-wider text-gray-400">Subtitle (Category)</label>
                 <input type="text" name="subtitle" defaultValue={editSkill?.subtitle || ""} key={editSkill?._id + 'sub'} placeholder="e.g. JavaScript Library" className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-2.5 outline-none focus:border-blue-500 transition-colors" />
@@ -127,24 +147,31 @@ export default function SkillsClient({ skills, services }: { skills: Skill[], se
 
               <div className="space-y-1.5">
                 <label className="text-xs font-bold uppercase tracking-wider text-gray-400">Select Icon</label>
-                <select name="icon" required defaultValue={editSkill?.icon || "Code2"} key={editSkill?._id + 'icon'} className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-2.5 outline-none focus:border-blue-500 transition-colors cursor-pointer appearance-none">
-                  <option value="Code2">Code / Frontend (React, Next.js)</option>
-                  <option value="Layout">UI / Layout (Tailwind, CSS)</option>
-                  <option value="Server">Backend / API (Node, Express)</option>
-                  <option value="Database">Database (MongoDB, SQL)</option>
-                  <option value="Monitor">Web Dev / General</option>
-                  <option value="Terminal">DevOps / Tools (Git, Docker)</option>
-                  <option value="Smartphone">Mobile App (React Native)</option>
-                  <option value="Palette">Design (Figma)</option>
+                <select name="icon" required defaultValue={editSkill?.icon || "Atom"} key={editSkill?._id + 'icon'} className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-2.5 outline-none focus:border-blue-500 transition-colors cursor-pointer appearance-none">
+                  <option value="Atom">React.js (Atom)</option>
+                  <option value="Globe">Next.js / WordPress (Globe)</option>
+                  <option value="Layers">Tailwind CSS (Layers)</option>
+                  <option value="Braces">JavaScript / TypeScript (Braces)</option>
+                  <option value="Cpu">Node.js / Express.js (Cpu)</option>
+                  <option value="Database">MongoDB (Database)</option>
+                  <option value="Lock">Firebase Auth (Lock)</option>
+                  <option value="Palette">Figma (Palette)</option>
+                  <option value="GitBranch">GIT (GitBranch)</option>
+                  <option value="Code2">General Code (Code2)</option>
+                  <option value="Layout">UI / Layout (Layout)</option>
+                  <option value="Server">Backend Generic (Server)</option>
+                  <option value="Terminal">DevOps / Tools (Terminal)</option>
+                  <option value="Smartphone">Mobile App (Smartphone)</option>
+                  <option value="Monitor">Web General (Monitor)</option>
                 </select>
               </div>
 
               <div className="pt-2 flex gap-2">
-                <button type="submit" className="flex-1 bg-black dark:bg-white text-white dark:text-black text-xs font-bold py-3 rounded-xl hover:opacity-80 transition-opacity flex items-center justify-center gap-2 shadow-sm">
-                  {editSkill ? "Update Skill" : "Save Skill"}
+                <button disabled={isSubmittingSkill} type="submit" className="flex-1 bg-black dark:bg-white text-white dark:text-black text-xs font-bold py-3 rounded-xl hover:opacity-80 transition-opacity flex items-center justify-center gap-2 shadow-sm disabled:opacity-50">
+                  {isSubmittingSkill ? <Loader2 className="w-4 h-4 animate-spin" /> : editSkill ? "Update Skill" : "Save Skill"}
                 </button>
                 {editSkill && (
-                  <button type="button" onClick={handleCancelEditSkill} className="px-4 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-bold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                  <button type="button" disabled={isSubmittingSkill} onClick={handleCancelEditSkill} className="px-4 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-bold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
                     <X className="w-4 h-4" />
                   </button>
                 )}
@@ -164,7 +191,7 @@ export default function SkillsClient({ skills, services }: { skills: Skill[], se
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
                 {skills.map((skill) => (
-                  <div key={skill._id} className="group bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 rounded-xl p-4 flex flex-col gap-3 relative overflow-hidden">
+                  <div key={skill._id} className={`group bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 rounded-xl p-4 flex flex-col gap-3 relative overflow-hidden transition-opacity ${deletingSkillId === skill._id ? "opacity-40" : ""}`}>
                     <div className="flex items-center justify-between z-10">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-lg bg-white dark:bg-[#222] flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-sm border border-gray-100 dark:border-gray-800">
@@ -177,13 +204,21 @@ export default function SkillsClient({ skills, services }: { skills: Skill[], se
                       </div>
                       
                       <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => handleEditSkill(skill)} className="w-7 h-7 rounded-md bg-blue-50 dark:bg-blue-950/30 text-blue-500 flex items-center justify-center hover:bg-blue-500 hover:text-white transition-colors"><Edit2 className="w-3.5 h-3.5" /></button>
-                        <form action={async () => { await deleteSkill(skill._id); }}>
-                          <button type="submit" className="w-7 h-7 rounded-md bg-red-50 dark:bg-red-950/30 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
-                        </form>
+                        <button disabled={deletingSkillId !== null} onClick={() => handleEditSkill(skill)} className="w-7 h-7 rounded-md bg-blue-50 dark:bg-blue-950/30 text-blue-500 flex items-center justify-center hover:bg-blue-500 hover:text-white transition-colors"><Edit2 className="w-3.5 h-3.5" /></button>
+                        <button 
+                          disabled={deletingSkillId !== null} 
+                          onClick={async () => {
+                            if(confirm("Delete this skill?")) {
+                              setDeletingSkillId(skill._id);
+                              try { await deleteSkill(skill._id); } finally { setDeletingSkillId(null); }
+                            }
+                          }} 
+                          className="w-7 h-7 rounded-md bg-red-50 dark:bg-red-950/30 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors"
+                        >
+                          {deletingSkillId === skill._id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                        </button>
                       </div>
                     </div>
-                    {/* Admin preview of 10-segment bar */}
                     <div className="flex gap-1 w-full mt-1">
                       {[...Array(10)].map((_, i) => (
                          <div key={i} className={`h-1 flex-1 rounded-sm ${i < Math.round(skill.percentage / 10) ? 'bg-purple-500' : 'bg-gray-200 dark:bg-gray-800'}`} />
@@ -197,7 +232,7 @@ export default function SkillsClient({ skills, services }: { skills: Skill[], se
         </div>
       )}
 
-      {/* ================= 🚀 TAB 2: EXPERIENCE / SERVICES (Accordion & Image) ================= */}
+      {/* ================= 🚀 TAB 2: EXPERIENCE / SERVICES ================= */}
       {activeTab === "services" && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
@@ -210,12 +245,17 @@ export default function SkillsClient({ skills, services }: { skills: Skill[], se
             
             <form 
               ref={formRef} 
-              onSubmit={() => setIsSubmitting(true)}
+              onSubmit={() => setIsSubmittingService(true)}
               action={async (formData) => {
-                await saveService(formData);
-                setEditService(null);
-                setIsSubmitting(false);
-                formRef.current?.reset();
+                try {
+                  await saveService(formData);
+                  setEditService(null);
+                  formRef.current?.reset();
+                } catch (err) {
+                  console.error(err);
+                } finally {
+                  setIsSubmittingService(false);
+                }
               }} 
               className="space-y-5"
             >
@@ -238,11 +278,11 @@ export default function SkillsClient({ skills, services }: { skills: Skill[], se
               </div>
 
               <div className="pt-2 flex gap-2">
-                <button disabled={isSubmitting} type="submit" className="flex-1 bg-black dark:bg-white text-white dark:text-black text-xs font-bold py-3 rounded-xl hover:opacity-80 transition-opacity flex items-center justify-center gap-2 shadow-sm disabled:opacity-70">
-                  {isSubmitting ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> : editService ? "Update Experience" : "Save Experience"}
+                <button disabled={isSubmittingService} type="submit" className="flex-1 bg-black dark:bg-white text-white dark:text-black text-xs font-bold py-3 rounded-xl hover:opacity-80 transition-opacity flex items-center justify-center gap-2 shadow-sm disabled:opacity-50">
+                  {isSubmittingService ? <Loader2 className="w-4 h-4 animate-spin" /> : editService ? "Update Experience" : "Save Experience"}
                 </button>
                 {editService && (
-                  <button type="button" disabled={isSubmitting} onClick={handleCancelEditService} className="px-4 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-bold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                  <button type="button" disabled={isSubmittingService} onClick={handleCancelEditService} className="px-4 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-bold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
                     <X className="w-4 h-4" />
                   </button>
                 )}
@@ -262,9 +302,8 @@ export default function SkillsClient({ skills, services }: { skills: Skill[], se
             ) : (
               <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
                 {services.map((service) => (
-                  <div key={service._id} className="group bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 rounded-xl flex overflow-hidden shadow-sm hover:border-purple-500/30 transition-colors">
+                  <div key={service._id} className={`group bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 rounded-xl flex overflow-hidden shadow-sm hover:border-purple-500/30 transition-colors ${deletingServiceId === service._id ? "opacity-40" : ""}`}>
                     
-                    {/* Image Preview */}
                     <div className="w-1/3 min-w-[120px] bg-gray-200 dark:bg-[#222] relative border-r border-gray-200 dark:border-gray-800">
                       {service.image ? (
                         <img src={service.image} alt={service.title} className="absolute inset-0 w-full h-full object-cover" />
@@ -273,16 +312,24 @@ export default function SkillsClient({ skills, services }: { skills: Skill[], se
                       )}
                     </div>
                     
-                    {/* Content & Actions */}
                     <div className="p-4 flex-1 flex flex-col justify-between">
                       <div>
                         <div className="flex items-center justify-between mb-2">
                            <h4 className="font-bold text-black dark:text-white flex items-center gap-1.5">{service.title} <ChevronDown className="w-4 h-4 text-gray-400" /></h4>
                            <div className="flex items-center gap-1.5">
-                             <button onClick={() => handleEditService(service)} className="w-7 h-7 rounded-md bg-gray-200 dark:bg-[#222] text-gray-600 dark:text-gray-400 flex items-center justify-center hover:bg-purple-500 hover:text-white transition-colors"><Edit2 className="w-3.5 h-3.5" /></button>
-                             <form action={async () => { await deleteService(service._id); }}>
-                               <button type="submit" className="w-7 h-7 rounded-md bg-gray-200 dark:bg-[#222] text-gray-600 dark:text-gray-400 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
-                             </form>
+                             <button disabled={deletingServiceId !== null} onClick={() => handleEditService(service)} className="w-7 h-7 rounded-md bg-gray-200 dark:bg-[#222] text-gray-600 dark:text-gray-400 flex items-center justify-center hover:bg-purple-500 hover:text-white transition-colors"><Edit2 className="w-3.5 h-3.5" /></button>
+                             <button 
+                              disabled={deletingServiceId !== null}
+                              onClick={async () => {
+                                if(confirm("Delete this experience?")) {
+                                  setDeletingServiceId(service._id);
+                                  try { await deleteService(service._id); } finally { setDeletingServiceId(null); }
+                                }
+                              }}
+                              className="w-7 h-7 rounded-md bg-gray-200 dark:bg-[#222] text-gray-600 dark:text-gray-400 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors"
+                             >
+                               {deletingServiceId === service._id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                             </button>
                            </div>
                         </div>
                         <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-3 leading-relaxed">{service.description}</p>
@@ -295,7 +342,6 @@ export default function SkillsClient({ skills, services }: { skills: Skill[], se
           </div>
         </div>
       )}
-      
     </div>
   );
 }
