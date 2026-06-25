@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation"; 
-import { Moon, Sun, Music, Menu, X, Play, Pause, Disc3, Code2, ArrowUpRight, Volume2 } from "lucide-react";
+import { Moon, Sun, Music, Menu, X, Play, Pause, Disc3, Code2, ArrowUpRight, Volume2, Home } from "lucide-react";
 
 interface TrackType {
   _id: string;
@@ -39,19 +39,24 @@ export default function Header({ settings, tracks }: HeaderProps) {
 
   const displayTracks = tracks && tracks.length > 0 ? tracks : fallbackTracks;
   const logoText = settings?.developerName ? settings.developerName.split(" ")[0] + "." : "Nazmus.";
+  const devFullName = settings?.developerName || "Developer Logo";
 
-  // 📌 Base Navigation Links (Contact ছাড়া বাকিগুলো)
+  // 📌 Updated Base Navigation Links
   const baseNavLinks = [
-    { name: "Home", href: "/" },
-    { name: "About", href: "/#about" },
-    { name: "Skills", href: "/#skills" },
-    { name: "Projects", href: "/#projects" },
+    { name: "About", href: "/about" },
+    { name: "Projects", href: "/projects" },
+    { name: "Blog", href: "/blog" },
   ];
 
-  // ⚙️ ️লজিক: শুধুমাত্র Contact পেজে আসলেই মেনুতে 'Contact' অপশনটি অ্যাড হবে
-  const navLinks = pathname === "/contact" 
+  // ⚙️ Logic: Add Contact only if on /contact page
+  const desktopNavLinks = pathname === "/contact" 
     ? [...baseNavLinks, { name: "Contact", href: "/contact" }] 
     : baseNavLinks;
+
+  // Mobile menu should always show Home if not on Home page
+  const mobileNavLinks = pathname === "/" 
+    ? desktopNavLinks 
+    : [{ name: "Home", href: "/" }, ...desktopNavLinks];
 
   const socialLinks = [
     { name: "GitHub", href: "#" },
@@ -141,55 +146,78 @@ export default function Header({ settings, tracks }: HeaderProps) {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ type: "spring", stiffness: 80, damping: 20 }}
-        className="fixed top-0 left-0 w-full z-50 px-4 md:px-6 pt-4 flex justify-center pointer-events-none"
+        className="fixed top-0 left-0 w-full z-50 px-4 md:px-0 flex justify-center pointer-events-none"
       >
+        {/* 📌 FIXED: Reduced top max-width to max-w-6xl for better aesthetic */}
         <header 
-          className={`pointer-events-auto w-full max-w-5xl rounded-full transition-all duration-500 ease-in-out border flex items-center justify-between px-5 md:px-6 py-2.5 md:py-3
+          className={`pointer-events-auto w-full transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] border flex items-center justify-between px-5 md:px-6
           ${isScrolled 
-            ? "bg-white/75 dark:bg-[#0a0a0a]/75 backdrop-blur-2xl border-gray-200/40 dark:border-gray-800/40 shadow-[0_12px_40px_rgba(0,0,0,0.03)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.3)]" 
-            : "bg-white/30 dark:bg-[#0a0a0a]/30 backdrop-blur-sm border-transparent"}`}
+            ? "bg-white/75 dark:bg-[#0a0a0a]/75 backdrop-blur-2xl border-gray-200/40 dark:border-gray-800/40 shadow-[0_12px_40px_rgba(0,0,0,0.03)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.3)] max-w-4xl lg:max-w-5xl rounded-full mt-4 py-2.5 md:py-3" 
+            : "bg-white/30 dark:bg-[#0a0a0a]/30 md:bg-transparent md:dark:bg-transparent backdrop-blur-sm md:backdrop-blur-none border-transparent max-w-5xl lg:max-w-6xl rounded-full md:rounded-none mt-4 md:mt-0 py-2.5 md:py-6"}`}
         >
-          {/* Dynamic Logo */}
+          {/* 📌 Dynamic Logo: Original Size and Shape */}
           <div className="flex items-center gap-3">
             <Link href="/" className="font-extrabold text-lg md:text-xl tracking-tighter text-black dark:text-white flex items-center gap-2.5 group">
               {settings?.siteLogo ? (
-                <img src={settings.siteLogo} alt="Logo" className="w-8 h-8 rounded-full object-cover shadow-sm group-hover:scale-105 transition-transform duration-500 border border-gray-200 dark:border-gray-800" />
+                <img src={settings.siteLogo} alt={devFullName} className="h-8 md:h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-500" />
               ) : (
-                <span className="w-8 h-8 rounded-full bg-black dark:bg-white flex items-center justify-center text-white dark:text-black shadow-sm group-hover:scale-105 transition-transform duration-500">
-                  <Code2 className="w-4 h-4" />
-                </span>
+                <>
+                  <span className="w-8 h-8 rounded-full bg-black dark:bg-white flex items-center justify-center text-white dark:text-black shadow-sm group-hover:scale-105 transition-transform duration-500">
+                    <Code2 className="w-4 h-4" />
+                  </span>
+                  {logoText}
+                </>
               )}
-              {logoText}
             </Link>
           </div>
 
-          {/* Desktop Navigation with Premium Fluid Border Animation */}
-          <nav className="hidden md:flex items-center gap-8 text-[13px] font-bold text-gray-500 dark:text-gray-400 relative">
-            {navLinks.map((link, idx) => {
-              const isActive = pathname === link.href || (pathname === "/" && link.href === "/");
-              return (
-                <Link 
-                  key={idx} 
-                  href={link.href} 
-                  className={`transition-colors relative py-1 ${isActive ? "text-black dark:text-white" : "hover:text-black dark:hover:text-white"}`}
+          {/* 📌 Desktop Navigation with Fluid Hover Background */}
+          <nav className="hidden md:flex items-center text-[13px] font-bold text-gray-500 dark:text-gray-400 relative">
+            
+            {/* Dynamic Home Icon (Shows only when not on homepage) */}
+            <AnimatePresence>
+              {pathname !== "/" && (
+                <motion.div 
+                  initial={{ opacity: 0, width: 0, scale: 0.5 }} 
+                  animate={{ opacity: 1, width: "auto", scale: 1 }} 
+                  exit={{ opacity: 0, width: 0, scale: 0.5 }}
+                  transition={{ duration: 0.3 }}
+                  className="overflow-hidden flex items-center"
                 >
-                  <span className="relative z-10">{link.name}</span>
-                  {isActive && (
-                    <motion.span
-                      layoutId="headerActiveLine"
-                      className="absolute bottom-0 left-0 w-full h-[2.5px] bg-blue-600 dark:bg-white rounded-full z-0"
-                      transition={{ type: "spring", stiffness: 350, damping: 28 }}
-                    />
-                  )}
-                </Link>
-              );
-            })}
+                  <Link href="/" className="flex items-center justify-center p-2 mr-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors group/home">
+                    <Home className="w-4 h-4 text-gray-500 group-hover/home:text-black dark:text-gray-400 dark:group-hover/home:text-white transition-colors" />
+                  </Link>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <div className="flex items-center gap-1 bg-black/5 dark:bg-white/5 p-1 rounded-full border border-black/5 dark:border-white/5">
+              {desktopNavLinks.map((link) => {
+                const isActive = pathname.startsWith(link.href);
+                return (
+                  <Link 
+                    key={link.name} 
+                    href={link.href} 
+                    className={`relative px-4 py-1.5 rounded-full transition-colors duration-300 ${isActive ? "text-black dark:text-white" : "hover:text-black dark:hover:text-white"}`}
+                  >
+                    {isActive && (
+                      <motion.div
+                        layoutId="activeNavBackground"
+                        className="absolute inset-0 bg-white dark:bg-[#222] rounded-full shadow-sm border border-gray-200/50 dark:border-gray-700/50"
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                      />
+                    )}
+                    <span className="relative z-10">{link.name}</span>
+                  </Link>
+                );
+              })}
+            </div>
           </nav>
 
           {/* Right Action Buttons */}
           <div className="flex items-center gap-2 md:gap-3">
             
-            {/* 📌 লজিক: কন্টাক্ট পেজ ছাড়া বাকি সব পেজে 'Let's Talk' বাটনটি দেখাবে */}
+            {/* 📌 Contact Logic: Hidden on Contact Page */}
             {pathname !== "/contact" && (
               <Link href="/contact" className="hidden md:flex items-center gap-1.5 bg-black dark:bg-white text-white dark:text-black px-4 py-2 rounded-full text-xs font-bold hover:scale-[1.04] active:scale-95 transition-all shadow-sm border border-black/10 dark:border-white/10">
                 Let's Talk <ArrowUpRight className="w-3.5 h-3.5 opacity-80" />
@@ -318,7 +346,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
             <div className="flex flex-col pt-28 px-8 gap-5 relative z-10">
               <p className="text-[10px] font-mono tracking-[0.3em] text-gray-400 uppercase mb-2">Navigation</p>
               
-              {navLinks.map((link, idx) => {
+              {mobileNavLinks.map((link, idx) => {
                 const isActive = pathname === link.href || (pathname === "/" && link.href === "/");
                 return (
                   <motion.div key={idx} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.1, duration: 0.4 }}>
@@ -351,7 +379,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
                 ))}
               </div>
               
-              {/* 📌 লজিক: কন্টাক্ট পেজ ছাড়া মোবাইল ড্রয়ারের নিচেও এই টক বাটন দেখাবে */}
+              {/* 📌 Contact Logic for Mobile Footer */}
               {pathname !== "/contact" && (
                 <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="w-full bg-black dark:bg-white text-white dark:text-black py-4 rounded-xl flex items-center justify-center gap-2 font-bold text-sm shadow-xl active:scale-95 transition-transform">
                   Let's Talk <ArrowUpRight className="w-4 h-4" />

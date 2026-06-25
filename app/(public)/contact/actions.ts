@@ -15,7 +15,7 @@ export async function sendMessage(formData: FormData) {
   const client = await MongoClient.connect(process.env.MONGODB_URI as string);
   const db = client.db();
   
-  // ডাটাবেজে নতুন মেসেজ ইনসার্ট করা হচ্ছে (সাথে সময় যুক্ত করে)
+  // ডাটাবেজে নতুন মেসেজ ইনসার্ট করা হচ্ছে (সাথে সময় যুক্ত করে)
   await db.collection("messages").insertOne({
     name,
     email,
@@ -25,6 +25,6 @@ export async function sendMessage(formData: FormData) {
   
   await client.close();
   
-  // ড্যাশবোর্ডের ইনবক্স যেন সাথে সাথে আপডেট হয়
+  // ড্যাশবোর্ডের ইনবক্স যেন সাথে সাথে আপডেট হয়
   revalidatePath("/dashboard/messages"); 
 }
