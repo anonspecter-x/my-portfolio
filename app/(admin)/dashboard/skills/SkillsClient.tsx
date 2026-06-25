@@ -3,28 +3,75 @@
 import React, { useState, useRef } from "react";
 import { saveSkill, deleteSkill, saveService, deleteService } from "./actions";
 import { 
-  Zap, Plus, Trash2, Code2, Layout, Server, Database, Terminal, 
-  Smartphone, Palette, Monitor, Edit2, X, Briefcase, 
-  Image as ImageIcon, ChevronDown, Loader2, Atom, Layers, Braces, Globe, Cpu, Lock, GitBranch 
+  Zap, Plus, Trash2, Edit2, X, Briefcase, 
+  Image as ImageIcon, ChevronDown, Loader2, Code2
 } from "lucide-react";
 
-// 📌 সব রিকোয়েস্টেড আইকন ম্যাপ
+// 📌 প্রতিটি টেকনোলজির জন্য ইন্ডিভিজুয়াল অফিশিয়াল ব্র্যান্ড SVG আইকন ম্যাপ
 const iconMap: Record<string, React.ReactNode> = {
-  Code2: <Code2 className="w-5 h-5" />,
-  Layout: <Layout className="w-5 h-5" />,
-  Server: <Server className="w-5 h-5" />,
-  Database: <Database className="w-5 h-5" />,
-  Terminal: <Terminal className="w-5 h-5" />,
-  Smartphone: <Smartphone className="w-5 h-5" />,
-  Palette: <Palette className="w-5 h-5" />,
-  Monitor: <Monitor className="w-5 h-5" />,
-  Atom: <Atom className="w-5 h-5" />,         // React.js
-  Layers: <Layers className="w-5 h-5" />,     // Tailwind CSS
-  Braces: <Braces className="w-5 h-5" />,     // JavaScript & TypeScript
-  Globe: <Globe className="w-5 h-5" />,       // Next.js & WordPress
-  Cpu: <Cpu className="w-5 h-5" />,           // Node.js & Express.js
-  Lock: <Lock className="w-5 h-5" />,         // Firebase Auth
-  GitBranch: <GitBranch className="w-5 h-5" /> // GIT
+  React: (
+    <svg viewBox="-11.5 -10.23174 23 20.46348" className="w-5 h-5 fill-none stroke-[#61dafb]" strokeWidth="1">
+      <circle cx="0" cy="0" r="2.05" fill="#61dafb"/>
+      <g>
+        <ellipse rx="11" ry="4.2"/>
+        <ellipse rx="11" ry="4.2" transform="rotate(60)"/>
+        <ellipse rx="11" ry="4.2" transform="rotate(120)"/>
+      </g>
+    </svg>
+  ),
+  NextJS: (
+    <svg viewBox="0 0 180 180" className="w-5 h-5 fill-black dark:fill-white">
+      <path d="M148.9 31.3c-16.1-16.1-38.4-26-63.1-26C38.4 5.3 0 43.7 0 91.1s38.4 85.8 85.8 85.8c25.1 0 47.7-10.2 63.9-26.6l-57.2-73.4H80v43.2H67.4V64.8h26.2l55.3 66.5z"/>
+    </svg>
+  ),
+  Tailwind: (
+    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-[#38bdf8]">
+      <path d="M12 6.036c-2.286 0-3.428 1.143-3.428 3.429 0 2.285 1.142 3.428 3.428 3.428 2.286 0 3.428-1.143 3.428-3.428 0-2.286-1.142-3.429-3.428-3.429zm-6.857 6.857c-2.286 0-3.429 1.143-3.429 3.429 0 2.285 1.143 3.428 3.429 3.428 2.286 0 3.428-1.143 3.428-3.428 0-2.286-1.142-3.429-3.428-3.429z"/>
+    </svg>
+  ),
+  JavaScript: (
+    <div className="w-5 h-5 bg-[#f7df1e] text-black font-extrabold flex items-center justify-end pr-0.5 pb-0.5 rounded text-[10px] select-none">JS</div>
+  ),
+  TypeScript: (
+    <div className="w-5 h-5 bg-[#3178c6] text-white font-extrabold flex items-center justify-end pr-0.5 pb-0.5 rounded text-[10px] select-none">TS</div>
+  ),
+  NodeJS: (
+    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-[#339933]">
+      <path d="M12 1L3.5 6v12L12 23l8.5-5V6L12 1zm6.5 16.2l-6.5 3.8-6.5-3.8V7.8l6.5-3.8 6.5 3.8v9.4z"/>
+    </svg>
+  ),
+  Express: (
+    <div className="w-5 h-5 bg-gray-200 dark:bg-zinc-800 text-black dark:text-white font-bold flex items-center justify-center rounded text-[9px] border border-gray-300 dark:border-zinc-700 select-none">EX</div>
+  ),
+  MongoDB: (
+    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-[#47A248]">
+      <path d="M12 .5c0 0-4.5 4.5-4.5 8.5s3 7 4.5 14.5c1.5-7.5 4.5-10.5 4.5-14.5S12 .5 12 .5z"/>
+    </svg>
+  ),
+  Firebase: (
+    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-[#FFCA28]">
+      <path d="M3.89 15.75L1.13 4.41c-.16-.64.44-1.18 1.01-.87l10.53 5.67-8.78 6.54zM20.11 15.75l2.76-11.34c.16-.64-.44-1.18-1.01-.87l-10.53 5.67 8.78 6.54zM12 8.73L3.89 15.75l7.53 4.24c.36.2.79.2 1.15 0l7.53-4.24L12 8.73z"/>
+    </svg>
+  ),
+  Figma: (
+    <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none">
+      <path d="M8 2h4v4H8V2zm0 4h4v4H8V6zm0 4h4v4H8v-4zm0 4a2 2 0 11-4 0 2 2 0 014 0zm4-8h4a2 2 0 11-2 2V6zm0 4h4a2 2 0 11-2 2v-2z" fill="#F24E1E"/>
+      <path d="M12 14h4a2 2 0 11-2 2v-2z" fill="#0ACF83"/>
+      <path d="M8 6a2 2 0 11-4 0 2 2 0 014 0zm0 4a2 2 0 11-4 0 2 2 0 014 0zm0 4V10H4a2 2 0 002 2h2z" fill="#1ABC9C"/>
+      <path d="M8 2a2 2 0 012 2v2H6a2 2 0 012-2z" fill="#FF7262"/>
+      <path d="M12 2h4a2 2 0 11-2 2V2z" fill="#A259FF"/>
+    </svg>
+  ),
+  Git: (
+    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-[#F05032]">
+      <path d="M23.2 11.4l-10.6-10.6c-.4-.4-1-.4-1.4 0l-2.4 2.4 3.1 3.1c.3-.1.6-.2.9-.2 1.1 0 2 .9 2 2 0 .3-.1.6-.2.9l3.1 3.1c.3-.1.6-.2.9-.2 1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2c0-.3.1-.6.2-.9l-3.1-3.1c-.3.1-.6.2-.9.2-1.1 0-2-.9-2-2 0-.4.1-.7.3-1l-3.1-3.1-4.8 4.8c-.4.4-.4 1 0 1.4l10.6 10.6c.4.4 1 .4 1.4 0l10.6-10.6c.4-.4.4-1 0-1.4z"/>
+    </svg>
+  ),
+  WordPress: (
+    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-[#21759b]">
+      <path d="M12.158 12.786l-2.698 7.83c2.147.625 4.423.415 6.425-.595-.11-.014-.21-.035-.296-.035-.744 0-1.266.635-1.266 1.25 0 .074.008.15.02.224-2.22 1.09-4.82 1.114-7.058.067l3.873-11.391zm-4.752.6l-2.62-7.14C2.564 8.783 2.195 11.956 3.738 14.8c.02-.317.065-.635.152-.942.344-1.076.994-2.18 1.554-3.16.59-.99 1.196-1.85 1.196-2.88 0-.4-.08-.774-.216-1.113l2.844 7.741-2.062 5.941zm15.422-4.08c0-1.433-.513-2.427-1.03-3.238-.687-1.041-1.332-1.928-1.332-2.977 0-1.144.87-2.203 2.083-2.203.116 0 .229.008.341.022A11.932 11.932 0 0 0 12 0C6.634 0 2.031 3.518.397 8.441c.176-.007.348-.01.513-.01.996 0 2.545.12 2.545.12.516.03.575.783.058.843 0 0-.52.06-1.098.09l3.483 10.37 2.093-6.284-1.492-4.086c-.52-.03-1.014-.09-1.014-.09-.517-.03-.458-.813.058-.843 0 0 1.58-.12 2.518-.12.996 0 2.546.12 2.546.12.516.03.576.783.059.843 0 0-.52.06-1.1.09l3.453 10.276 1.004-3.26c.465-1.434.808-2.5.808-3.393zm-4.457 4.773c.968-2.88 2.01-5.323 2.01-7.234 0-1.53-.514-2.583-1.053-3.414-.145-.23-.29-.444-.424-.658A11.91 11.91 0 0 1 23.4 12c0 2.768-.94 5.318-2.506 7.34l-2.523-7.261z"/>
+    </svg>
+  )
 };
 
 interface Skill {
@@ -85,14 +132,14 @@ export default function SkillsClient({ skills, services }: { skills: Skill[], se
         <button 
           disabled={isSubmittingSkill || isSubmittingService}
           onClick={() => { setActiveTab("skills"); handleCancelEditService(); }}
-          className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === "skills" ? "bg-white dark:bg-[#222] text-blue-600 dark:text-blue-400 shadow-sm" : "text-gray-500 hover:text-black dark:hover:text-white"} disabled:opacity-5`}
+          className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === "skills" ? "bg-white dark:bg-[#222] text-blue-600 dark:text-blue-400 shadow-sm" : "text-gray-500 hover:text-black dark:hover:text-white"} disabled:opacity-50`}
         >
           <Zap className="w-4 h-4" /> Technical Skills
         </button>
         <button 
           disabled={isSubmittingSkill || isSubmittingService}
           onClick={() => { setActiveTab("services"); handleCancelEditSkill(); }}
-          className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === "services" ? "bg-white dark:bg-[#222] text-purple-600 dark:text-purple-400 shadow-sm" : "text-gray-500 hover:text-black dark:hover:text-white"} disabled:opacity-5`}
+          className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === "services" ? "bg-white dark:bg-[#222] text-purple-600 dark:text-purple-400 shadow-sm" : "text-gray-500 hover:text-black dark:hover:text-white"} disabled:opacity-50`}
         >
           <Briefcase className="w-4 h-4" /> Experience & Services
         </button>
@@ -147,22 +194,19 @@ export default function SkillsClient({ skills, services }: { skills: Skill[], se
 
               <div className="space-y-1.5">
                 <label className="text-xs font-bold uppercase tracking-wider text-gray-400">Select Icon</label>
-                <select name="icon" required defaultValue={editSkill?.icon || "Atom"} key={editSkill?._id + 'icon'} className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-2.5 outline-none focus:border-blue-500 transition-colors cursor-pointer appearance-none">
-                  <option value="Atom">React.js (Atom)</option>
-                  <option value="Globe">Next.js / WordPress (Globe)</option>
-                  <option value="Layers">Tailwind CSS (Layers)</option>
-                  <option value="Braces">JavaScript / TypeScript (Braces)</option>
-                  <option value="Cpu">Node.js / Express.js (Cpu)</option>
-                  <option value="Database">MongoDB (Database)</option>
-                  <option value="Lock">Firebase Auth (Lock)</option>
-                  <option value="Palette">Figma (Palette)</option>
-                  <option value="GitBranch">GIT (GitBranch)</option>
-                  <option value="Code2">General Code (Code2)</option>
-                  <option value="Layout">UI / Layout (Layout)</option>
-                  <option value="Server">Backend Generic (Server)</option>
-                  <option value="Terminal">DevOps / Tools (Terminal)</option>
-                  <option value="Smartphone">Mobile App (Smartphone)</option>
-                  <option value="Monitor">Web General (Monitor)</option>
+                <select name="icon" required defaultValue={editSkill?.icon || "React"} key={editSkill?._id + 'icon'} className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-2.5 outline-none focus:border-blue-500 transition-colors cursor-pointer appearance-none">
+                  <option value="React">React.js</option>
+                  <option value="NextJS">Next.js</option>
+                  <option value="Tailwind">Tailwind CSS</option>
+                  <option value="JavaScript">JavaScript</option>
+                  <option value="TypeScript">TypeScript</option>
+                  <option value="NodeJS">Node.js</option>
+                  <option value="Express">Express.js</option>
+                  <option value="MongoDB">MongoDB</option>
+                  <option value="Firebase">Firebase Auth</option>
+                  <option value="Figma">Figma</option>
+                  <option value="Git">GIT</option>
+                  <option value="WordPress">WordPress</option>
                 </select>
               </div>
 
@@ -194,8 +238,8 @@ export default function SkillsClient({ skills, services }: { skills: Skill[], se
                   <div key={skill._id} className={`group bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 rounded-xl p-4 flex flex-col gap-3 relative overflow-hidden transition-opacity ${deletingSkillId === skill._id ? "opacity-40" : ""}`}>
                     <div className="flex items-center justify-between z-10">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-white dark:bg-[#222] flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-sm border border-gray-100 dark:border-gray-800">
-                          {iconMap[skill.icon] || <Code2 className="w-5 h-5" />}
+                        <div className="w-10 h-10 rounded-lg bg-white dark:bg-[#222] flex items-center justify-center shadow-sm border border-gray-100 dark:border-gray-800">
+                          {iconMap[skill.icon] || <Code2 className="w-5 h-5 text-gray-400" />}
                         </div>
                         <div>
                           <h4 className="text-sm font-bold text-black dark:text-white">{skill.name}</h4>
