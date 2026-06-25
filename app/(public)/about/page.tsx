@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import AboutClient from "./AboutClient";
 
 export function generateMetadata(): Metadata {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://yourdomain.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://meetsakib.com";
 
   return {
     title: "About Me | Md Nazmus Shakib",

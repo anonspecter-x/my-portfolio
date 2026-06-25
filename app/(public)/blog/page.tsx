@@ -7,7 +7,7 @@ export const revalidate = 60; // প্রতি ৬০ সেকেন্ডে
 
 // 📌 স্ট্যাটিক পেজের এসইও এবং ক্যানোনিকাল ট্যাগ (For Blog List Page)
 export function generateMetadata(): Metadata {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://yourdomain.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://meetsakib.com";
   
   return {
     title: "Blog & Articles | Md Nazmus Shakib",
