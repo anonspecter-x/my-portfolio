@@ -109,10 +109,9 @@ export default async function Footer() {
         </div>
 
         {/* ================= 2. CUSTOM GRID SYSTEM ================= */}
-        {/* ডেস্কটপে: 1.5fr (Branding) | 0.8fr (Index) | 0.8fr (Projects) | 1.5fr (Stack) | 1.5fr (Connect) */}
         <div className="grid grid-cols-2 lg:grid-cols-[1.5fr_0.8fr_0.8fr_1.5fr_1.5fr] gap-x-6 gap-y-10 pb-12">
           
-          {/* Column 1: Branding (Full width on mobile) */}
+          {/* Column 1: Branding */}
           <div className="col-span-2 lg:col-span-1 flex flex-col gap-4">
             <Link href="/" className="group w-fit block">
               {settings?.siteLogo ? (
@@ -196,10 +195,13 @@ export default async function Footer() {
             
             <div className="flex flex-wrap justify-center lg:justify-start gap-3">
               {dynamicSocials.map((link, idx) => {
-                const SocialIcon = link.icon;
+                const mappedIconKey = link.name.charAt(0).toUpperCase() + link.name.slice(1);
+                const SocialIcon = iconMap[mappedIconKey] || iconMap[link.name] || <ArrowUpRight className="w-4 h-4 text-gray-500" />;
                 return (
                   <a key={idx} href={link.url} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-gray-100 dark:bg-[#111] hover:bg-gray-200 dark:hover:bg-[#222] hover:-translate-y-1 flex items-center justify-center transition-all duration-300 group">
-                    <SocialIcon className="w-4 h-4 text-gray-500 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+                    <span className="w-4 h-4 opacity-70 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      {SocialIcon}
+                    </span>
                   </a>
                 );
               })}
@@ -231,6 +233,7 @@ export default async function Footer() {
         </div>
 
         {/* ================= 4. BOTTOM COPYRIGHT & LINKS ================= */}
+        
         {/* Desktop View (flex-row, hidden on mobile) */}
         <div className="hidden sm:flex flex-row items-center justify-between pt-6 border-t border-gray-200/80 dark:border-gray-800/80 mt-2">
           <div className="text-[11px] sm:text-xs font-medium text-gray-500 flex flex-wrap items-center gap-1.5">
@@ -250,23 +253,17 @@ export default async function Footer() {
           </div>
         </div>
 
-        {/* Mobile View (2 columns, hidden on desktop) */}
-        <div className="flex sm:hidden flex-row justify-between pt-6 border-t border-gray-200/80 dark:border-gray-800/80 mt-2 gap-4">
-          
-          {/* Left Column (Larger) */}
-          <div className="flex flex-col gap-1.5 text-[11px] font-medium text-gray-500 w-[65%] shrink-0">
-            <span className="whitespace-nowrap overflow-hidden text-ellipsis">&copy; {currentYear}. meetsakib.com</span>
-            <span className="flex items-center gap-1 whitespace-nowrap overflow-hidden text-ellipsis">
-              Crafted with <svg className="w-3.5 h-3.5 text-red-500 fill-current shrink-0" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg> by {developerName}
-            </span>
+        {/* Mobile View (Single Column Left Aligned, hidden on desktop) */}
+        <div className="flex sm:hidden flex-col items-start gap-2 pt-6 border-t border-gray-200/80 dark:border-gray-800/80 mt-2">
+          <span className="text-[11px] font-medium text-gray-500">&copy; {currentYear}. meetsakib.com</span>
+          <span className="flex items-center gap-1 text-[11px] font-medium text-gray-500">
+            Crafted with <svg className="w-3.5 h-3.5 text-red-500 fill-current shrink-0" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg> by {developerName}
+          </span>
+          <div className="flex items-center gap-3 text-[11px] font-semibold text-gray-500 mt-1">
+            <Link href="/sitemap" className="hover:text-black dark:hover:text-white transition-colors">Site Map</Link>
+            <span className="text-gray-300 dark:text-gray-700">|</span>
+            <Link href="/privacy" className="hover:text-black dark:hover:text-white transition-colors">Privacy Policy</Link>
           </div>
-          
-          {/* Right Column (Smaller) */}
-          <div className="flex flex-col items-end gap-1.5 text-[11px] font-semibold text-gray-500 w-[35%] shrink-0 text-right">
-            <Link href="/sitemap" className="hover:text-black dark:hover:text-white transition-colors whitespace-nowrap">Site Map</Link>
-            <Link href="/privacy" className="hover:text-black dark:hover:text-white transition-colors whitespace-nowrap">Privacy Policy</Link>
-          </div>
-          
         </div>
 
       </div>
