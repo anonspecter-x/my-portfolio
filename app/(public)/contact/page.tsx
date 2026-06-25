@@ -6,7 +6,7 @@ export const revalidate = 60; // ISR
 
 // 📌 কন্টাক্ট পেজের জন্য প্রফেশনাল এসইও
 export function generateMetadata(): Metadata {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://meetsakib.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.meetsakib.com";
   
   return {
     title: "Contact & Collaboration | Md Nazmus Shakib",

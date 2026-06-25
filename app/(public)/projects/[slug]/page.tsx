@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     return { title: "Project Not Found" };
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://meetsakib.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.meetsakib.com";
   const projectUrl = `${siteUrl}/projects/${slug}`;
 
   return {

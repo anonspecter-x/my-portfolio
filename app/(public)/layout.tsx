@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
     await client.close();
 
     // এনভায়রনমেন্ট ভ্যারিয়েবল থেকে সাইটের বেস URL নেওয়া, ব্যাকআপ হিসেবে ফলব্যাক ডোমেইন
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://meetsakib.com";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.meetsakib.com";
     
     const title = settings?.seoTitle || "Nazmus Shakib | Portfolio";
     const description = settings?.seoDescription || "Full Stack Web Developer Portfolio";

@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
     const settings = await db.collection("settings").findOne({});
     await client.close();
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://meetsakib.com";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.meetsakib.com";
     const title = settings?.seoTitle || "Nazmus Shakib | Portfolio";
     const description = settings?.seoDescription || "Full Stack Web Developer Portfolio";
     const keywords = settings?.seoKeywords || "Next.js, Developer, MERN, Bangladesh";

@@ -9,7 +9,7 @@ interface DynamicRoute {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://meetsakib.com';
+  const baseUrl = 'https://www.meetsakib.com';
 
   // 📌 টাইপ explicitly বলে দেওয়া হলো
   let projects: DynamicRoute[] = [];
