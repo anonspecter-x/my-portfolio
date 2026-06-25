@@ -12,14 +12,14 @@ export async function generateMetadata(): Promise<Metadata> {
     const settings = await db.collection("settings").findOne({});
     await client.close();
 
-    // এনভায়রনমেন্ট ভ্যারিয়েবল থেকে সাইটের বেস URL নেওয়া, ব্যাকআপ হিসেবে ফলব্যাক ডোমেইন
+    // এনভায়রনমেন্ট ভ্যারিয়েবল থেকে সাইটের বেস URL নেওয়া, ব্যাকআপ হিসেবে ফলব্যাক ডোমেইন
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.meetsakib.com";
     
     const title = settings?.seoTitle || "Nazmus Shakib | Portfolio";
     const description = settings?.seoDescription || "Full Stack Web Developer Portfolio";
     const keywords = settings?.seoKeywords || "Next.js, Developer, MERN, Bangladesh";
     const authorName = settings?.developerName || "Md Nazmus Shakib";
-    const ogImage = settings?.developerPhoto || "/og-image.png"; // প্রোফাইল বা ওজি ফটো ডাটাবেজ থেকে
+    const ogImage = settings?.developerPhoto || "/og-image.png";
 
     return {
       metadataBase: new URL(siteUrl),
@@ -42,7 +42,7 @@ export async function generateMetadata(): Promise<Metadata> {
         },
       },
 
-      // 🌐 ওপেন গ্রাফ (Facebook, LinkedIn, Discord শেয়ারিং প্রিভিউ)
+      // 🌐 ওপেন গ্রাফ
       openGraph: {
         title: title,
         description: description,
@@ -84,12 +84,11 @@ async function getGlobalData() {
     const client = await MongoClient.connect(process.env.MONGODB_URI as string);
     const db = client.db();
     
-    const settings = await db.collection("settings").findOne({});
+    const settingsData = await db.collection("settings").findOne({});
     const rawTracks = await db.collection("tracks").find({}).sort({ createdAt: -1 }).toArray();
     
     await client.close();
 
-    // 🚀 TypeScript Build Error Fix: ডাটাগুলো এক্সাক্ট প্রপার্টি অনুযায়ী ম্যাপ করা হলো
     const formattedTracks = rawTracks.map((t) => ({
       _id: t._id.toString(),
       title: t.title || "Unknown Track",
@@ -98,11 +97,14 @@ async function getGlobalData() {
       audioUrl: t.audioUrl || "",
     }));
 
+    // ✅ FIXED: পুরো settings অবজেক্ট পাস করা হচ্ছে, শুধু ২টা ফিল্ড নয়
+    const formattedSettings = settingsData ? {
+      ...settingsData,
+      _id: settingsData._id.toString(),
+    } : null;
+
     return {
-      settings: settings ? { 
-        developerName: settings.developerName || "", 
-        siteLogo: settings.siteLogo || "" 
-      } : null,
+      settings: formattedSettings,
       tracks: formattedTracks
     };
   } catch (error) {
