@@ -1,9 +1,12 @@
 "use client";
 
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { ArrowRight, FileText, Code2, Layout, LayoutTemplate, Database, Server, ChevronRight, Terminal, Smartphone, Palette, Monitor, ExternalLink, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowRight, FileText, Code2, Layout, LayoutTemplate, ChevronRight, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
 import Link from "next/link";
-import { useState, ReactNode } from "react";
+import { useState } from "react";
+
+// 📌 সেন্ট্রালাইজড ব্র্যান্ড আইকন ম্যাপ ইম্পোর্ট করা হলো
+import { iconMap } from "@/lib/iconMap";
 
 // ==========================================
 // 📌 CUSTOM SVG SOCIAL ICONS
@@ -15,21 +18,6 @@ const YoutubeIcon = ({ className }: { className?: string }) => <svg className={c
 const FacebookIcon = ({ className }: { className?: string }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>;
 const InstagramIcon = ({ className }: { className?: string }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>;
 const WhatsappIcon = ({ className }: { className?: string }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>;
-
-// ==========================================
-// 📌 SYSTEMATIC ICON MAPPING
-// ==========================================
-// স্কিল আইকন সিস্টেম (Lucide Icons)
-const iconMap: Record<string, ReactNode> = {
-  Code2: <Code2 className="w-4 h-4 md:w-5 md:h-5" />,
-  Layout: <Layout className="w-4 h-4 md:w-5 md:h-5" />,
-  Server: <Server className="w-4 h-4 md:w-5 md:h-5" />,
-  Database: <Database className="w-4 h-4 md:w-5 md:h-5" />,
-  Terminal: <Terminal className="w-4 h-4 md:w-5 md:h-5" />,
-  Smartphone: <Smartphone className="w-4 h-4 md:w-5 md:h-5" />,
-  Palette: <Palette className="w-4 h-4 md:w-5 md:h-5" />,
-  Monitor: <Monitor className="w-4 h-4 md:w-5 md:h-5" />,
-};
 
 // সোশ্যাল আইকন সিস্টেম
 const socialPlatformSystem = [
@@ -245,21 +233,23 @@ export default function HomeClient({ realProjects, realSkills, services = [], se
                 const percentage = skill.percentage;
                 const totalBlocks = 5;
                 
-                // আইকন ফিক্সিং লজিক
+                // আইকন টাইপ ডিটেকশন (Image URL নাকি SVG Key)
                 const isImageIcon = skill.icon && (skill.icon.startsWith("http") || skill.icon.startsWith("/") || skill.icon.startsWith("data:image"));
-                // যদি নামের প্রথম অক্ষর ছোট হাতের থাকে, সেটাকে বড় হাতের করে চেক করা
+                
+                // নাম কেস-সেন্সিটিভ ফিক্সিং (যেমন: react -> React)
                 const mappedIconKey = skill.icon ? skill.icon.charAt(0).toUpperCase() + skill.icon.slice(1) : "";
 
                 return (
                   <motion.div key={skill._id} variants={fadeUp} className="relative p-5 md:p-6 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-2xl transition-colors shadow-sm mt-4">
                     
+                    {/* আইকন কনটেইনারের ব্যাকগ্রাউন্ড নিউট্রাল করা হয়েছে যাতে ব্র্যান্ডের অরিজিনাল রং সুন্দর দেখায় */}
                     <div className="absolute -top-6 -left-2 bg-white dark:bg-[#0a0a0a] p-1.5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm">
-                       <div className="w-10 h-10 rounded-xl bg-black dark:bg-white text-white dark:text-black flex items-center justify-center p-2">
-                         {/* 📌 SYSTEMATIC SKILL ICON RENDERING (FIXED) */}
+                       <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-[#151515] border border-gray-200/50 dark:border-gray-800/50 flex items-center justify-center p-2">
+                         {/* 📌 DYNAMIC BRAND SKILL ICON RENDERING */}
                          {isImageIcon ? (
                            <img src={skill.icon} alt={skill.name} className="w-full h-full object-contain" />
                          ) : (
-                           iconMap[skill.icon] || iconMap[mappedIconKey] || <Code2 className="w-5 h-5" />
+                           iconMap[skill.icon] || iconMap[mappedIconKey] || <Code2 className="w-5 h-5 text-gray-400" />
                          )}
                        </div>
                     </div>
