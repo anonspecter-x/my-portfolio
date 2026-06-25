@@ -18,6 +18,23 @@ export async function updateSettings(formData: FormData) {
     updatedAt: new Date(),
   };
 
+  // 📌 Social Media Links & Visibility Handle
+  const socialPlatforms = [
+    "github", "linkedin", "twitter", "whatsapp", 
+    "youtube", "facebook", "instagram"
+  ];
+  
+  socialPlatforms.forEach(platform => {
+    const linkKey = `social_${platform}`;
+    const visibilityKey = `social_${platform}_visible`;
+    
+    // লিংক সেভ করা
+    data[linkKey] = formData.get(linkKey) as string || "";
+    
+    // চেকবক্স যদি অন থাকে তাহলে "true" আসবে, অফ থাকলে formData-তে আসবে না তাই "false" সেভ হবে
+    data[visibilityKey] = formData.get(visibilityKey) === "true" ? "true" : "false";
+  });
+
   const developerPhoto = formData.get("developerPhoto") as File;
   const siteLogo = formData.get("siteLogo") as File;
 

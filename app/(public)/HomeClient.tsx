@@ -3,7 +3,7 @@
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { ArrowRight, FileText, Code2, Layout, LayoutTemplate, Database, Server, ChevronRight, Terminal, Smartphone, Palette, Monitor, ExternalLink, ChevronDown, ChevronUp } from "lucide-react";
 import Link from "next/link";
-import { useState, ReactNode } from "react"; // 📌 ReactNode ইমপোর্ট করা হলো
+import { useState, ReactNode } from "react";
 
 // ==========================================
 // 📌 CUSTOM SVG SOCIAL ICONS
@@ -16,7 +16,10 @@ const FacebookIcon = ({ className }: { className?: string }) => <svg className={
 const InstagramIcon = ({ className }: { className?: string }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>;
 const WhatsappIcon = ({ className }: { className?: string }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>;
 
-// 📌 JSX.Element এর বদলে ReactNode ব্যবহার করা হলো
+// ==========================================
+// 📌 SYSTEMATIC ICON MAPPING
+// ==========================================
+// স্কিল আইকন সিস্টেম
 const iconMap: Record<string, ReactNode> = {
   Code2: <Code2 className="w-4 h-4 md:w-5 md:h-5" />,
   Layout: <Layout className="w-4 h-4 md:w-5 md:h-5" />,
@@ -27,6 +30,17 @@ const iconMap: Record<string, ReactNode> = {
   Palette: <Palette className="w-4 h-4 md:w-5 md:h-5" />,
   Monitor: <Monitor className="w-4 h-4 md:w-5 md:h-5" />,
 };
+
+// সোশ্যাল আইকন সিস্টেম
+const socialPlatformSystem = [
+  { id: "github", name: "GitHub", icon: <GithubIcon className="w-4 h-4" /> },
+  { id: "linkedin", name: "LinkedIn", icon: <LinkedinIcon className="w-4 h-4" /> },
+  { id: "twitter", name: "Twitter", icon: <TwitterIcon className="w-4 h-4" /> },
+  { id: "whatsapp", name: "WhatsApp", icon: <WhatsappIcon className="w-4 h-4" /> },
+  { id: "youtube", name: "YouTube", icon: <YoutubeIcon className="w-4 h-4" /> },
+  { id: "facebook", name: "Facebook", icon: <FacebookIcon className="w-4 h-4" /> },
+  { id: "instagram", name: "Instagram", icon: <InstagramIcon className="w-4 h-4" /> },
+];
 
 const fadeUp: any = { hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } };
 const staggerContainer: any = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.15 } } };
@@ -53,22 +67,16 @@ export default function HomeClient({ realProjects, realSkills, services = [], se
 
   const displayProjects = realProjects.slice(0, 4);
 
-  const availablePlatforms = [
-    { id: "github", name: "GitHub", icon: <GithubIcon className="w-4 h-4" /> },
-    { id: "linkedin", name: "LinkedIn", icon: <LinkedinIcon className="w-4 h-4" /> },
-    { id: "twitter", name: "Twitter", icon: <TwitterIcon className="w-4 h-4" /> },
-    { id: "whatsapp", name: "WhatsApp", icon: <WhatsappIcon className="w-4 h-4" /> },
-    { id: "youtube", name: "YouTube", icon: <YoutubeIcon className="w-4 h-4" /> },
-    { id: "facebook", name: "Facebook", icon: <FacebookIcon className="w-4 h-4" /> },
-    { id: "instagram", name: "Instagram", icon: <InstagramIcon className="w-4 h-4" /> },
-  ];
-
-  const activeSocials = availablePlatforms.filter(platform => 
-    settings?.[`social_${platform.id}_visible`] === "true" && settings?.[`social_${platform.id}`]
-  ).map(platform => ({
-    ...platform,
-    url: settings?.[`social_${platform.id}`]
-  }));
+  // 📌 DYNAMIC SOCIAL FETCHING SYSTEM
+  // Settings থেকে চেক করে যেগুলো visible এবং link আছে, শুধু সেগুলোই রিটার্ন করবে
+  const activeSocials = socialPlatformSystem
+    .filter(platform => 
+      settings?.[`social_${platform.id}_visible`] === "true" && settings?.[`social_${platform.id}`]
+    )
+    .map(platform => ({
+      ...platform,
+      url: settings?.[`social_${platform.id}`]
+    }));
 
   return (
     <main className="relative min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] transition-colors duration-1000 ease-in-out selection:bg-blue-500/30 font-sans overflow-clip">
@@ -118,7 +126,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], se
 
               <motion.div variants={fadeUp} className="col-span-1 lg:col-span-5 flex justify-center lg:justify-end mt-8 lg:mt-0">
                 <div className="flex flex-row flex-wrap justify-center lg:flex-col gap-3 md:gap-4 text-xs md:text-sm font-medium text-gray-500 dark:text-gray-400">
-                  {/* 📌 DYNAMIC SOCIALS */}
+                  {/* 📌 SYSTEMATIC DYNAMIC SOCIALS RENDERING */}
                   {activeSocials.map((item, idx) => (
                     <a key={idx} href={item.url} target="_blank" rel="noreferrer" className="group flex items-center gap-2.5 md:gap-3 hover:text-blue-600 dark:hover:text-blue-400 transition-colors bg-white/50 dark:bg-[#111]/50 lg:bg-transparent lg:dark:bg-transparent px-3 py-2 lg:p-0 rounded-full lg:rounded-none border border-gray-200/80 dark:border-gray-800/80 lg:border-none">
                       <span className="w-8 h-8 md:w-8 md:h-8 rounded-full border-none lg:border lg:border-solid border-gray-200 dark:border-gray-800 flex items-center justify-center group-hover:border-blue-600 dark:group-hover:border-blue-400 transition-colors bg-gray-100 dark:bg-[#222] lg:bg-transparent lg:dark:bg-transparent">
@@ -243,6 +251,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], se
                     
                     <div className="absolute -top-6 -left-2 bg-white dark:bg-[#0a0a0a] p-1.5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm">
                        <div className="w-10 h-10 rounded-xl bg-black dark:bg-white text-white dark:text-black flex items-center justify-center">
+                         {/* 📌 SYSTEMATIC SKILL ICON RENDERING */}
                          {iconMap[skill.icon] || <Code2 className="w-5 h-5" />}
                        </div>
                     </div>
@@ -302,7 +311,6 @@ export default function HomeClient({ realProjects, realSkills, services = [], se
                    className="sticky w-full"
                    style={{ top: `calc(80px + ${idx * 24}px)` }}
                  >
-                   {/* 🎨 Clean, Padded Split Layout Card */}
                    <div className="w-full bg-white dark:bg-[#0a0a0a] rounded-[2rem] md:rounded-[2.5rem] border border-gray-200 dark:border-gray-800 p-5 sm:p-6 md:p-8 lg:p-10 flex flex-col lg:flex-row items-center gap-8 lg:gap-12 shadow-xl dark:shadow-[0_10px_40px_-15px_rgba(0,0,0,0.5)] mb-[10vh] md:mb-[15vh] relative group/card">
                      
                      {/* 📝 Content Side (Left) */}
@@ -334,7 +342,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], se
                         </Link>
                      </div>
 
-                     {/* 🖼️ Image Side (Right) - Has padding around it inside the card */}
+                     {/* 🖼️ Image Side (Right) */}
                      <div className="w-full lg:w-1/2 relative aspect-[4/3] md:aspect-[16/10] lg:aspect-[4/3] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden bg-gray-50 dark:bg-[#111] border border-gray-200/80 dark:border-gray-800/80 order-1 lg:order-2 shrink-0">
                        {project.image ? (
                           <img src={project.image} alt={project.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-105" />
