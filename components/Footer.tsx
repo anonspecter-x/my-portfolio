@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { MongoClient } from "mongodb";
-import { ArrowUpRight, Code2, Mail, Send, Award, Briefcase, CheckCircle2, Users } from "lucide-react";
+import { ArrowUpRight, Code2, Award, Briefcase, CheckCircle2, Users } from "lucide-react";
 import { iconMap } from "@/lib/iconMap";
 import FooterActiveLink from "./FooterActiveLink";
+import NewsletterForm from "./NewsletterForm"; // 📌 নতুন কম্পোনেন্ট ইম্পোর্ট করা হলো
 
 // ==========================================
 // 📌 CUSTOM SVG ICONS FOR SOCIAL BRANDS
@@ -38,12 +39,10 @@ export default async function Footer() {
   const { settings, projects, skills } = await getFooterData();
   const currentYear = new Date().getFullYear();
 
-  // 📌 ডায়নামিক ভ্যালু সেট করা
   const developerName = settings?.developerName || "Md Nazmus Shakib";
   const tagline = settings?.developerRole || "Engineering premium, high-performance web applications.";
   const description = settings?.footerDescription || "Specializing in the MERN stack and modern frameworks to engineer secure, SEO-optimized, and scalable digital solutions for visionary brands.";
 
-  // 📌 সোশ্যাল লিংকস
   const availablePlatforms = [
     { id: "github", name: "GitHub", icon: GithubIcon },
     { id: "linkedin", name: "LinkedIn", icon: LinkedinIcon },
@@ -68,7 +67,6 @@ export default async function Footer() {
     { name: "Contact", url: "/contact" },
   ];
 
-  // 📌 স্ট্যাটস ডেটা
   const stats = [
     { id: 1, title: "Experience", value: "06+", icon: Briefcase },
     { id: 2, title: "Projects", value: "100+", icon: CheckCircle2 },
@@ -91,22 +89,8 @@ export default async function Footer() {
             </p>
           </div>
           
-          <form action="/api/subscribe" method="POST" className="w-full md:w-1/2 flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              {/* 📌 ইনপুট ফিল্ডের টেক্সট এবং প্লেসহোল্ডার কালার ফিক্স করা হয়েছে */}
-              <input 
-                type="email" 
-                name="email"
-                placeholder="Enter your email" 
-                required
-                className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-black dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 text-sm rounded-xl pl-10 pr-4 py-3 outline-none focus:border-blue-500 transition-colors"
-              />
-            </div>
-            <button type="submit" className="bg-black dark:bg-white text-white dark:text-black font-semibold text-sm px-6 py-3 rounded-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 shrink-0 shadow-sm">
-              Subscribe <Send className="w-3.5 h-3.5" />
-            </button>
-          </form>
+          {/* 📌 এখানে নতুন ক্লায়েন্ট কম্পোনেন্টটি ব্যবহার করা হয়েছে */}
+          <NewsletterForm />
         </div>
 
         {/* ================= 2. CUSTOM GRID SYSTEM ================= */}
@@ -234,7 +218,6 @@ export default async function Footer() {
 
         {/* ================= 4. BOTTOM COPYRIGHT & LINKS ================= */}
         
-        {/* Desktop View (flex-row, hidden on mobile) */}
         <div className="hidden sm:flex flex-row items-center justify-between pt-6 border-t border-gray-200/80 dark:border-gray-800/80 mt-2">
           <div className="text-[11px] sm:text-xs font-medium text-gray-500 flex flex-wrap items-center gap-1.5">
             <span>&copy; {currentYear}. meetsakib.com</span>
@@ -253,7 +236,6 @@ export default async function Footer() {
           </div>
         </div>
 
-        {/* Mobile View (Single Column Left Aligned, hidden on desktop) */}
         <div className="flex sm:hidden flex-col items-start gap-2 pt-6 border-t border-gray-200/80 dark:border-gray-800/80 mt-2">
           <span className="text-[11px] font-medium text-gray-500">&copy; {currentYear}. meetsakib.com</span>
           <span className="flex items-center gap-1 text-[11px] font-medium text-gray-500">
