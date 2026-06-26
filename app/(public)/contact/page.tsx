@@ -1,6 +1,6 @@
 import { MongoClient } from "mongodb";
 import ContactClient from "./ContactClient";
-import type { Metadata } from "next"; // 📌 মেটাডাটা ইমপোর্ট করা হলো
+import type { Metadata } from "next";
 
 export const revalidate = 60; // ISR
 
@@ -34,10 +34,13 @@ async function getContactData() {
       phone: settings.developerPhone || "+880 1XXX XXXXXX",
       region: settings.developerRegion || "Dhaka, Bangladesh",
       socials: {
-        github: settings.social_github_visible === "true" ? settings.social_github : null,
-        linkedin: settings.social_linkedin_visible === "true" ? settings.social_linkedin : null,
-        twitter: settings.social_twitter_visible === "true" ? settings.social_twitter : null,
-        whatsapp: settings.social_whatsapp_visible === "true" ? settings.social_whatsapp : null,
+        github: (settings.social_github_visible === "true" || settings.social_github_visible === true) && settings.social_github ? settings.social_github : null,
+        linkedin: (settings.social_linkedin_visible === "true" || settings.social_linkedin_visible === true) && settings.social_linkedin ? settings.social_linkedin : null,
+        twitter: (settings.social_twitter_visible === "true" || settings.social_twitter_visible === true) && settings.social_twitter ? settings.social_twitter : null,
+        whatsapp: (settings.social_whatsapp_visible === "true" || settings.social_whatsapp_visible === true) && settings.social_whatsapp ? settings.social_whatsapp : null,
+        facebook: (settings.social_facebook_visible === "true" || settings.social_facebook_visible === true) && settings.social_facebook ? settings.social_facebook : null,
+        youtube: (settings.social_youtube_visible === "true" || settings.social_youtube_visible === true) && settings.social_youtube ? settings.social_youtube : null,
+        instagram: (settings.social_instagram_visible === "true" || settings.social_instagram_visible === true) && settings.social_instagram ? settings.social_instagram : null,
       }
     } : null;
   } catch (error) {
