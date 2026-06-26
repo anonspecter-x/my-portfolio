@@ -70,10 +70,10 @@ export default async function Footer() {
 
   // 📌 স্ট্যাটস ডেটা
   const stats = [
-    { id: 1, title: "Experience", value: "04+", icon: Briefcase },
-    { id: 2, title: "Projects", value: "50+", icon: CheckCircle2 },
-    { id: 3, title: "Happy Clients", value: "30+", icon: Users },
-    { id: 4, title: "Awards", value: "05+", icon: Award },
+    { id: 1, title: "Experience", value: "06+", icon: Briefcase },
+    { id: 2, title: "Projects", value: "100+", icon: CheckCircle2 },
+    { id: 3, title: "Happy Clients", value: "100+", icon: Users },
+    { id: 4, title: "Awards", value: "10+", icon: Award },
   ];
 
   return (

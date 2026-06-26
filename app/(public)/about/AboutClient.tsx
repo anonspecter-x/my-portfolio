@@ -49,7 +49,7 @@ export default function AboutClient() {
 
           <motion.div variants={fadeUp} className="flex items-center gap-6">
             <div className="flex flex-col">
-              <span className="text-4xl font-black text-black dark:text-white">4+</span>
+              <span className="text-4xl font-black text-black dark:text-white">6+</span>
               <span className="text-xs font-bold text-gray-500 uppercase tracking-widest mt-1">Years Coding</span>
             </div>
             <div className="w-px h-12 bg-gray-200 dark:bg-gray-800"></div>

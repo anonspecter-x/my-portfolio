@@ -148,12 +148,11 @@ export default function Header({ settings, tracks }: HeaderProps) {
         transition={{ type: "spring", stiffness: 80, damping: 20 }}
         className="fixed top-0 left-0 w-full z-50 px-4 md:px-0 flex justify-center pointer-events-none"
       >
-        {/* 📌 FIXED: Reduced top max-width to max-w-6xl for better aesthetic */}
         <header 
-          className={`pointer-events-auto w-full transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] border flex items-center justify-between px-5 md:px-6
+          className={`pointer-events-auto w-full transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] border flex items-center justify-between
           ${isScrolled 
-            ? "bg-white/75 dark:bg-[#0a0a0a]/75 backdrop-blur-2xl border-gray-200/40 dark:border-gray-800/40 shadow-[0_12px_40px_rgba(0,0,0,0.03)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.3)] max-w-4xl lg:max-w-5xl rounded-full mt-4 py-2.5 md:py-3" 
-            : "bg-white/30 dark:bg-[#0a0a0a]/30 md:bg-transparent md:dark:bg-transparent backdrop-blur-sm md:backdrop-blur-none border-transparent max-w-5xl lg:max-w-6xl rounded-full md:rounded-none mt-4 md:mt-0 py-2.5 md:py-6"}`}
+            ? "bg-white/70 dark:bg-[#050505]/70 backdrop-blur-2xl saturate-150 border-gray-200/60 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] max-w-full md:max-w-[85rem] rounded-full mt-4 md:mt-5 py-2.5 md:py-3.5 px-6 md:px-20" 
+            : "bg-white/30 dark:bg-[#050505]/30 md:bg-transparent md:dark:bg-transparent backdrop-blur-sm md:backdrop-blur-none border-transparent max-w-full md:max-w-[85rem] rounded-full md:rounded-none mt-4 md:mt-0 py-2.5 md:py-8 px-6 sm:px-8 md:px-12"}`}
         >
           {/* 📌 Dynamic Logo: Original Size and Shape */}
           <div className="flex items-center gap-3">
