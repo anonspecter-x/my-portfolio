@@ -10,7 +10,7 @@ import {
 import Link from "next/link";
 
 export default function AboutClient() {
-  // 📌 TypeScript Error Fix: Added ': any' to explicitly ignore strict type checking for framer-motion variants
+  // 📌 TypeScript Error Fix
   const fadeUp: any = {
     hidden: { opacity: 0, y: 40 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
@@ -32,35 +32,38 @@ export default function AboutClient() {
         className="grid grid-cols-1 xl:grid-cols-12 gap-12 xl:gap-20 items-center mb-32 md:mb-48"
       >
         <div className="xl:col-span-7 flex flex-col justify-center">
-          <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/30 text-xs font-bold mb-8 text-blue-600 dark:text-blue-400 uppercase tracking-widest w-fit">
+          
+          {/* 📌 Header Badge (Matched with Projects/Blog) */}
+          <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-xs font-semibold mb-6 text-gray-600 dark:text-gray-400">
             <Terminal className="w-3.5 h-3.5" /> Engineer. Architect. Creator.
           </motion.div>
           
-          <motion.h1 variants={fadeUp} className="text-4xl sm:text-5xl md:text-7xl lg:text-[5.5rem] font-extrabold tracking-tighter leading-[1.05] mb-8 text-black dark:text-white">
-            I engineer <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-500 dark:from-blue-400 dark:to-purple-400">
-              scalable realities.
-            </span>
+          {/* 📌 Hero Title (Matched with Projects/Blog) */}
+          <motion.h1 variants={fadeUp} className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-black dark:text-white leading-[1.1] mb-6">
+            Engineering scalable <br className="hidden md:block" />
+            <span className="text-gray-400">realities</span> and systems.
           </motion.h1>
           
-          <motion.p variants={fadeUp} className="text-lg md:text-2xl text-gray-600 dark:text-gray-400 leading-relaxed font-medium max-w-2xl mb-10">
+          {/* 📌 Hero Description */}
+          <motion.p variants={fadeUp} className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mb-10">
             Hi, I'm <strong className="text-black dark:text-white">Md Nazmus Shakib</strong>. A Senior Full-Stack Developer obsessed with crafting digital ecosystems that balance stunning aesthetics with absolute, uncompromising performance.
           </motion.p>
 
+          {/* 📌 Stats */}
           <motion.div variants={fadeUp} className="flex items-center gap-6">
             <div className="flex flex-col">
               <span className="text-4xl font-black text-black dark:text-white">6+</span>
-              <span className="text-xs font-bold text-gray-500 uppercase tracking-widest mt-1">Years Coding</span>
+              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Years Coding</span>
             </div>
-            <div className="w-px h-12 bg-gray-200 dark:bg-gray-800"></div>
+            <div className="w-px h-10 bg-gray-200 dark:bg-gray-800"></div>
             <div className="flex flex-col">
               <span className="text-4xl font-black text-black dark:text-white">10k+</span>
-              <span className="text-xs font-bold text-gray-500 uppercase tracking-widest mt-1">Commits Pushed</span>
+              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Commits Pushed</span>
             </div>
-            <div className="w-px h-12 bg-gray-200 dark:bg-gray-800 hidden sm:block"></div>
+            <div className="w-px h-10 bg-gray-200 dark:bg-gray-800 hidden sm:block"></div>
             <div className="flex flex-col hidden sm:flex">
               <span className="text-4xl font-black text-black dark:text-white">∞</span>
-              <span className="text-xs font-bold text-gray-500 uppercase tracking-widest mt-1">Lines to Write</span>
+              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Lines to Write</span>
             </div>
           </motion.div>
         </div>
@@ -68,7 +71,6 @@ export default function AboutClient() {
         {/* 📸 MY PHOTO CONTAINER */}
         <motion.div variants={fadeUp} className="xl:col-span-5 relative perspective-1000">
           <div className="relative aspect-[4/5] sm:aspect-square xl:aspect-[4/5] rounded-[3rem] overflow-hidden bg-gray-100 dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 shadow-2xl group transform rotate-y-[-5deg] hover:rotate-y-0 transition-transform duration-700">
-            <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/20 to-purple-500/20 mix-blend-overlay z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent z-10"></div>
             
             <img 
@@ -87,31 +89,25 @@ export default function AboutClient() {
               </p>
             </div>
           </div>
-          
-          <div className="absolute -z-10 -top-10 -right-10 w-64 h-64 bg-blue-500/10 dark:bg-blue-500/5 blur-3xl rounded-full"></div>
-          <div className="absolute -z-10 -bottom-10 -left-10 w-64 h-64 bg-purple-500/10 dark:bg-purple-500/5 blur-3xl rounded-full"></div>
         </motion.div>
       </motion.section>
 
-      {/* ================= 2. THE ENGINEERING MANIFESTO ================= */}
+      {/* ================= 2. THE ENGINEERING MANIFESTO (Clean Style) ================= */}
       <motion.section 
         initial="hidden" 
         whileInView="visible" 
         viewport={{ once: true, margin: "-100px" }} 
         variants={stagger} 
-        className="mb-32 md:mb-48 bg-black dark:bg-white text-white dark:text-black rounded-[3rem] p-10 md:p-20 relative overflow-hidden"
+        className="mb-32 md:mb-48 relative border-l-4 border-gray-200 dark:border-gray-800 pl-8 md:pl-12"
       >
-        <div className="absolute top-0 right-0 p-10 opacity-10">
-          <Braces className="w-64 h-64" />
-        </div>
         <div className="relative z-10 max-w-4xl">
-          <motion.h2 variants={fadeUp} className="text-sm font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-6">
+          <motion.h2 variants={fadeUp} className="text-[10px] font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400 mb-4 bg-blue-50 dark:bg-blue-900/20 px-2.5 py-1 rounded-md w-fit">
             The Developer Manifesto
           </motion.h2>
-          <motion.h3 variants={fadeUp} className="text-3xl md:text-5xl font-extrabold tracking-tight leading-snug mb-10">
+          <motion.h3 variants={fadeUp} className="text-3xl md:text-4xl font-bold tracking-tight leading-snug mb-8 text-black dark:text-white">
             I refuse to build software that merely "works". It must be intuitive, resilient, and blazingly fast.
           </motion.h3>
-          <motion.div variants={fadeUp} className="prose prose-lg dark:prose-invert prose-p:text-gray-300 dark:prose-p:text-gray-700 leading-relaxed max-w-none">
+          <motion.div variants={fadeUp} className="prose prose-lg dark:prose-invert prose-p:text-gray-600 dark:prose-p:text-gray-400 leading-relaxed max-w-none">
             <p>
               In an era where attention spans are measured in milliseconds, bloated code and sluggish interfaces are unacceptable. I approach software engineering as an art form built strictly on logic. 
             </p>
