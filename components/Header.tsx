@@ -61,11 +61,23 @@ export default function Header({ settings, tracks }: HeaderProps) {
     ? desktopNavLinks 
     : [{ name: "Home", href: "/" }, ...desktopNavLinks];
 
-  const socialLinks = [
-    { name: "GitHub", href: "#" },
-    { name: "LinkedIn", href: "#" },
-    { name: "Twitter", href: "#" },
+  // 📌 Dynamic Social Links Logic based on Settings
+  const availableSocials = [
+    { id: "github", name: "GitHub" },
+    { id: "linkedin", name: "LinkedIn" },
+    { id: "twitter", name: "Twitter" },
+    { id: "whatsapp", name: "WhatsApp" },
+    { id: "youtube", name: "YouTube" },
+    { id: "facebook", name: "Facebook" },
+    { id: "instagram", name: "Instagram" },
   ];
+
+  const socialLinks = availableSocials
+    .filter(social => settings?.[`social_${social.id}_visible`] === "true" && settings?.[`social_${social.id}`])
+    .map(social => ({
+      name: social.name,
+      href: settings[`social_${social.id}`]
+    }));
 
   // Scroll Logic
   useEffect(() => {
@@ -173,7 +185,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
         <header 
           className={`pointer-events-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] border flex items-center justify-between
           ${isScrolled 
-            // 🛠️ FIX APPLIED HERE: Replaced md:w-full with calculated widths to maintain margins on zoom
+            // Desktop Zoom Fix Retained
             ? "w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] lg:w-[calc(100%-6rem)] bg-white/70 dark:bg-[#050505]/80 backdrop-blur-2xl saturate-200 border-gray-200/60 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] max-w-full md:max-w-[calc(85rem-6rem)] rounded-full mt-4 md:mt-5 py-2.5 md:py-3 px-5 sm:px-6 md:px-8" 
             : "w-full max-w-[85rem] bg-transparent dark:bg-transparent border-transparent rounded-none mt-0 py-4 sm:py-5 md:py-8 px-4 sm:px-6 md:px-12"}`}
         >
@@ -399,13 +411,17 @@ export default function Header({ settings, tracks }: HeaderProps) {
               className="p-8 pb-10 border-t border-gray-200/50 dark:border-gray-800/50 relative z-10 bg-white/50 dark:bg-[#0a0a0a]/50"
             >
               <p className="text-[10px] font-mono tracking-[0.3em] text-gray-400 uppercase mb-5">Connect</p>
-              <div className="flex items-center gap-5 mb-6">
-                {socialLinks.map((social, idx) => (
-                  <Link key={idx} href={social.href} className="text-[14px] font-bold text-black dark:text-white hover:text-blue-600 transition-colors">
-                    {social.name}
-                  </Link>
-                ))}
-              </div>
+              
+              {/* 📌 Dynamic Social Media Links Container */}
+              {socialLinks.length > 0 && (
+                <div className="flex flex-wrap items-center gap-4 mb-6">
+                  {socialLinks.map((social, idx) => (
+                    <Link key={idx} href={social.href} target="_blank" rel="noopener noreferrer" className="text-[14px] font-bold text-black dark:text-white hover:text-blue-600 transition-colors">
+                      {social.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
               
               {/* 📌 Contact Logic for Mobile Footer */}
               {pathname !== "/contact" && (
