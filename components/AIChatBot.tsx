@@ -19,7 +19,7 @@ export default function AIChatBot() {
   const chatEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // 📌 ওয়েলকাম মেসেজ ফেচ করা
+  // 📌 ওয়েলকাম মেসেজ ফেচ করা
   useEffect(() => {
     const fetchGreeting = async () => {
       try {
@@ -156,15 +156,13 @@ export default function AIChatBot() {
                     className={`flex w-full ${chat.sender === "user" ? "justify-end" : "justify-start"}`}
                   >
                     {chat.sender === "bot" ? (
-                      // 📌 BOT MESSAGE LAYOUT (With Name above bubble)
+                      // 📌 BOT MESSAGE LAYOUT
                       <div className="flex w-full justify-start max-w-[90%]">
-                        {/* Bot Icon */}
                         <div className="flex flex-col items-center mr-2.5 shrink-0 mt-1">
                           <div className="w-7 h-7 rounded-full bg-white dark:bg-[#111] flex items-center justify-center border border-gray-200 dark:border-gray-800 shadow-sm">
                             <Bot className="w-3.5 h-3.5 text-gray-700 dark:text-gray-300" />
                           </div>
                         </div>
-                        {/* Name & Bubble */}
                         <div className="flex flex-col flex-1">
                           <span className="text-[10px] font-bold text-gray-400 mb-1 ml-1 uppercase tracking-wider">Syntaxi</span>
                           <div className="p-4 text-[13.5px] leading-relaxed shadow-sm bg-white dark:bg-[#111] border border-gray-100 dark:border-gray-800/80 text-gray-700 dark:text-gray-300 rounded-2xl rounded-tl-sm">
@@ -215,10 +213,11 @@ export default function AIChatBot() {
                 placeholder="Ask me anything..." 
                 className="flex-1 bg-gray-100 dark:bg-[#111] text-sm px-4 py-3.5 rounded-xl outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-gray-600 dark:text-white transition-all disabled:opacity-50 border border-transparent focus:bg-white dark:focus:bg-[#0a0a0a]" 
               />
+              {/* 📌 dark:bg-none যুক্ত করে গ্রেডিয়েন্ট সমস্যা সমাধান করা হয়েছে */}
               <button 
                 onClick={handleSend}
                 disabled={!message.trim() || isLoading}
-                className="bg-gradient-to-br from-gray-800 to-black dark:bg-white dark:text-black text-white p-3.5 rounded-xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100 shadow-lg shadow-black/20 dark:shadow-white/10"
+                className="bg-gradient-to-br from-gray-800 to-black dark:bg-none dark:bg-white dark:text-black text-white p-3.5 rounded-xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100 shadow-lg shadow-black/20 dark:shadow-white/10"
               >
                 <Send className="w-4 h-4 ml-0.5" />
               </button>
