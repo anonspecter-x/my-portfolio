@@ -96,7 +96,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
   // ⏱️ Time Update Logic (Hydration Safe)
   useEffect(() => {
     const updateTime = () => {
-      // Force Asia/Dhaka timezone so it shows YOUR time to global clients
+      // Force Asia/Dhaka timezone
       const options: Intl.DateTimeFormatOptions = { 
         timeZone: 'Asia/Dhaka', 
         hour: '2-digit', 
@@ -104,11 +104,11 @@ export default function Header({ settings, tracks }: HeaderProps) {
         hour12: true 
       };
       const formatter = new Intl.DateTimeFormat('en-US', options);
-      setLocalTime(`Dhaka ${formatter.format(new Date())}`);
+      setLocalTime(formatter.format(new Date()));
     };
     
     updateTime();
-    const interval = setInterval(updateTime, 60000); // Update every minute
+    const interval = setInterval(updateTime, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -192,10 +192,8 @@ export default function Header({ settings, tracks }: HeaderProps) {
             </Link>
           </div>
 
-          {/* 📌 Desktop Navigation with Fluid Hover Background */}
+          {/* 📌 Desktop Navigation */}
           <nav className="hidden md:flex items-center text-[13px] font-bold text-gray-500 dark:text-gray-400 relative">
-            
-            {/* Dynamic Home Icon (Shows only when not on homepage) */}
             <AnimatePresence>
               {pathname !== "/" && (
                 <motion.div 
@@ -238,18 +236,15 @@ export default function Header({ settings, tracks }: HeaderProps) {
           {/* Right Action Buttons */}
           <div className="flex items-center gap-2 md:gap-3">
             
-            {/* ⏱️ Pro Feature: Local Time Indicator (Hidden on small screens so it doesn't break layout) */}
+            {/* ⏱️ Pro Feature: Clean Local Time (No Green Dot, Digital Style) */}
             {localTime && (
-              <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 text-[11px] font-bold text-gray-600 dark:text-gray-300 mr-1 shadow-sm">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                </span>
-                {localTime}
+              <div className="hidden lg:flex items-center gap-1.5 text-gray-500 dark:text-gray-400 mr-2">
+                <span className="text-[9px] font-bold tracking-widest uppercase opacity-70">UTC +6</span>
+                <span className="font-mono text-[13px] font-semibold tracking-widest">{localTime}</span>
               </div>
             )}
 
-            {/* 📌 Contact Logic: Hidden on Contact Page */}
+            {/* 📌 Contact Logic */}
             {pathname !== "/contact" && (
               <Link href="/contact" className="hidden md:flex items-center gap-1.5 bg-black dark:bg-white text-white dark:text-black px-4 py-2 rounded-full text-xs font-bold hover:scale-[1.04] active:scale-95 transition-all shadow-sm border border-black/10 dark:border-white/10">
                 Let's Talk <ArrowUpRight className="w-3.5 h-3.5 opacity-80" />
