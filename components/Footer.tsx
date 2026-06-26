@@ -41,7 +41,6 @@ export default async function Footer() {
   // 📌 ডায়নামিক ভ্যালু সেট করা
   const developerName = settings?.developerName || "Md Nazmus Shakib";
   const tagline = settings?.developerRole || "Engineering premium, high-performance web applications.";
-  // 📌 সেটিংস থেকে footerDescription কল করা হলো
   const description = settings?.footerDescription || "Specializing in the MERN stack and modern frameworks to engineer secure, SEO-optimized, and scalable digital solutions for visionary brands.";
 
   // 📌 সোশ্যাল লিংকস
@@ -95,12 +94,13 @@ export default async function Footer() {
           <form action="/api/subscribe" method="POST" className="w-full md:w-1/2 flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              {/* 📌 ইনপুট ফিল্ডের টেক্সট এবং প্লেসহোল্ডার কালার ফিক্স করা হয়েছে */}
               <input 
                 type="email" 
                 name="email"
                 placeholder="Enter your email" 
                 required
-                className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl pl-10 pr-4 py-3 outline-none focus:border-blue-500 transition-colors"
+                className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-black dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 text-sm rounded-xl pl-10 pr-4 py-3 outline-none focus:border-blue-500 transition-colors"
               />
             </div>
             <button type="submit" className="bg-black dark:bg-white text-white dark:text-black font-semibold text-sm px-6 py-3 rounded-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 shrink-0 shadow-sm">
@@ -195,7 +195,6 @@ export default async function Footer() {
             <h4 className="font-mono text-[10px] tracking-[0.2em] text-gray-400 dark:text-gray-500 uppercase font-bold">Connect</h4>
             
             <div className="flex flex-wrap justify-center lg:justify-start gap-3">
-              {/* 📌 সোশ্যাল আইকনের সমস্যা সমাধান করা হয়েছে */}
               {dynamicSocials.map((link, idx) => {
                 const SocialIcon = link.icon;
                 return (
