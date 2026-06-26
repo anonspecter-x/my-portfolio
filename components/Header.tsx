@@ -93,10 +93,9 @@ export default function Header({ settings, tracks }: HeaderProps) {
     localStorage.setItem("theme", newTheme);
   };
 
-  // ⏱️ Time Update Logic (Hydration Safe)
+  // ⏱️ Time Update Logic (Dynamic real-time update)
   useEffect(() => {
     const updateTime = () => {
-      // Force Asia/Dhaka timezone
       const options: Intl.DateTimeFormatOptions = { 
         timeZone: 'Asia/Dhaka', 
         hour: '2-digit', 
@@ -108,7 +107,8 @@ export default function Header({ settings, tracks }: HeaderProps) {
     };
     
     updateTime();
-    const interval = setInterval(updateTime, 60000);
+    // 1000ms (1 second) interval ensures exact minute change
+    const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -236,7 +236,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
           {/* Right Action Buttons */}
           <div className="flex items-center gap-2 md:gap-3">
             
-            {/* ⏱️ Pro Feature: Clean Local Time (No Green Dot, Digital Style) */}
+            {/* ⏱️ Pro Feature: Clean Local Time (Digital Style) */}
             {localTime && (
               <div className="hidden lg:flex items-center gap-1.5 text-gray-500 dark:text-gray-400 mr-2">
                 <span className="text-[9px] font-bold tracking-widest uppercase opacity-70">UTC +6</span>
