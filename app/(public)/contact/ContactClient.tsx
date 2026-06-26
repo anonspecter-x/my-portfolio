@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 
 // ==========================================
-// 📌 SOCIAL ICONS (From React Icons FA)
+// 🌟 SOCIAL ICONS (From React Icons FA)
 // ==========================================
 import { 
   FaGithub, 
@@ -52,13 +52,14 @@ export default function ContactClient({ contactData }: ContactClientProps) {
   const region = contactData?.region || "Dhaka, Bangladesh";
 
   return (
-    <main className="min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] pt-32 pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto overflow-hidden">
+    // এখানে 'relative' ক্লাস যুক্ত করা হয়েছে
+    <main className="relative min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] pt-32 pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto overflow-hidden">
       
-      {/* 🌟 Background Elements */}
+      {/* 🎨 Background Elements */}
       <div className="absolute top-40 left-[-10%] w-[300px] h-[300px] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none -z-10"></div>
       <div className="absolute bottom-40 right-[-10%] w-[300px] h-[300px] bg-purple-500/5 blur-[120px] rounded-full pointer-events-none -z-10"></div>
 
-      {/* 📌 Header (Left-aligned & Styled like other pages) */}
+      {/* 🌟 Header (Left-aligned & Styled like other pages) */}
       <motion.div 
         initial="hidden" animate="visible" variants={fadeUp}
         className="max-w-3xl mb-16 md:mb-24"
@@ -75,10 +76,10 @@ export default function ContactClient({ contactData }: ContactClientProps) {
         </p>
       </motion.div>
 
-      {/* 📌 Grid Layout (Fixed heights using items-stretch) */}
+      {/* 🌟 Grid Layout (Fixed heights using items-stretch) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
         
-        {/* 📌 Left Side: Contact Info Panel */}
+        {/* 🌟 Left Side: Contact Info Panel */}
         <motion.div 
           initial="hidden" animate="visible" variants={fadeUp} transition={{ delay: 0.1 }}
           className="lg:col-span-5 h-full"
@@ -172,7 +173,7 @@ export default function ContactClient({ contactData }: ContactClientProps) {
           </div>
         </motion.div>
 
-        {/* 📌 Right Side: Contact Form */}
+        {/* 🌟 Right Side: Contact Form */}
         <motion.div 
           initial="hidden" animate="visible" variants={fadeUp} transition={{ delay: 0.2 }}
           className="lg:col-span-7 h-full"
