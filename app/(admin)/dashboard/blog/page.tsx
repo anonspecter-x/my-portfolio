@@ -16,6 +16,10 @@ async function getPosts() {
     content: post.content,
     coverImage: post.coverImage,
     slug: post.slug,
+    // 📌 SEO ডাটাগুলো ক্লায়েন্টে পাঠানো হলো
+    seoTitle: post.seoTitle || "",
+    seoDescription: post.seoDescription || "",
+    seoKeywords: post.seoKeywords || "",
     createdAt: post.createdAt ? post.createdAt.toISOString() : new Date().toISOString(),
   }));
 }
@@ -30,7 +34,7 @@ export default async function BlogAdminPage() {
           <BookOpen className="w-8 h-8 text-blue-500" /> Blog Studio
         </h1>
         <p className="text-gray-500 dark:text-gray-400 mt-1">
-          Write, edit, and manage your technical articles and thoughts.
+          Write, edit, and manage your technical articles with rich media support.
         </p>
       </div>
 
