@@ -1,11 +1,11 @@
 import { MongoClient } from "mongodb";
 import Link from "next/link";
-import { ArrowUpRight, Calendar, BookOpen } from "lucide-react";
-import type { Metadata } from "next"; // 📌 মেটাডাটা ইমপোর্ট করা হলো
+import { ArrowUpRight, Calendar, BookOpen, Clock } from "lucide-react";
+import type { Metadata } from "next";
 
-export const revalidate = 60; // প্রতি ৬০ সেকেন্ডে আপডেট হবে (ISR)
+export const revalidate = 60; // ISR
 
-// 📌 স্ট্যাটিক পেজের এসইও এবং ক্যানোনিকাল ট্যাগ (For Blog List Page)
+// 📌 স্ট্যাটিক পেজের এসইও এবং ক্যানোনিকাল ট্যাগ
 export function generateMetadata(): Metadata {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.meetsakib.com";
   
@@ -28,7 +28,8 @@ async function getPosts() {
   try {
     const client = await MongoClient.connect(process.env.MONGODB_URI as string);
     const db = client.db();
-    const posts = await db.collection("posts").find({}).sort({ createdAt: -1 }).toArray();
+    // 📌 শুধুমাত্র পাবলিশড পোস্টগুলো আনা হচ্ছে
+    const posts = await db.collection("posts").find({ status: "published" }).sort({ createdAt: -1 }).toArray();
     await client.close();
     
     return posts.map(post => ({
@@ -36,6 +37,8 @@ async function getPosts() {
       title: post.title,
       slug: post.slug,
       coverImage: post.coverImage || null,
+      category: post.category || "Uncategorized", // 📌 নতুন ফিল্ড
+      readingTime: post.readingTime || "1 min read", // 📌 নতুন ফিল্ড
       createdAt: post.createdAt ? new Date(post.createdAt).toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
@@ -86,13 +89,19 @@ export default async function BlogPage() {
                 <div className="absolute top-4 right-4 bg-white/90 dark:bg-black/90 backdrop-blur-md w-8 h-8 rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
                   <ArrowUpRight className="w-4 h-4 text-black dark:text-white" />
                 </div>
+                {/* 📌 Category Badge Over Image */}
+                <div className="absolute top-4 left-4 bg-white/90 dark:bg-black/90 backdrop-blur-md px-3 py-1 rounded-full shadow-sm">
+                  <span className="text-[10px] font-bold tracking-wider uppercase text-blue-600 dark:text-blue-400">
+                    {post.category}
+                  </span>
+                </div>
               </div>
 
               {/* Content */}
               <div className="p-6 md:p-8 flex flex-col flex-1">
-                <div className="flex items-center gap-2 text-[11px] font-bold tracking-wider uppercase text-gray-400 mb-4">
-                  <Calendar className="w-3.5 h-3.5" />
-                  {post.createdAt}
+                <div className="flex items-center gap-4 text-[11px] font-bold tracking-wider uppercase text-gray-400 mb-4">
+                  <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> {post.createdAt}</span>
+                  <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> {post.readingTime}</span>
                 </div>
                 <h2 className="text-xl md:text-2xl font-bold tracking-tight text-black dark:text-white leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                   {post.title}
