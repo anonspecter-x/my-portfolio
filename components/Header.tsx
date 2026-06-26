@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+// 📌 Added useScroll and useSpring for Progress Bar
+import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation"; 
 import { Moon, Sun, Music, Menu, X, Play, Pause, Disc3, Code2, ArrowUpRight, Volume2, Home } from "lucide-react";
@@ -25,12 +26,23 @@ export default function Header({ settings, tracks }: HeaderProps) {
   const [isMusicOpen, setIsMusicOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
+  // 🕒 Local Time State
+  const [currentTime, setCurrentTime] = useState<string>("");
+
   // 🎵 Audio Player States
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
   const pathname = usePathname(); 
   const musicRef = useRef<HTMLDivElement>(null);
+
+  // 📌 Scroll Progress Logic
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
 
   const fallbackTracks = [
     { _id: "1", title: "Lofi Chill Vibes", artist: "Developer Beats", cover: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=100&auto=format&fit=crop", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
@@ -41,19 +53,16 @@ export default function Header({ settings, tracks }: HeaderProps) {
   const logoText = settings?.developerName ? settings.developerName.split(" ")[0] + "." : "Nazmus.";
   const devFullName = settings?.developerName || "Developer Logo";
 
-  // 📌 Updated Base Navigation Links
   const baseNavLinks = [
     { name: "About", href: "/about" },
     { name: "Projects", href: "/projects" },
     { name: "Blog", href: "/blog" },
   ];
 
-  // ⚙️ Logic: Add Contact only if on /contact page
   const desktopNavLinks = pathname === "/contact" 
     ? [...baseNavLinks, { name: "Contact", href: "/contact" }] 
     : baseNavLinks;
 
-  // Mobile menu should always show Home if not on Home page
   const mobileNavLinks = pathname === "/" 
     ? desktopNavLinks 
     : [{ name: "Home", href: "/" }, ...desktopNavLinks];
@@ -63,6 +72,24 @@ export default function Header({ settings, tracks }: HeaderProps) {
     { name: "LinkedIn", href: "#" },
     { name: "Twitter", href: "#" },
   ];
+
+  // 🕒 Time Update Logic (Hydration Safe)
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString('en-US', {
+        timeZone: 'Asia/Dhaka',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+      setCurrentTime(`Dhaka ${timeString}`);
+    };
+
+    updateTime(); 
+    const interval = setInterval(updateTime, 60000); // Update every minute
+    return () => clearInterval(interval);
+  }, []);
 
   // Scroll Logic
   useEffect(() => {
@@ -149,13 +176,23 @@ export default function Header({ settings, tracks }: HeaderProps) {
         className="fixed top-0 left-0 w-full z-50 flex justify-center pointer-events-none"
       >
         <header 
-          className={`pointer-events-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] border flex items-center justify-between
+          // 📌 Added 'relative' here to contain the absolute progress bar
+          className={`relative pointer-events-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] border flex items-center justify-between
           ${isScrolled 
             ? "w-[calc(100%-2rem)] md:w-full bg-white/70 dark:bg-[#050505]/80 backdrop-blur-2xl saturate-200 border-gray-200/60 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] max-w-full md:max-w-[calc(85rem-6rem)] rounded-full mt-4 md:mt-5 py-2.5 md:py-3 px-5 sm:px-6 md:px-8" 
             : "w-full max-w-[85rem] bg-transparent dark:bg-transparent border-transparent rounded-none mt-0 py-4 sm:py-5 md:py-8 px-4 sm:px-6 md:px-12"}`}
         >
+          
+          {/* 📌 Scroll Progress Bar Background Wrapper (prevents overflow on rounded edges) */}
+          <div className={`absolute inset-0 pointer-events-none overflow-hidden ${isScrolled ? 'rounded-full' : 'rounded-none'}`}>
+            <motion.div
+              className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 origin-left"
+              style={{ scaleX }}
+            />
+          </div>
+
           {/* 📌 Dynamic Logo: Original Size and Shape */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 relative z-10">
             <Link href="/" className="font-extrabold text-lg md:text-xl tracking-tighter text-black dark:text-white flex items-center gap-2.5 group">
               {settings?.siteLogo ? (
                 <img src={settings.siteLogo} alt={devFullName} className="h-8 md:h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-500" />
@@ -171,7 +208,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
           </div>
 
           {/* 📌 Desktop Navigation with Fluid Hover Background */}
-          <nav className="hidden md:flex items-center text-[13px] font-bold text-gray-500 dark:text-gray-400 relative">
+          <nav className="hidden md:flex items-center text-[13px] font-bold text-gray-500 dark:text-gray-400 relative z-10">
             
             {/* Dynamic Home Icon (Shows only when not on homepage) */}
             <AnimatePresence>
@@ -214,8 +251,22 @@ export default function Header({ settings, tracks }: HeaderProps) {
           </nav>
 
           {/* Right Action Buttons */}
-          <div className="flex items-center gap-2 md:gap-3">
+          <div className="flex items-center gap-2 md:gap-3 relative z-10">
             
+            {/* 🕒 Local Time Display */}
+            <AnimatePresence>
+              {currentTime && (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 bg-gray-100/80 dark:bg-[#111] rounded-full border border-gray-200/80 dark:border-gray-800/80 shadow-sm mr-1"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                  <span className="text-[10px] font-bold text-gray-600 dark:text-gray-300 tracking-wide uppercase">{currentTime}</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             {/* 📌 Contact Logic: Hidden on Contact Page */}
             {pathname !== "/contact" && (
               <Link href="/contact" className="hidden md:flex items-center gap-1.5 bg-black dark:bg-white text-white dark:text-black px-4 py-2 rounded-full text-xs font-bold hover:scale-[1.04] active:scale-95 transition-all shadow-sm border border-black/10 dark:border-white/10">
