@@ -33,12 +33,12 @@ export default function AboutClient() {
       >
         <div className="xl:col-span-7 flex flex-col justify-center">
           
-          {/* 📌 Header Badge (Matched with Projects/Blog) */}
-          <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-xs font-semibold mb-6 text-gray-600 dark:text-gray-400">
+          {/* 📌 Header Badge (w-fit যুক্ত করা হয়েছে) */}
+          <motion.div variants={fadeUp} className="inline-flex items-center w-fit gap-2 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-xs font-semibold mb-6 text-gray-600 dark:text-gray-400">
             <Terminal className="w-3.5 h-3.5" /> Engineer. Architect. Creator.
           </motion.div>
           
-          {/* 📌 Hero Title (Matched with Projects/Blog) */}
+          {/* 📌 Hero Title */}
           <motion.h1 variants={fadeUp} className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-black dark:text-white leading-[1.1] mb-6">
             Engineering scalable <br className="hidden md:block" />
             <span className="text-gray-400">realities</span> and systems.
@@ -92,22 +92,25 @@ export default function AboutClient() {
         </motion.div>
       </motion.section>
 
-      {/* ================= 2. THE ENGINEERING MANIFESTO (Clean Style) ================= */}
+      {/* ================= 2. THE ENGINEERING MANIFESTO (আগের ডিজাইন ফিরিয়ে দেওয়া হলো) ================= */}
       <motion.section 
         initial="hidden" 
         whileInView="visible" 
         viewport={{ once: true, margin: "-100px" }} 
         variants={stagger} 
-        className="mb-32 md:mb-48 relative border-l-4 border-gray-200 dark:border-gray-800 pl-8 md:pl-12"
+        className="mb-32 md:mb-48 bg-black dark:bg-white text-white dark:text-black rounded-[3rem] p-10 md:p-20 relative overflow-hidden"
       >
+        <div className="absolute top-0 right-0 p-10 opacity-10">
+          <Braces className="w-64 h-64" />
+        </div>
         <div className="relative z-10 max-w-4xl">
-          <motion.h2 variants={fadeUp} className="text-[10px] font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400 mb-4 bg-blue-50 dark:bg-blue-900/20 px-2.5 py-1 rounded-md w-fit">
+          <motion.h2 variants={fadeUp} className="text-sm font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-6">
             The Developer Manifesto
           </motion.h2>
-          <motion.h3 variants={fadeUp} className="text-3xl md:text-4xl font-bold tracking-tight leading-snug mb-8 text-black dark:text-white">
+          <motion.h3 variants={fadeUp} className="text-3xl md:text-5xl font-extrabold tracking-tight leading-snug mb-10">
             I refuse to build software that merely "works". It must be intuitive, resilient, and blazingly fast.
           </motion.h3>
-          <motion.div variants={fadeUp} className="prose prose-lg dark:prose-invert prose-p:text-gray-600 dark:prose-p:text-gray-400 leading-relaxed max-w-none">
+          <motion.div variants={fadeUp} className="prose prose-lg dark:prose-invert prose-p:text-gray-300 dark:prose-p:text-gray-700 leading-relaxed max-w-none">
             <p>
               In an era where attention spans are measured in milliseconds, bloated code and sluggish interfaces are unacceptable. I approach software engineering as an art form built strictly on logic. 
             </p>
