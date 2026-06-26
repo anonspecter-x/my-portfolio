@@ -151,7 +151,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
         <header 
           className={`pointer-events-auto w-full transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] border flex items-center justify-between
           ${isScrolled 
-            ? "bg-white/70 dark:bg-[#050505]/80 backdrop-blur-2xl saturate-200 border-gray-200/60 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] max-w-full md:max-w-[calc(85rem-6rem)] rounded-full mt-4 md:mt-5 py-2.5 md:py-3.5 px-5 sm:px-8 md:px-10 lg:px-12" 
+            ? "bg-white/70 dark:bg-[#050505]/80 backdrop-blur-2xl saturate-200 border-gray-200/60 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] max-w-full md:max-w-[calc(85rem-6rem)] rounded-full mt-4 md:mt-5 py-2.5 md:py-3 px-5 sm:px-6 md:px-8" 
             : "bg-white/30 dark:bg-[#050505]/30 md:bg-transparent md:dark:bg-transparent backdrop-blur-sm md:backdrop-blur-none border-transparent max-w-full md:max-w-[85rem] rounded-full md:rounded-none mt-4 md:mt-0 py-2.5 md:py-8 px-5 sm:px-8 md:px-12"}`}
         >
           {/* 📌 Dynamic Logo: Original Size and Shape */}
