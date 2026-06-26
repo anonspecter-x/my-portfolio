@@ -41,7 +41,8 @@ export default async function Footer() {
   // 📌 ডায়নামিক ভ্যালু সেট করা
   const developerName = settings?.developerName || "Md Nazmus Shakib";
   const tagline = settings?.developerRole || "Engineering premium, high-performance web applications.";
-  const description = settings?.developerDescription || "Specializing in the MERN stack and modern frameworks to engineer secure, SEO-optimized, and scalable digital solutions for visionary brands.";
+  // 📌 সেটিংস থেকে footerDescription কল করা হলো
+  const description = settings?.footerDescription || "Specializing in the MERN stack and modern frameworks to engineer secure, SEO-optimized, and scalable digital solutions for visionary brands.";
 
   // 📌 সোশ্যাল লিংকস
   const availablePlatforms = [
@@ -194,13 +195,13 @@ export default async function Footer() {
             <h4 className="font-mono text-[10px] tracking-[0.2em] text-gray-400 dark:text-gray-500 uppercase font-bold">Connect</h4>
             
             <div className="flex flex-wrap justify-center lg:justify-start gap-3">
+              {/* 📌 সোশ্যাল আইকনের সমস্যা সমাধান করা হয়েছে */}
               {dynamicSocials.map((link, idx) => {
-                const mappedIconKey = link.name.charAt(0).toUpperCase() + link.name.slice(1);
-                const SocialIcon = iconMap[mappedIconKey] || iconMap[link.name] || <ArrowUpRight className="w-4 h-4 text-gray-500" />;
+                const SocialIcon = link.icon;
                 return (
                   <a key={idx} href={link.url} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-gray-100 dark:bg-[#111] hover:bg-gray-200 dark:hover:bg-[#222] hover:-translate-y-1 flex items-center justify-center transition-all duration-300 group">
                     <span className="w-4 h-4 opacity-70 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      {SocialIcon}
+                      <SocialIcon className="w-full h-full" />
                     </span>
                   </a>
                 );

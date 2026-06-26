@@ -12,6 +12,7 @@ export async function updateSettings(formData: FormData) {
     developerEmail: formData.get("developerEmail") as string,
     developerPhone: formData.get("developerPhone") as string,
     developerRegion: formData.get("developerRegion") as string,
+    footerDescription: formData.get("footerDescription") as string, // 📌 নতুন ফিল্ড: Footer Description
     seoTitle: formData.get("seoTitle") as string,
     seoDescription: formData.get("seoDescription") as string,
     seoKeywords: formData.get("seoKeywords") as string,

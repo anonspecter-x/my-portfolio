@@ -181,6 +181,11 @@ export default async function SettingsPage() {
                 <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Service Region / Address</label>
                 <input type="text" name="developerRegion" defaultValue={settings?.developerRegion} required className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-colors" />
               </div>
+              {/* 📌 নতুন ফিল্ড: Footer Description */}
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Footer Description / Bio</label>
+                <textarea name="footerDescription" defaultValue={settings?.footerDescription} required rows={3} placeholder="Write a short description that will appear in your footer..." className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-colors resize-none"></textarea>
+              </div>
             </div>
           </div>
 
