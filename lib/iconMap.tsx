@@ -11,11 +11,20 @@ import {
   SiFirebase, 
   SiFigma, 
   SiGit, 
-  SiWordpress 
+  SiWordpress,
+  // 📌 Social Media Icons
+  SiGithub,
+  SiLinkedin,
+  SiX,
+  SiWhatsapp,
+  SiYoutube,
+  SiFacebook,
+  SiInstagram
 } from "react-icons/si";
 
-// 📌 Protiti technologier jonno official brand icon map (React Icons Platform theke)
+// 📌 Protiti technology ebong social media-r jonno official brand icon map
 export const iconMap: Record<string, React.ReactNode> = {
+  // --- Technology Icons ---
   React: <SiReact className="w-5 h-5 shrink-0 text-[#61dafb]" />,
   NextJS: <SiNextdotjs className="w-5 h-5 shrink-0 text-black dark:text-white" />,
   Tailwind: <SiTailwindcss className="w-5 h-5 shrink-0 text-[#38bdf8]" />,
@@ -27,5 +36,14 @@ export const iconMap: Record<string, React.ReactNode> = {
   Firebase: <SiFirebase className="w-5 h-5 shrink-0 text-[#FFCA28]" />,
   Figma: <SiFigma className="w-5 h-5 shrink-0 text-[#F24E1E]" />,
   Git: <SiGit className="w-5 h-5 shrink-0 text-[#F05032]" />,
-  WordPress: <SiWordpress className="w-5 h-5 shrink-0 text-[#21759b]" />
+  WordPress: <SiWordpress className="w-5 h-5 shrink-0 text-[#21759b]" />,
+
+  // --- Social Media Icons ---
+  GitHub: <SiGithub className="w-5 h-5 shrink-0 text-black dark:text-white" />,
+  LinkedIn: <SiLinkedin className="w-5 h-5 shrink-0 text-[#0A66C2]" />,
+  Twitter: <SiX className="w-5 h-5 shrink-0 text-black dark:text-white" />, // X Logo
+  WhatsApp: <SiWhatsapp className="w-5 h-5 shrink-0 text-[#25D366]" />,
+  YouTube: <SiYoutube className="w-5 h-5 shrink-0 text-[#FF0000]" />,
+  Facebook: <SiFacebook className="w-5 h-5 shrink-0 text-[#1877F2]" />,
+  Instagram: <SiInstagram className="w-5 h-5 shrink-0 text-[#E4405F]" />
 };
