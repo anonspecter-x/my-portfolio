@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { MongoClient } from "mongodb";
+import NextTopLoader from "nextjs-toploader"; // 📌 প্যাকেজটি ইমপোর্ট করা হলো
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -48,8 +49,23 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-theme="light" suppressHydrationWarning data-scroll-behavior="smooth">
-      {/* <body> থেকে <Header /> এবং <Footer /> কেটে ফেলা হয়েছে */}
       <body suppressHydrationWarning className={`${inter.className} antialiased bg-[#fafafa] dark:bg-[#030303] text-black dark:text-white transition-colors duration-500`}>
+        
+        {/* 📌 প্রফেশনাল গ্লোবাল টপ লোডার */}
+        <NextTopLoader
+          color="#2563eb" // আপনার প্রোজেক্টের blue-600 থিমের সাথে মিল রেখে
+          initialPosition={0.08}
+          crawlSpeed={200}
+          height={3}
+          crawl={true}
+          showSpinner={false} // ডানপাশের স্পিনার অফ করা হয়েছে ক্লিন লুকের জন্য
+          easing="ease"
+          speed={200}
+          shadow="0 0 10px #2563eb,0 0 5px #2563eb" // সুন্দর গ্লো ইফেক্ট
+          zIndex={1600}
+          showAtBottom={false}
+        />
+        
         {children}
       </body>
     </html>
