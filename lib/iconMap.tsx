@@ -1,4 +1,5 @@
 import React from "react";
+// টেকনোলজি আইকনগুলো SI থেকে (কারণ এগুলো স্টেবল আছে)
 import { 
   SiReact, 
   SiNextdotjs, 
@@ -11,18 +12,21 @@ import {
   SiFirebase, 
   SiFigma, 
   SiGit, 
-  SiWordpress,
-  // 📌 Social Media Icons
-  SiGithub,
-  SiLinkedin,
-  SiX,
-  SiWhatsapp,
-  SiYoutube,
-  SiFacebook,
-  SiInstagram
+  SiWordpress 
 } from "react-icons/si";
 
-// 📌 Protiti technology ebong social media-r jonno official brand icon map
+// সোশ্যাল মিডিয়া আইকনগুলো FA (Font Awesome) থেকে (যাতে বিল্ড এরর না দেয়)
+import {
+  FaGithub,
+  FaLinkedin,
+  FaTwitter,
+  FaWhatsapp,
+  FaYoutube,
+  FaFacebook,
+  FaInstagram
+} from "react-icons/fa";
+
+// 📌 প্রতিটি টেকনোলজি এবং সোশ্যাল মিডিয়ার জন্য অফিশিয়াল ব্র্যান্ড আইকন ম্যাপ
 export const iconMap: Record<string, React.ReactNode> = {
   // --- Technology Icons ---
   React: <SiReact className="w-5 h-5 shrink-0 text-[#61dafb]" />,
@@ -39,11 +43,11 @@ export const iconMap: Record<string, React.ReactNode> = {
   WordPress: <SiWordpress className="w-5 h-5 shrink-0 text-[#21759b]" />,
 
   // --- Social Media Icons ---
-  GitHub: <SiGithub className="w-5 h-5 shrink-0 text-black dark:text-white" />,
-  LinkedIn: <SiLinkedin className="w-5 h-5 shrink-0 text-[#0A66C2]" />,
-  Twitter: <SiX className="w-5 h-5 shrink-0 text-black dark:text-white" />, // X Logo
-  WhatsApp: <SiWhatsapp className="w-5 h-5 shrink-0 text-[#25D366]" />,
-  YouTube: <SiYoutube className="w-5 h-5 shrink-0 text-[#FF0000]" />,
-  Facebook: <SiFacebook className="w-5 h-5 shrink-0 text-[#1877F2]" />,
-  Instagram: <SiInstagram className="w-5 h-5 shrink-0 text-[#E4405F]" />
+  GitHub: <FaGithub className="w-5 h-5 shrink-0 text-black dark:text-white" />,
+  LinkedIn: <FaLinkedin className="w-5 h-5 shrink-0 text-[#0A66C2]" />,
+  Twitter: <FaTwitter className="w-5 h-5 shrink-0 text-[#1DA1F2]" />, 
+  WhatsApp: <FaWhatsapp className="w-5 h-5 shrink-0 text-[#25D366]" />,
+  YouTube: <FaYoutube className="w-5 h-5 shrink-0 text-[#FF0000]" />,
+  Facebook: <FaFacebook className="w-5 h-5 shrink-0 text-[#1877F2]" />,
+  Instagram: <FaInstagram className="w-5 h-5 shrink-0 text-[#E4405F]" />
 };

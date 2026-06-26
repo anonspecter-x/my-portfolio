@@ -5,16 +5,16 @@ import {
 } from "lucide-react";
 import { SettingsType } from "@/models/Settings";
 
-// 📌 REACT ICONS IMPORT (Official Brand Icons)
+// 📌 REACT ICONS IMPORT (Stable Font Awesome Icons for Socials)
 import { 
-  SiGithub, 
-  SiLinkedin, 
-  SiX, 
-  SiWhatsapp, 
-  SiYoutube, 
-  SiFacebook, 
-  SiInstagram 
-} from "react-icons/si";
+  FaGithub, 
+  FaLinkedin, 
+  FaTwitter, 
+  FaWhatsapp, 
+  FaYoutube, 
+  FaFacebook, 
+  FaInstagram 
+} from "react-icons/fa";
 
 // TypeScript Interface for Music Track
 interface TrackType {
@@ -43,15 +43,15 @@ async function getSettingsPageData() {
 export default async function SettingsPage() {
   const { settings, tracks } = await getSettingsPageData();
 
-  // 📌 Social Platforms Data Array (Connected with react-icons)
+  // 📌 Social Platforms Data Array (Connected with FontAwesome)
   const socialPlatforms = [
-    { id: "github", label: "GitHub", icon: SiGithub, placeholder: "https://github.com/..." },
-    { id: "linkedin", label: "LinkedIn", icon: SiLinkedin, placeholder: "https://linkedin.com/in/..." },
-    { id: "twitter", label: "Twitter / X", icon: SiX, placeholder: "https://twitter.com/..." },
-    { id: "whatsapp", label: "WhatsApp", icon: SiWhatsapp, placeholder: "https://wa.me/8801..." },
-    { id: "youtube", label: "YouTube", icon: SiYoutube, placeholder: "https://youtube.com/c/..." },
-    { id: "facebook", label: "Facebook", icon: SiFacebook, placeholder: "https://facebook.com/..." },
-    { id: "instagram", label: "Instagram", icon: SiInstagram, placeholder: "https://instagram.com/..." },
+    { id: "github", label: "GitHub", icon: FaGithub, placeholder: "https://github.com/..." },
+    { id: "linkedin", label: "LinkedIn", icon: FaLinkedin, placeholder: "https://linkedin.com/in/..." },
+    { id: "twitter", label: "Twitter / X", icon: FaTwitter, placeholder: "https://twitter.com/..." },
+    { id: "whatsapp", label: "WhatsApp", icon: FaWhatsapp, placeholder: "https://wa.me/8801..." },
+    { id: "youtube", label: "YouTube", icon: FaYoutube, placeholder: "https://youtube.com/c/..." },
+    { id: "facebook", label: "Facebook", icon: FaFacebook, placeholder: "https://facebook.com/..." },
+    { id: "instagram", label: "Instagram", icon: FaInstagram, placeholder: "https://instagram.com/..." },
   ];
 
   return (
@@ -180,7 +180,6 @@ export default async function SettingsPage() {
                 <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Service Region / Address</label>
                 <input type="text" name="developerRegion" defaultValue={settings?.developerRegion} required className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-colors" />
               </div>
-              {/* 📌 Footer Description */}
               <div className="space-y-2 md:col-span-2">
                 <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Footer Description / Bio</label>
                 <textarea name="footerDescription" defaultValue={settings?.footerDescription} required rows={3} placeholder="Write a short description that will appear in your footer..." className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-colors resize-none"></textarea>
