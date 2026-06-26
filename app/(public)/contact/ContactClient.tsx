@@ -50,25 +50,25 @@ export default function ContactClient({ contactData }: ContactClientProps) {
   const region = contactData?.region || "Dhaka, Bangladesh";
 
   return (
-    <main className="min-h-screen bg-[#fafafa] dark:bg-[#030303] pt-32 pb-20 px-4 sm:px-6 md:px-12 max-w-[75rem] mx-auto overflow-hidden">
+    <main className="min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] pt-32 pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto overflow-hidden">
       
       {/* 🌟 Background Elements */}
       <div className="absolute top-40 left-[-10%] w-[300px] h-[300px] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none -z-10"></div>
       <div className="absolute bottom-40 right-[-10%] w-[300px] h-[300px] bg-purple-500/5 blur-[120px] rounded-full pointer-events-none -z-10"></div>
 
-      {/* 📌 Header */}
+      {/* 📌 Header (Left-aligned & Styled like other pages) */}
       <motion.div 
         initial="hidden" animate="visible" variants={fadeUp}
-        className="text-center mb-12 md:mb-16"
+        className="max-w-3xl mb-16 md:mb-24"
       >
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-xs font-semibold mb-4 text-gray-600 dark:text-gray-400 uppercase tracking-widest">
-          Let's Connect
+        <div className="inline-flex items-center w-fit gap-2 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-xs font-semibold mb-6 text-gray-600 dark:text-gray-400">
+          <MessageSquare className="w-3.5 h-3.5" /> Let's Connect
         </div>
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-black dark:text-white mb-4 leading-tight">
-          Ready to build <br className="hidden sm:block" />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-500 dark:from-blue-400 dark:to-purple-400">your next big idea?</span>
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-black dark:text-white leading-[1.1] mb-6">
+          Ready to build <br className="hidden md:block" />
+          <span className="text-gray-400">your next big idea?</span>
         </h1>
-        <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 max-w-xl mx-auto font-normal">
+        <p className="text-gray-600 dark:text-gray-400 text-lg">
           Whether you need a full-stack application, technical consultation, or just want to say hi—my inbox is always open.
         </p>
       </motion.div>
