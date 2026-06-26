@@ -3,7 +3,6 @@ import { updateSettings, addMusicTrack, deleteMusicTrack } from "./actions";
 import { 
   Settings2, Save, User, Search, Image as ImageIcon, Music, Trash2, Plus, Share2 
 } from "lucide-react";
-import { SettingsType } from "@/models/Settings";
 
 // 📌 REACT ICONS IMPORT (Stable Font Awesome Icons for Socials)
 import { 
@@ -140,7 +139,8 @@ export default async function SettingsPage() {
             <h2 className="text-lg font-bold text-black dark:text-white flex items-center gap-2 mb-4">
               <ImageIcon className="w-5 h-5 text-blue-500" /> Identity Media
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* 📌 ৩ কলামের গ্রিড করা হলো যাতে ৩টি আইটেম সুন্দরভাবে বসে */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Developer Photo</label>
                 <input type="file" name="developerPhoto" accept="image/*" className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-2.5 outline-none focus:border-blue-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30" />
@@ -150,6 +150,12 @@ export default async function SettingsPage() {
                 <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Site Logo</label>
                 <input type="file" name="siteLogo" accept="image/*" className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-2.5 outline-none focus:border-blue-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30" />
                 {settings?.siteLogo && <p className="text-xs text-green-600 dark:text-green-500 font-medium mt-1">✓ Current logo is active.</p>}
+              </div>
+              {/* 📌 নতুন Favicon আপলোডের অপশন */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Site Favicon (PNG/ICO)</label>
+                <input type="file" name="siteFavicon" accept=".ico,image/png,image/x-icon" className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-2.5 outline-none focus:border-blue-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30" />
+                {settings?.siteFavicon && <p className="text-xs text-green-600 dark:text-green-500 font-medium mt-1">✓ Current favicon is active.</p>}
               </div>
             </div>
           </div>

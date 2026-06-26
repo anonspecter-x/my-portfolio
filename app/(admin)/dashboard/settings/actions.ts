@@ -38,6 +38,7 @@ export async function updateSettings(formData: FormData) {
 
   const developerPhoto = formData.get("developerPhoto") as File;
   const siteLogo = formData.get("siteLogo") as File;
+  const siteFavicon = formData.get("siteFavicon") as File; // 📌 Favicon ফিল্ড যুক্ত করা হলো
 
   if (developerPhoto && developerPhoto.size > 0) {
     const photoUrl = await uploadFileToR2(developerPhoto, "settings");
@@ -47,6 +48,12 @@ export async function updateSettings(formData: FormData) {
   if (siteLogo && siteLogo.size > 0) {
     const logoUrl = await uploadFileToR2(siteLogo, "settings");
     data.siteLogo = logoUrl;
+  }
+
+  // 📌 Favicon R2 তে আপলোড করার লজিক
+  if (siteFavicon && siteFavicon.size > 0) {
+    const faviconUrl = await uploadFileToR2(siteFavicon, "settings");
+    data.siteFavicon = faviconUrl;
   }
 
   const client = await MongoClient.connect(process.env.MONGODB_URI as string);
