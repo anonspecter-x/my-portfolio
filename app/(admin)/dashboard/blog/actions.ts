@@ -15,9 +15,20 @@ export async function saveBlogPost(formData: FormData) {
     const seoDescription = formData.get("seoDescription") as string;
     const seoKeywords = formData.get("seoKeywords") as string;
 
+    // 📌 নতুন যুক্ত হওয়া ফিল্ডগুলো
+    const status = formData.get("status") as string || "published";
+    const category = formData.get("category") as string || "Uncategorized";
+    const tagsString = formData.get("tags") as string || "";
+    const tags = tagsString.split(",").map(tag => tag.trim()).filter(Boolean); // কমা দিয়ে ট্যাগ আলাদা করা
+
     if (!title || !content) {
       throw new Error("Title and Content are required.");
     }
+
+    // ⏱️ Reading Time Calculation (HTML ট্যাগ রিমুভ করে ওয়ার্ড কাউন্ট)
+    const plainText = content.replace(/<[^>]*>?/gm, '');
+    const wordCount = plainText.split(/\s+/).length;
+    const readingTime = Math.max(1, Math.ceil(wordCount / 200)) + " min read";
 
     const client = await MongoClient.connect(process.env.MONGODB_URI as string);
     const db = client.db();
@@ -27,7 +38,11 @@ export async function saveBlogPost(formData: FormData) {
       content, 
       seoTitle,          
       seoDescription,    
-      seoKeywords,       
+      seoKeywords,
+      status,
+      category,
+      tags,
+      readingTime,       
       updatedAt: new Date() 
     };
 

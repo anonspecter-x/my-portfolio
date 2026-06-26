@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { saveBlogPost, deleteBlogPost } from "./actions";
 import RichEditor from "@/components/RichEditor";
-import { PenTool, Trash2, Edit2, Image as ImageIcon, Search, Loader2, Code, ImagePlus } from "lucide-react";
+import { PenTool, Trash2, Edit2, Image as ImageIcon, Search, Loader2, Code, ImagePlus, Settings, Tag, Clock } from "lucide-react";
 
 interface Post {
   _id: string;
@@ -15,6 +15,10 @@ interface Post {
   seoTitle?: string;
   seoDescription?: string;
   seoKeywords?: string;
+  status?: string;
+  category?: string;
+  tags?: string[];
+  readingTime?: string;
 }
 
 export default function BlogClient({ posts }: { posts: Post[] }) {
@@ -22,7 +26,11 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"published" | "draft">("published");
   const formRef = useRef<HTMLFormElement>(null);
+
+  // 📌 ট্যাব অনুযায়ী পোস্ট ফিল্টার করা
+  const filteredPosts = posts.filter(post => (post.status || "published") === activeTab);
 
   const handleEditClick = (post: Post) => {
     setEditPost(post);
@@ -36,7 +44,6 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
     formRef.current?.reset();
   };
 
-  // 📌 ফর্ম সাবমিট হ্যান্ডলার (লোডিং স্টেট সহ)
   const handleSubmit = async (formData: FormData) => {
     setIsSubmitting(true);
     try {
@@ -50,7 +57,6 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
     }
   };
 
-  // 📌 ডিলিট হ্যান্ডলার (লোডিং স্টেট সহ)
   const handleDelete = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this post?")) return;
     setDeletingId(id);
@@ -73,17 +79,13 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
             {editPost ? <Edit2 className="w-6 h-6 text-blue-500" /> : <PenTool className="w-6 h-6 text-blue-500" />}
             {editPost ? "Edit Article" : "Write New Article"}
           </h2>
-          <div className="flex gap-2 text-xs text-gray-500 font-medium">
-            <span className="flex items-center gap-1 bg-gray-100 dark:bg-[#111] px-2 py-1 rounded-md"><Code className="w-3 h-3"/> Code Snippets</span>
-            <span className="flex items-center gap-1 bg-gray-100 dark:bg-[#111] px-2 py-1 rounded-md"><ImagePlus className="w-3 h-3"/> Rich Media</span>
+          <div className="flex gap-2 text-xs text-gray-500 font-medium hidden sm:flex">
+            <span className="flex items-center gap-1 bg-gray-100 dark:bg-[#111] px-2 py-1 rounded-md"><Code className="w-3 h-3"/> Rich Text</span>
+            <span className="flex items-center gap-1 bg-gray-100 dark:bg-[#111] px-2 py-1 rounded-md"><Settings className="w-3 h-3"/> Auto SEO</span>
           </div>
         </div>
         
-        <form 
-          ref={formRef}
-          action={handleSubmit} 
-          className="space-y-6"
-        >
+        <form ref={formRef} action={handleSubmit} className="space-y-6">
           {editPost && <input type="hidden" name="id" value={editPost._id} />}
           <input type="hidden" name="content" value={content} />
 
@@ -98,6 +100,27 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
               placeholder="e.g. The Ultimate Guide to Next.js 14..." 
               className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all font-semibold" 
             />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Category</label>
+              <select name="category" defaultValue={editPost?.category || "Technology"} key={editPost ? editPost._id + 'cat' : 'new-cat'} className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-colors cursor-pointer">
+                <option value="Technology">Technology</option>
+                <option value="Tutorial">Tutorial</option>
+                <option value="Lifestyle">Lifestyle</option>
+                <option value="News">News</option>
+                <option value="Portfolio">Portfolio</option>
+              </select>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Status</label>
+              <select name="status" defaultValue={editPost?.status || "published"} key={editPost ? editPost._id + 'status' : 'new-status'} className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-colors cursor-pointer">
+                <option value="published">🟢 Published</option>
+                <option value="draft">🟡 Save as Draft</option>
+              </select>
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -116,11 +139,22 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
           </div>
 
           <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Tags (Comma Separated)</label>
+            <input 
+              type="text" 
+              name="tags" 
+              defaultValue={editPost?.tags?.join(", ") || ""}
+              key={editPost ? editPost._id + 'tags' : 'new-tags'}
+              placeholder="e.g. React, UI Design, Web Dev" 
+              className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-colors" 
+            />
+          </div>
+
+          <div className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Article Content *</label>
             <div className="prose-editor border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
               <RichEditor value={content} onChange={(val) => setContent(val)} />
             </div>
-            <p className="text-[11px] text-gray-400 mt-1">Use the editor above to add headers, bold text, code blocks, and inline images.</p>
           </div>
 
           {/* ================= 📌 SEO OPTIMIZATION SECTION ================= */}
@@ -154,7 +188,7 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Keywords</label>
+              <label className="text-xs font-bold uppercase tracking-wider text-gray-500">SEO Keywords</label>
               <input 
                 type="text" 
                 name="seoKeywords" 
@@ -174,7 +208,7 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
               className="flex-1 bg-black dark:bg-white text-white dark:text-black text-sm font-bold py-3.5 rounded-xl hover:opacity-80 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
-              {isSubmitting ? "Saving..." : (editPost ? "Update Article" : "Publish Article")}
+              {isSubmitting ? "Saving..." : (editPost ? "Save Changes" : "Save Article")}
             </button>
             {editPost && (
               <button 
@@ -190,32 +224,52 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
         </form>
       </div>
 
-      {/* ================= 📊 PUBLISHED POSTS ================= */}
+      {/* ================= 📊 POSTS MANAGER (TABS) ================= */}
       <div className="xl:col-span-4 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm h-fit">
-        <h2 className="text-lg font-bold text-black dark:text-white flex items-center gap-2 mb-6">
-          <PenTool className="w-5 h-5 text-gray-400" /> Published ({posts.length})
-        </h2>
         
-        {posts.length === 0 ? (
+        {/* Tabs */}
+        <div className="flex p-1 bg-gray-100 dark:bg-[#111] rounded-xl mb-6">
+          <button 
+            onClick={() => setActiveTab("published")}
+            className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${activeTab === "published" ? "bg-white dark:bg-[#222] text-black dark:text-white shadow-sm" : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"}`}
+          >
+            Published
+          </button>
+          <button 
+            onClick={() => setActiveTab("draft")}
+            className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${activeTab === "draft" ? "bg-white dark:bg-[#222] text-black dark:text-white shadow-sm" : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"}`}
+          >
+            Drafts
+          </button>
+        </div>
+        
+        {filteredPosts.length === 0 ? (
           <div className="text-center py-20 border border-dashed border-gray-200 dark:border-gray-800 rounded-xl">
-            <p className="text-sm text-gray-500">No articles published yet.</p>
+            <p className="text-sm text-gray-500">No {activeTab} articles found.</p>
           </div>
         ) : (
           <div className="space-y-4 max-h-[800px] overflow-y-auto pr-2 custom-scrollbar">
-            {posts.map((post) => (
+            {filteredPosts.map((post) => (
               <div key={post._id} className="group bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 rounded-xl p-3 flex gap-3 relative overflow-hidden transition-all hover:border-gray-300 dark:hover:border-gray-700 hover:shadow-sm">
                 
                 {post.coverImage ? (
-                  <img src={post.coverImage} alt={post.title} className="w-14 h-14 rounded-lg object-cover border border-gray-200 dark:border-gray-800 shrink-0" />
+                  <img src={post.coverImage} alt={post.title} className="w-16 h-16 rounded-lg object-cover border border-gray-200 dark:border-gray-800 shrink-0" />
                 ) : (
-                  <div className="w-14 h-14 rounded-lg bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-gray-400 shrink-0">
+                  <div className="w-16 h-16 rounded-lg bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-gray-400 shrink-0">
                     <ImageIcon className="w-5 h-5" />
                   </div>
                 )}
                 
                 <div className="flex-1 min-w-0 flex flex-col justify-center">
                   <h4 className="text-sm font-bold text-black dark:text-white truncate" title={post.title}>{post.title}</h4>
-                  <p className="text-[11px] text-gray-500 mt-0.5 truncate">/{post.slug}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
+                      {post.category || "Uncategorized"}
+                    </span>
+                    <span className="text-[10px] text-gray-500 flex items-center gap-1">
+                      <Clock className="w-3 h-3"/> {post.readingTime || "1 min"}
+                    </span>
+                  </div>
                 </div>
                 
                 {/* ✏️ Actions */}

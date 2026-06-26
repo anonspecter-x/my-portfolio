@@ -16,10 +16,15 @@ async function getPosts() {
     content: post.content,
     coverImage: post.coverImage,
     slug: post.slug,
-    // 📌 SEO ডাটাগুলো ক্লায়েন্টে পাঠানো হলো
+    // 📌 SEO ডাটা
     seoTitle: post.seoTitle || "",
     seoDescription: post.seoDescription || "",
     seoKeywords: post.seoKeywords || "",
+    // 📌 নতুন যুক্ত হওয়া অ্যাডভান্সড ডাটা
+    status: post.status || "published",
+    category: post.category || "Technology",
+    tags: post.tags || [],
+    readingTime: post.readingTime || "1 min read",
     createdAt: post.createdAt ? post.createdAt.toISOString() : new Date().toISOString(),
   }));
 }
@@ -31,10 +36,10 @@ export default async function BlogAdminPage() {
     <div className="space-y-10 max-w-[1400px]">
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-black dark:text-white flex items-center gap-3">
-          <BookOpen className="w-8 h-8 text-blue-500" /> Blog Studio
+          <BookOpen className="w-8 h-8 text-blue-500" /> Blog Studio Pro
         </h1>
         <p className="text-gray-500 dark:text-gray-400 mt-1">
-          Write, edit, and manage your technical articles with rich media support.
+          Manage your content, set categories, save drafts, and optimize SEO all in one place.
         </p>
       </div>
 
