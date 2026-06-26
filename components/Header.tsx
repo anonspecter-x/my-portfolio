@@ -96,6 +96,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
   // ⏱️ Time Update Logic (Hydration Safe)
   useEffect(() => {
     const updateTime = () => {
+      // Force Asia/Dhaka timezone so it shows YOUR time to global clients
       const options: Intl.DateTimeFormatOptions = { 
         timeZone: 'Asia/Dhaka', 
         hour: '2-digit', 
@@ -107,7 +108,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
     };
     
     updateTime();
-    const interval = setInterval(updateTime, 60000);
+    const interval = setInterval(updateTime, 60000); // Update every minute
     return () => clearInterval(interval);
   }, []);
 
@@ -172,8 +173,8 @@ export default function Header({ settings, tracks }: HeaderProps) {
         <header 
           className={`pointer-events-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] border flex items-center justify-between
           ${isScrolled 
-            ? "w-[calc(100%-2rem)] max-w-[80rem] mx-auto bg-white/70 dark:bg-[#050505]/80 backdrop-blur-2xl saturate-200 border-gray-200/60 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] rounded-full mt-4 md:mt-5 py-2.5 md:py-3 px-5 sm:px-6 md:px-8" 
-            : "w-full max-w-[85rem] mx-auto bg-transparent dark:bg-transparent border-transparent rounded-none mt-0 py-4 sm:py-5 md:py-8 px-4 sm:px-6 md:px-12"}`}
+            ? "w-[calc(100%-2rem)] md:w-full bg-white/70 dark:bg-[#050505]/80 backdrop-blur-2xl saturate-200 border-gray-200/60 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] max-w-full md:max-w-[calc(85rem-6rem)] rounded-full mt-4 md:mt-5 py-2.5 md:py-3 px-5 sm:px-6 md:px-8" 
+            : "w-full max-w-[85rem] bg-transparent dark:bg-transparent border-transparent rounded-none mt-0 py-4 sm:py-5 md:py-8 px-4 sm:px-6 md:px-12"}`}
         >
           {/* 📌 Dynamic Logo: Original Size and Shape */}
           <div className="flex items-center gap-3">
@@ -191,8 +192,10 @@ export default function Header({ settings, tracks }: HeaderProps) {
             </Link>
           </div>
 
-          {/* 📌 Desktop Navigation */}
+          {/* 📌 Desktop Navigation with Fluid Hover Background */}
           <nav className="hidden md:flex items-center text-[13px] font-bold text-gray-500 dark:text-gray-400 relative">
+            
+            {/* Dynamic Home Icon (Shows only when not on homepage) */}
             <AnimatePresence>
               {pathname !== "/" && (
                 <motion.div 
@@ -235,18 +238,18 @@ export default function Header({ settings, tracks }: HeaderProps) {
           {/* Right Action Buttons */}
           <div className="flex items-center gap-2 md:gap-3">
             
-            {/* ⏱️ Pro Feature: Clean & Minimal Local Time */}
+            {/* ⏱️ Pro Feature: Local Time Indicator (Hidden on small screens so it doesn't break layout) */}
             {localTime && (
-              <div className="hidden lg:flex items-center gap-2 text-[12px] font-medium tracking-wide text-gray-500 dark:text-gray-400 mr-2">
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/80 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+              <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 text-[11px] font-bold text-gray-600 dark:text-gray-300 mr-1 shadow-sm">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                 </span>
-                <span className="font-mono">{localTime}</span>
+                {localTime}
               </div>
             )}
 
-            {/* 📌 Contact Logic */}
+            {/* 📌 Contact Logic: Hidden on Contact Page */}
             {pathname !== "/contact" && (
               <Link href="/contact" className="hidden md:flex items-center gap-1.5 bg-black dark:bg-white text-white dark:text-black px-4 py-2 rounded-full text-xs font-bold hover:scale-[1.04] active:scale-95 transition-all shadow-sm border border-black/10 dark:border-white/10">
                 Let's Talk <ArrowUpRight className="w-3.5 h-3.5 opacity-80" />
