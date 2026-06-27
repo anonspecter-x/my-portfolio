@@ -4,7 +4,8 @@ import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import { 
   ArrowRight, FileText, Code2, Layout, LayoutTemplate, 
   ChevronRight, ChevronDown, ChevronUp, ExternalLink, 
-  Quote, Star, Lightbulb, PenTool, Rocket, PhoneCall 
+  Quote, Star, Lightbulb, PenTool, Rocket, PhoneCall,
+  Calendar, Clock // 📌 নতুন আইকন যুক্ত করা হয়েছে
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
@@ -44,11 +45,12 @@ interface HomeClientProps {
   realSkills: any[];
   services?: any[];
   testimonials?: any[];
-  brands?: any[]; // 📌 নতুন যুক্ত করা হলো
+  brands?: any[]; 
+  blogs?: any[]; // 📌 ব্লগ ডাটার জন্য প্রপ যুক্ত করা হয়েছে
   settings: any; 
 }
 
-export default function HomeClient({ realProjects, realSkills, services = [], testimonials = [], brands = [], settings }: HomeClientProps) {
+export default function HomeClient({ realProjects, realSkills, services = [], testimonials = [], brands = [], blogs = [], settings }: HomeClientProps) {
   const { scrollYProgress } = useScroll();
   const yBackground = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
   const rotateBackground = useTransform(scrollYProgress, [0, 1], [0, 45]);
@@ -62,6 +64,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
   const [activeAccordion, setActiveAccordion] = useState(0);
 
   const displayProjects = realProjects.slice(0, 4);
+  const displayBlogs = blogs.slice(0, 3); // 📌 লেটেস্ট ৩টি ব্লগ
 
   // 📌 DYNAMIC SOCIAL FETCHING SYSTEM
   const activeSocials = socialPlatformSystem
@@ -679,6 +682,65 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               ))}
             </div>
 
+          </motion.section>
+        )}
+
+        {/* ================= 📝 LATEST BLOGS SECTION (NEW) ================= */}
+        {displayBlogs.length > 0 && (
+          <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} className="py-20 md:py-32 border-t border-gray-200/50 dark:border-gray-800/50" id="blog">
+            <div className="mb-12 md:mb-16 text-center">
+              <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 md:mb-6 text-black dark:text-white">
+                Latest Articles
+              </motion.h2>
+              <motion.p variants={fadeUp} className="text-sm md:text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                Read my latest thoughts, technical insights, and tutorials on web development.
+              </motion.p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {displayBlogs.map((blog, idx) => (
+                <motion.div key={blog._id || idx} variants={fadeUp} className="group relative bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-3xl overflow-hidden hover:border-blue-500/40 dark:hover:border-blue-400/40 hover:shadow-xl transition-all duration-300">
+                  <Link href={`/blog/${blog.slug}`} className="block h-full flex flex-col">
+                    <div className="relative aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-[#111]">
+                      {blog.coverImage ? (
+                        <img src={blog.coverImage} alt={blog.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400">
+                          <FileText className="w-10 h-10 opacity-50" />
+                        </div>
+                      )}
+                      {blog.category && (
+                        <div className="absolute top-4 left-4 bg-white/90 dark:bg-black/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase border border-gray-200 dark:border-gray-800 text-black dark:text-white">
+                          {blog.category}
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-6 flex flex-col flex-1">
+                      <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400 mb-3 font-medium">
+                        {blog.createdAt && (
+                          <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> {new Date(blog.createdAt).toLocaleDateString()}</span>
+                        )}
+                        {blog.readingTime && (
+                          <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> {blog.readingTime}</span>
+                        )}
+                      </div>
+                      <h3 className="text-xl font-bold text-black dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
+                        {blog.title}
+                      </h3>
+                      <div className="mt-auto pt-4 flex items-center gap-2 text-sm font-bold text-black dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        Read Article <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div variants={fadeUp} className="mt-12 flex justify-center w-full">
+              <Link href="/blog" className="group flex items-center gap-2 px-8 py-4 bg-gray-100 dark:bg-[#111] text-black dark:text-white font-semibold rounded-full hover:bg-gray-200 dark:hover:bg-[#222] transition-all border border-gray-200 dark:border-gray-800">
+                View All Articles <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" />
+              </Link>
+            </motion.div>
           </motion.section>
         )}
 

@@ -72,8 +72,15 @@ async function getPageData() {
     // 📌 ডাটাবেজ থেকে টেস্টিমোনিয়াল আনা হচ্ছে (প্রায়োরিটি অনুযায়ী)
     const rawTestimonials = await db.collection("testimonials").find({}).sort({ priority: -1, createdAt: -1 }).toArray();
 
-    // 📌 ডাটাবেজ থেকে ব্র্যান্ড লোগো আনা হচ্ছে (নতুন)
+    // 📌 ডাটাবেজ থেকে ব্র্যান্ড লোগো আনা হচ্ছে
     const rawBrands = await db.collection("brands").find({}).sort({ order: 1 }).toArray();
+
+    // 📌 ডাটাবেজ থেকে লেটেস্ট পাবলিশড ব্লগগুলো আনা হচ্ছে (নতুন)
+    const rawBlogs = await db.collection("posts")
+      .find({ status: "published" }) // শুধুমাত্র পাবলিশড পোস্ট
+      .sort({ createdAt: -1 })
+      .limit(3) // লেটেস্ট ৩টি
+      .toArray();
 
     // ডাটাবেজ থেকে সেটিংস আনা হচ্ছে
     const settingsData = await db.collection("settings").findOne({});
@@ -127,12 +134,23 @@ async function getPageData() {
       photoUrl: t.photoUrl || null
     }));
 
-    // 📌 ব্র্যান্ড লোগো ফরম্যাট করা (নতুন)
+    // 📌 ব্র্যান্ড লোগো ফরম্যাট করা
     const formattedBrands = rawBrands.map(b => ({
       _id: b._id.toString(),
       name: b.name,
       logo: b.logo || "",
       order: b.order
+    }));
+
+    // 📌 ব্লগ ফরম্যাট করা (নতুন যুক্ত হলো)
+    const formattedBlogs = rawBlogs.map(b => ({
+      _id: b._id.toString(),
+      title: b.title,
+      slug: b.slug,
+      coverImage: b.coverImage || "",
+      category: b.category || "Uncategorized",
+      createdAt: b.createdAt ? (b.createdAt instanceof Date ? b.createdAt.toISOString() : new Date(b.createdAt).toISOString()) : new Date().toISOString(),
+      readingTime: b.readingTime || "1 min read"
     }));
 
     // 📌 FIXED: পুরো settings অবজেক্টটি পাস করা হলো যাতে Social Links গুলো HomeClient এ পৌঁছায়
@@ -146,19 +164,20 @@ async function getPageData() {
       skills: formattedSkills, 
       services: formattedServices,
       testimonials: formattedTestimonials,
-      brands: formattedBrands, // 👈 নতুন যুক্ত হলো
+      brands: formattedBrands, 
+      blogs: formattedBlogs, // 👈 নতুন যুক্ত হলো
       settings: formattedSettings 
     };
 
   } catch (error) {
     console.error("Failed to fetch data:", error);
-    // 👈 error এর ক্ষেত্রে brands: [] যুক্ত হলো
-    return { projects: [], skills: [], services: [], testimonials: [], brands: [], settings: null };
+    // 👈 error এর ক্ষেত্রে blogs: [] যুক্ত হলো
+    return { projects: [], skills: [], services: [], testimonials: [], brands: [], blogs: [], settings: null };
   }
 }
 
 export default async function Home() {
-  const { projects, skills, services, testimonials, brands, settings } = await getPageData(); // 👈 brands ডিস্ট্রাকচার হলো
+  const { projects, skills, services, testimonials, brands, blogs, settings } = await getPageData(); // 👈 blogs ডিস্ট্রাকচার হলো
 
   // ডাটাগুলো ক্লায়েন্ট কম্পোনেন্টে পাস করা হচ্ছে
   return (
@@ -167,7 +186,8 @@ export default async function Home() {
       realSkills={skills} 
       services={services} 
       testimonials={testimonials} 
-      brands={brands} // 👈 HomeClient এ পাঠানো হলো
+      brands={brands} 
+      blogs={blogs} // 👈 HomeClient এ পাঠানো হলো
       settings={settings} 
     />
   );
