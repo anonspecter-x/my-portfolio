@@ -3,7 +3,7 @@
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { ArrowRight, FileText, Code2, Layout, LayoutTemplate, ChevronRight, ChevronDown, ChevronUp, ExternalLink, Quote, Star } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // 📌 সেন্ট্রালাইজড ব্র্যান্ড আইকন ম্যাপ ইম্পোর্ট করা হলো
 import { iconMap } from "@/lib/iconMap";
@@ -68,13 +68,65 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
       url: settings?.[`social_${platform.id}`]
     }));
 
-  // টেস্টিমোনিয়াল অ্যারে ডুপ্লিকেট করা হলো যেন ইনফিনিট লুপ স্ক্রল একদম পারফেক্ট হয়
-  const marqueeTestimonials = testimonials.length > 0 ? [...testimonials, ...testimonials, ...testimonials] : [];
+  // ==========================================
+  // 🚀 TESTIMONIALS LOGIC (Desktop vs Mobile)
+  // ==========================================
+  const baseTestimonials = testimonials || [];
+  const desktopTestimonials = [...baseTestimonials, ...baseTestimonials]; 
+  const mobileTestimonials = [...baseTestimonials, ...baseTestimonials, ...baseTestimonials, ...baseTestimonials]; // ৪ গুণ করা হলো ইনফিনিট লুপের জন্য
+
+  const mobileScrollerRef = useRef<HTMLDivElement>(null);
+  const [isMobileInteracting, setIsMobileInteracting] = useState(false);
+  const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // 📱 Mobile Auto-Scroll Logic
+  useEffect(() => {
+    const scroller = mobileScrollerRef.current;
+    if (!scroller || mobileTestimonials.length === 0) return;
+
+    let animationId: number;
+    const scroll = () => {
+      // যদি ইউজার টাচ না করে থাকেন, তবেই অটো স্ক্রল হবে
+      if (!isMobileInteracting) {
+        scroller.scrollLeft += 1; // স্পিড কন্ট্রোল (মান বাড়ালে স্পিড বাড়বে)
+        
+        // ইনফিনিট লুপ লজিক: অর্ধেক স্ক্রল হয়ে গেলে আবার শুরুতে চলে আসবে (স্মুথভাবে)
+        if (scroller.scrollLeft >= scroller.scrollWidth / 2) {
+          scroller.scrollLeft -= scroller.scrollWidth / 2;
+        }
+      }
+      animationId = requestAnimationFrame(scroll);
+    };
+
+    animationId = requestAnimationFrame(scroll);
+    return () => cancelAnimationFrame(animationId);
+  }, [isMobileInteracting, mobileTestimonials.length]);
+
+  // 📱 Mobile Interaction Handlers
+  const handleMobileScroll = () => {
+    setIsMobileInteracting(true);
+    if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+    scrollTimeout.current = setTimeout(() => {
+      setIsMobileInteracting(false); // স্ক্রলিং থামার ১৫০ms পর আবার অটো স্ক্রল শুরু হবে
+    }, 150);
+  };
+
+  const handleTouchStart = () => {
+    setIsMobileInteracting(true);
+    if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+  };
+
+  const handleTouchEnd = () => {
+    if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+    scrollTimeout.current = setTimeout(() => {
+      setIsMobileInteracting(false);
+    }, 150);
+  };
 
   return (
     <main className="relative min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] transition-colors duration-1000 ease-in-out selection:bg-blue-500/30 font-sans overflow-clip">
       
-      {/* 🌟 Custom CSS for Marquee Animation */}
+      {/* 🌟 Custom CSS for Desktop Marquee Animation */}
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes scroll-marquee {
           from { transform: translateX(0); }
@@ -83,9 +135,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
         .animate-marquee {
           animation: scroll-marquee 40s linear infinite;
         }
-        /* Hover or Touch active state pauses the animation */
         .pause-on-hover:hover .animate-marquee,
-        .pause-on-hover:active .animate-marquee,
         .pause-on-hover:focus-within .animate-marquee {
           animation-play-state: paused;
         }
@@ -249,35 +299,26 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
             </div>
           )}
 
-          {/* 📌 Skill Cards (Mobile Sticky Overlap Added) */}
+          {/* 📌 Skill Cards */}
           {realSkills.length > 0 && (
             <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-y-10 gap-x-6 w-full pb-[5vh] md:pb-0">
               {realSkills.map((skill, idx) => {
                 const percentage = skill.percentage;
                 const totalBlocks = 5;
                 
-                // আইকন টাইপ ডিটেকশন (Image URL নাকি SVG Key)
                 const isImageIcon = skill.icon && (skill.icon.startsWith("http") || skill.icon.startsWith("/") || skill.icon.startsWith("data:image"));
-                
-                // নাম কেস-সেন্সিটিভ ফিক্সিং (যেমন: react -> React)
                 const mappedIconKey = skill.icon ? skill.icon.charAt(0).toUpperCase() + skill.icon.slice(1) : "";
 
                 return (
                   <motion.div 
                     key={skill._id} 
                     variants={fadeUp} 
-                    // ডেক্সটপ মোডে relative করে দেওয়া হলো যাতে আইকন না হারায়
                     className="sticky md:relative w-full p-5 md:p-6 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-2xl transition-colors shadow-lg md:shadow-sm mt-4 mb-[8vh] md:mb-0 z-10"
-                    style={{ 
-                      // মোবাইলে কার্ডগুলো যেন একটির উপর আরেকটি সাজানো থাকে
-                      top: `calc(100px + ${idx * 16}px)` 
-                    }}
+                    style={{ top: `calc(100px + ${idx * 16}px)` }}
                   >
                     
-                    {/* আইকন কনটেইনারের ব্যাকগ্রাউন্ড নিউট্রাল করা হয়েছে যাতে ব্র্যান্ডের অরিজিনাল রং সুন্দর দেখায় */}
                     <div className="absolute -top-6 -left-2 bg-white dark:bg-[#0a0a0a] p-1.5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm">
                        <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-[#151515] border border-gray-200/50 dark:border-gray-800/50 flex items-center justify-center p-2">
-                         {/* 📌 DYNAMIC BRAND SKILL ICON RENDERING */}
                          {isImageIcon ? (
                            <img src={skill.icon} alt={skill.name} className="w-full h-full object-contain" />
                          ) : (
@@ -341,7 +382,6 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                    className="sticky w-full"
                    style={{ top: `calc(80px + ${idx * 24}px)` }}
                  >
-                   {/* 📌 মূল ডিভটি এখন একটি Link, যেন কার্ডের যেকোনো জায়গায় ক্লিক করা যায় */}
                    <Link 
                      href={project.link || "#"} 
                      className="block w-full bg-white dark:bg-[#0a0a0a] rounded-[2rem] md:rounded-[2.5rem] border border-gray-200 dark:border-gray-800 p-5 sm:p-6 md:p-8 lg:p-10 shadow-xl dark:shadow-[0_10px_40px_-15px_rgba(0,0,0,0.5)] mb-[10vh] md:mb-[15vh] relative group/card hover:scale-[1.01] hover:border-blue-500/40 dark:hover:border-blue-400/40 transition-all duration-300 cursor-pointer"
@@ -371,7 +411,6 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                              ))}
                           </div>
                           
-                          {/* 📌 Link কে span দিয়ে রিপ্লেস করা হয়েছে যাতে লিংকের মধ্যে লিংক না থাকে */}
                           <span className="inline-flex items-center justify-center sm:justify-start gap-2 font-bold text-sm text-white dark:text-black bg-black dark:bg-white w-full sm:w-fit px-8 py-3.5 rounded-full group/btn shadow-md">
                              View Case Study <ArrowRight className="w-4 h-4 sm:group-hover/btn:translate-x-1.5 transition-transform" />
                           </span>
@@ -414,8 +453,8 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
           )}
         </motion.section>
 
-        {/* ================= 🌟 TESTIMONIALS SECTION (Auto-Scrolling Marquee) ================= */}
-        {testimonials.length > 0 && (
+        {/* ================= 🌟 TESTIMONIALS SECTION (Marquee - Desktop vs Mobile) ================= */}
+        {baseTestimonials.length > 0 && (
           <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} className="py-20 md:py-40 border-t border-gray-200/50 dark:border-gray-800/50 overflow-hidden" id="testimonials">
             
             <div className="mb-12 md:mb-16 text-center">
@@ -427,18 +466,16 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               </motion.p>
             </div>
 
-            {/* 📌 Marquee Wrapper (with gradient mask for smooth edges) */}
-            <div className="relative w-full flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] pause-on-hover py-4">
-              
-              {/* First Half of Marquee */}
+            {/* ================= 💻 1. DESKTOP MARQUEE (CSS Animation - Unchanged) ================= */}
+            <div className="hidden md:flex relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] pause-on-hover py-4">
               <div className="flex shrink-0 animate-marquee gap-6">
-                {marqueeTestimonials.map((testimonial, idx) => (
+                {desktopTestimonials.map((testimonial, idx) => (
                   <div 
-                    key={`t1-${testimonial._id}-${idx}`} 
-                    className="w-[320px] md:w-[400px] shrink-0 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col justify-between relative group hover:border-blue-500/30 dark:hover:border-blue-400/30 transition-colors whitespace-normal text-left cursor-grab active:cursor-grabbing"
+                    key={`desktop1-${testimonial._id}-${idx}`} 
+                    className="w-[400px] shrink-0 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-3xl p-8 shadow-sm flex flex-col justify-between relative group hover:border-blue-500/30 dark:hover:border-blue-400/30 transition-colors whitespace-normal text-left"
                   >
                     <div className="absolute top-6 right-6 text-gray-100 dark:text-[#151515] group-hover:text-blue-50 dark:group-hover:text-blue-900/10 transition-colors">
-                      <Quote className="w-12 h-12 md:w-16 md:h-16" />
+                      <Quote className="w-16 h-16" />
                     </div>
                     <div className="relative z-10">
                       <div className="flex items-center gap-1 mb-5">
@@ -446,7 +483,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                           <Star key={i} className={`w-4 h-4 ${i < testimonial.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-200 dark:text-gray-800"}`} />
                         ))}
                       </div>
-                      <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 leading-relaxed font-medium mb-8 line-clamp-4">
+                      <p className="text-base text-gray-600 dark:text-gray-400 leading-relaxed font-medium mb-8 line-clamp-4">
                         "{testimonial.review}"
                       </p>
                     </div>
@@ -457,23 +494,23 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                         className="w-12 h-12 rounded-full object-cover border border-gray-200 dark:border-gray-700 shrink-0 pointer-events-none" 
                       />
                       <div>
-                        <h4 className="font-bold text-black dark:text-white text-sm md:text-base">{testimonial.name}</h4>
-                        <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">{testimonial.role}</p>
+                        <h4 className="font-bold text-black dark:text-white text-base">{testimonial.name}</h4>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{testimonial.role}</p>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
 
-              {/* Second Half of Marquee (Duplicate for seamless loop) */}
+              {/* Desktop Duplicate Loop */}
               <div aria-hidden="true" className="flex shrink-0 animate-marquee gap-6 ml-6">
-                {marqueeTestimonials.map((testimonial, idx) => (
+                {desktopTestimonials.map((testimonial, idx) => (
                   <div 
-                    key={`t2-${testimonial._id}-${idx}`} 
-                    className="w-[320px] md:w-[400px] shrink-0 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col justify-between relative group hover:border-blue-500/30 dark:hover:border-blue-400/30 transition-colors whitespace-normal text-left cursor-grab active:cursor-grabbing"
+                    key={`desktop2-${testimonial._id}-${idx}`} 
+                    className="w-[400px] shrink-0 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-3xl p-8 shadow-sm flex flex-col justify-between relative group hover:border-blue-500/30 dark:hover:border-blue-400/30 transition-colors whitespace-normal text-left"
                   >
                     <div className="absolute top-6 right-6 text-gray-100 dark:text-[#151515] group-hover:text-blue-50 dark:group-hover:text-blue-900/10 transition-colors">
-                      <Quote className="w-12 h-12 md:w-16 md:h-16" />
+                      <Quote className="w-16 h-16" />
                     </div>
                     <div className="relative z-10">
                       <div className="flex items-center gap-1 mb-5">
@@ -481,7 +518,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                           <Star key={i} className={`w-4 h-4 ${i < testimonial.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-200 dark:text-gray-800"}`} />
                         ))}
                       </div>
-                      <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 leading-relaxed font-medium mb-8 line-clamp-4">
+                      <p className="text-base text-gray-600 dark:text-gray-400 leading-relaxed font-medium mb-8 line-clamp-4">
                         "{testimonial.review}"
                       </p>
                     </div>
@@ -492,15 +529,56 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                         className="w-12 h-12 rounded-full object-cover border border-gray-200 dark:border-gray-700 shrink-0 pointer-events-none" 
                       />
                       <div>
-                        <h4 className="font-bold text-black dark:text-white text-sm md:text-base">{testimonial.name}</h4>
-                        <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">{testimonial.role}</p>
+                        <h4 className="font-bold text-black dark:text-white text-base">{testimonial.name}</h4>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{testimonial.role}</p>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
-
             </div>
+
+            {/* ================= 📱 2. MOBILE MARQUEE (Native Drag + Auto Scroll) ================= */}
+            <div 
+              ref={mobileScrollerRef}
+              onScroll={handleMobileScroll}
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
+              className="flex md:hidden relative w-full overflow-x-auto [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)] py-4 gap-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            >
+              {mobileTestimonials.map((testimonial, idx) => (
+                <div 
+                  key={`mobile-${testimonial._id}-${idx}`} 
+                  className="w-[300px] shrink-0 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-3xl p-6 shadow-sm flex flex-col justify-between relative whitespace-normal text-left"
+                >
+                  <div className="absolute top-6 right-6 text-gray-100 dark:text-[#151515] transition-colors">
+                    <Quote className="w-12 h-12" />
+                  </div>
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-1 mb-5">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className={`w-3.5 h-3.5 ${i < testimonial.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-200 dark:text-gray-800"}`} />
+                      ))}
+                    </div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed font-medium mb-8 line-clamp-4">
+                      "{testimonial.review}"
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4 mt-auto relative z-10 pt-5 border-t border-gray-100 dark:border-gray-800/80">
+                    <img 
+                      src={testimonial.photoUrl || "https://via.placeholder.com/150"} 
+                      alt={testimonial.name} 
+                      className="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-gray-700 shrink-0 pointer-events-none" 
+                    />
+                    <div>
+                      <h4 className="font-bold text-black dark:text-white text-sm">{testimonial.name}</h4>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{testimonial.role}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
           </motion.section>
         )}
 
