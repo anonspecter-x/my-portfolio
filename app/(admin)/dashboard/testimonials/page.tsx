@@ -14,9 +14,15 @@ async function getTestimonials(): Promise<TestimonialType[]> {
   
   await client.close();
   
+  // 📌 🛠️ ফিক্স: স্প্রেড অপারেটর (...t) এর বদলে ম্যানুয়ালি প্রোপার্টিগুলো ম্যাপ করা হলো
   return testimonials.map((t) => ({ 
-    ...t, 
-    _id: t._id.toString() 
+    _id: t._id.toString(),
+    name: t.name,
+    role: t.role,
+    review: t.review,
+    rating: t.rating,
+    priority: t.priority,
+    photoUrl: t.photoUrl
   })) as TestimonialType[];
 }
 
