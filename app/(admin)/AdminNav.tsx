@@ -2,7 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Briefcase, MessageSquare, Settings, Zap, BookOpen } from "lucide-react";
+import { 
+  LayoutDashboard, 
+  Briefcase, 
+  MessageSquare, 
+  Settings, 
+  Zap, 
+  BookOpen, 
+  MessageSquareQuote // 📌 নতুন আইকন ইমপোর্ট করা হলো
+} from "lucide-react";
 
 export default function AdminNav() {
   const pathname = usePathname();
@@ -13,6 +21,7 @@ export default function AdminNav() {
     { name: "Projects", href: "/dashboard/projects", icon: Briefcase },
     { name: "Skills", href: "/dashboard/skills", icon: Zap },
     { name: "Blog", href: "/dashboard/blog", icon: BookOpen },
+    { name: "Testimonials", href: "/dashboard/testimonials", icon: MessageSquareQuote }, // 📌 নতুন লিংক যোগ করা হলো
     { name: "Inbox", href: "/dashboard/messages", icon: MessageSquare },
     { name: "Settings", href: "/dashboard/settings", icon: Settings },
   ];

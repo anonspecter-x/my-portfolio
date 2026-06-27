@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 
 // ==========================================
 // 🔒 SECURITY CHECK: Environment Variables
@@ -57,5 +57,30 @@ export async function uploadFileToR2(file: File, folder: string = "uploads"): Pr
   } catch (error) {
     console.error("R2 Upload Error:", error);
     throw new Error("Failed to upload file to Cloudflare storage.");
+  }
+}
+
+// ==========================================
+// 🗑️ SECURE DELETE FUNCTION
+// ==========================================
+export async function deleteFileFromR2(fileUrl: string): Promise<void> {
+  try {
+    if (!fileUrl) return;
+
+    // URL থেকে ফাইলের Key (path) বের করা
+    // যেমন: https://cdn.domain.com/testimonials/123.jpg থেকে "testimonials/123.jpg" এক্সট্রাক্ট করা
+    const url = new URL(fileUrl);
+    const fileKey = decodeURIComponent(url.pathname.substring(1));
+
+    const command = new DeleteObjectCommand({
+      Bucket: bucketName,
+      Key: fileKey,
+    });
+
+    await r2Client.send(command);
+    console.log(`Successfully deleted from R2: ${fileKey}`);
+  } catch (error) {
+    console.error("R2 Delete Error:", error);
+    throw new Error("Failed to delete file from Cloudflare storage.");
   }
 }
