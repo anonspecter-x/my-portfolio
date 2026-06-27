@@ -88,9 +88,9 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
     const scroll = () => {
       // যদি ইউজার টাচ না করে থাকেন, তবেই অটো স্ক্রল হবে
       if (!isMobileInteracting) {
-        scroller.scrollLeft += 1; // স্পিড কন্ট্রোল (মান বাড়ালে স্পিড বাড়বে)
+        scroller.scrollLeft += 1; // স্পিড কন্ট্রোল (মান বাড়ালে স্পিড বাড়বে)
         
-        // ইনফিনিট লুপ লজিক: অর্ধেক স্ক্রল হয়ে গেলে আবার শুরুতে চলে আসবে (স্মুথভাবে)
+        // ইনফিনিট লুপ লজিক: অর্ধেক স্ক্রল হয়ে গেলে আবার শুরুতে চলে আসবে (স্মুথভাবে)
         if (scroller.scrollLeft >= scroller.scrollWidth / 2) {
           scroller.scrollLeft -= scroller.scrollWidth / 2;
         }
@@ -103,14 +103,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
   }, [isMobileInteracting, mobileTestimonials.length]);
 
   // 📱 Mobile Interaction Handlers
-  const handleMobileScroll = () => {
-    setIsMobileInteracting(true);
-    if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-    scrollTimeout.current = setTimeout(() => {
-      setIsMobileInteracting(false); // স্ক্রলিং থামার ১৫০ms পর আবার অটো স্ক্রল শুরু হবে
-    }, 150);
-  };
-
+  // onScroll ইভেন্টটি বাদ দেওয়া হয়েছে কারণ JS স্ক্রল করলে সেটি onScroll ফায়ার করে বাগ তৈরি করছিল।
   const handleTouchStart = () => {
     setIsMobileInteracting(true);
     if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
@@ -118,9 +111,10 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
 
   const handleTouchEnd = () => {
     if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+    // স্ক্রলিং থামার ৮০০ms পর আবার অটো স্ক্রল শুরু হবে যাতে মোমেন্টাম স্ক্রল শেষ হতে পারে
     scrollTimeout.current = setTimeout(() => {
       setIsMobileInteracting(false);
-    }, 150);
+    }, 800);
   };
 
   return (
@@ -246,7 +240,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
             <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 text-black dark:text-white">
               Skills And Experience
             </motion.h2>
-            <motion.div variants={fadeUp} className="h-1 w-16 bg-blue-600 dark:bg-blue-500 mx-auto rounded-full mb-6"></motion.div>
+            <motion.div variants={fadeUp} className="h-1 w-16 bg-blue-600 dark:bg-blue-50 mx-auto rounded-full mb-6"></motion.div>
             <motion.p variants={fadeUp} className="text-sm md:text-base text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
               Web developer skilled in MERN stack and Next.js, specializing in dynamic websites and custom solutions.
             </motion.p>
@@ -541,7 +535,6 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
             {/* ================= 📱 2. MOBILE MARQUEE (Native Drag + Auto Scroll) ================= */}
             <div 
               ref={mobileScrollerRef}
-              onScroll={handleMobileScroll}
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
               className="flex md:hidden relative w-full overflow-x-auto [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)] py-4 gap-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
