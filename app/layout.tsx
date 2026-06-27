@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Montserrat } from "next/font/google"; // 📌 ফন্ট পরিবর্তন করে Montserrat করা হলো
 import { MongoClient } from "mongodb";
-import NextTopLoader from "nextjs-toploader"; // 📌 প্যাকেজটি ইমপোর্ট করা হলো
+import NextTopLoader from "nextjs-toploader"; 
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+// 📌 Montserrat ফন্ট কনফিগারেশন (display: 'swap' দিলে ফন্ট লোড হতে কোনো সমস্যা হবে না)
+const montserrat = Montserrat({ 
+  subsets: ["latin"], 
+  weight: ["300", "400", "500", "600", "700", "800"], // আপনার প্রয়োজন অনুযায়ী ওয়েট দেওয়া হলো
+  display: 'swap',
+  variable: '--font-montserrat', // টেইলউইন্ডের জন্য ভেরিয়েবল
+});
 
 // 📌 ডাটাবেজ থেকে গ্লোবাল সেটিংস (Favicon) আনার ফাংশন
 async function getGlobalSettings() {
@@ -49,19 +55,23 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-theme="light" suppressHydrationWarning data-scroll-behavior="smooth">
-      <body suppressHydrationWarning className={`${inter.className} antialiased bg-[#fafafa] dark:bg-[#030303] text-black dark:text-white transition-colors duration-500`}>
+      <body 
+        suppressHydrationWarning 
+        // 📌 montserrat.className ব্যবহার করে পুরো সাইটে ফন্ট অ্যাপ্লাই করা হলো
+        className={`${montserrat.className} ${montserrat.variable} antialiased bg-[#fafafa] dark:bg-[#030303] text-black dark:text-white transition-colors duration-500`}
+      >
         
         {/* 📌 প্রফেশনাল গ্লোবাল টপ লোডার */}
         <NextTopLoader
-          color="#2563eb" // আপনার প্রোজেক্টের blue-600 থিমের সাথে মিল রেখে
+          color="#2563eb"
           initialPosition={0.08}
           crawlSpeed={200}
           height={3}
           crawl={true}
-          showSpinner={false} // ডানপাশের স্পিনার অফ করা হয়েছে ক্লিন লুকের জন্য
+          showSpinner={false} 
           easing="ease"
           speed={200}
-          shadow="0 0 10px #2563eb,0 0 5px #2563eb" // সুন্দর গ্লো ইফেক্ট
+          shadow="0 0 10px #2563eb,0 0 5px #2563eb" 
           zIndex={1600}
           showAtBottom={false}
         />
