@@ -228,10 +228,10 @@ export default function HomeClient({ realProjects, realSkills, services = [], se
             </div>
           )}
 
-          {/* 📌 Skill Cards */}
+          {/* 📌 Skill Cards (Mobile Sticky Overlap Added) */}
           {realSkills.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-10 gap-x-6">
-              {realSkills.map((skill) => {
+            <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-y-10 gap-x-6 w-full pb-[5vh] md:pb-0">
+              {realSkills.map((skill, idx) => {
                 const percentage = skill.percentage;
                 const totalBlocks = 5;
                 
@@ -242,9 +242,18 @@ export default function HomeClient({ realProjects, realSkills, services = [], se
                 const mappedIconKey = skill.icon ? skill.icon.charAt(0).toUpperCase() + skill.icon.slice(1) : "";
 
                 return (
-                  <motion.div key={skill._id} variants={fadeUp} className="relative p-5 md:p-6 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-2xl transition-colors shadow-sm mt-4">
+                  <motion.div 
+                    key={skill._id} 
+                    variants={fadeUp} 
+                    // মোবাইল মোডে স্টিকি থাকবে এবং মার্জিন বটম এর কারণে স্ক্রল স্পেস পাবে
+                    className="sticky md:static w-full relative p-5 md:p-6 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-2xl transition-colors shadow-lg md:shadow-sm mt-4 mb-[8vh] md:mb-0 z-10"
+                    style={{ 
+                      // মোবাইলে কার্ডগুলো যেন একটির উপর আরেকটি সাজানো থাকে
+                      top: `calc(100px + ${idx * 16}px)` 
+                    }}
+                  >
                     
-                    {/* আইকন কনটেইনারের ব্যাকগ্রাউন্ড নিউট্রাল করা হয়েছে যাতে ব্র্যান্ডের অরিজিনাল রং সুন্দর দেখায় */}
+                    {/* আইকন কনটেইনারের ব্যাকগ্রাউন্ড নিউট্রাল করা হয়েছে যাতে ব্র্যান্ডের অরিজিনাল রং সুন্দর দেখায় */}
                     <div className="absolute -top-6 -left-2 bg-white dark:bg-[#0a0a0a] p-1.5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm">
                        <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-[#151515] border border-gray-200/50 dark:border-gray-800/50 flex items-center justify-center p-2">
                          {/* 📌 DYNAMIC BRAND SKILL ICON RENDERING */}
@@ -311,55 +320,60 @@ export default function HomeClient({ realProjects, realSkills, services = [], se
                    className="sticky w-full"
                    style={{ top: `calc(80px + ${idx * 24}px)` }}
                  >
-                   <div className="w-full bg-white dark:bg-[#0a0a0a] rounded-[2rem] md:rounded-[2.5rem] border border-gray-200 dark:border-gray-800 p-5 sm:p-6 md:p-8 lg:p-10 flex flex-col lg:flex-row items-center gap-8 lg:gap-12 shadow-xl dark:shadow-[0_10px_40px_-15px_rgba(0,0,0,0.5)] mb-[10vh] md:mb-[15vh] relative group/card">
-                     
-                     {/* 📝 Content Side (Left) */}
-                     <div className="w-full lg:w-1/2 flex flex-col justify-center order-2 lg:order-1 text-left">
-                        <div className="flex items-center gap-3 mb-4 md:mb-6">
-                           <span className="font-mono text-[10px] md:text-xs tracking-[0.2em] text-blue-600 dark:text-blue-400 uppercase font-bold bg-blue-50 dark:bg-blue-900/20 px-3 py-1.5 rounded-md">
-                             Project {(idx + 1).toString().padStart(2, '0')}
-                           </span>
-                        </div>
-                        
-                        <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4 md:mb-6 text-black dark:text-white group-hover/card:text-blue-600 dark:group-hover/card:text-blue-400 transition-colors">
-                           {project.title}
-                        </h3>
-                        
-                        <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 mb-8 md:mb-10 leading-relaxed font-medium line-clamp-3">
-                           {project.description}
-                        </p>
-                        
-                        <div className="flex flex-wrap gap-2 mb-8 md:mb-10">
-                           {project.tech.map((t: string, i: number) => (
-                              <span key={i} className="text-[10px] md:text-xs font-semibold px-3 py-1.5 bg-gray-100 dark:bg-[#151515] text-gray-700 dark:text-gray-300 rounded-lg border border-gray-200 dark:border-gray-800">
-                                {t}
-                              </span>
-                           ))}
-                        </div>
-                        
-                        <Link href={project.link} className="inline-flex items-center justify-center sm:justify-start gap-2 font-bold text-sm text-white dark:text-black bg-black dark:bg-white hover:opacity-80 transition-opacity w-full sm:w-fit px-8 py-3.5 rounded-full group/btn shadow-md">
-                           View Case Study <ArrowRight className="w-4 h-4 sm:group-hover/btn:translate-x-1.5 transition-transform" />
-                        </Link>
-                     </div>
-
-                     {/* 🖼️ Image Side (Right) */}
-                     <div className="w-full lg:w-1/2 relative aspect-[4/3] md:aspect-[16/10] lg:aspect-[4/3] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden bg-gray-50 dark:bg-[#111] border border-gray-200/80 dark:border-gray-800/80 order-1 lg:order-2 shrink-0">
-                       {project.image ? (
-                          <img src={project.image} alt={project.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-105" />
-                       ) : (
-                          <div className="absolute inset-0 w-full h-full flex flex-col items-center justify-center font-mono text-xs text-gray-400">
-                            <LayoutTemplate className="w-10 h-10 mb-3 opacity-50" />
-                            [ Project Interface ]
+                   {/* 📌 মূল ডিভটি এখন একটি Link, যেন কার্ডের যেকোনো জায়গায় ক্লিক করা যায় */}
+                   <Link 
+                     href={project.link || "#"} 
+                     className="block w-full bg-white dark:bg-[#0a0a0a] rounded-[2rem] md:rounded-[2.5rem] border border-gray-200 dark:border-gray-800 p-5 sm:p-6 md:p-8 lg:p-10 shadow-xl dark:shadow-[0_10px_40px_-15px_rgba(0,0,0,0.5)] mb-[10vh] md:mb-[15vh] relative group/card hover:scale-[1.01] hover:border-blue-500/40 dark:hover:border-blue-400/40 transition-all duration-300 cursor-pointer"
+                   >
+                     <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 w-full">
+                       {/* 📝 Content Side (Left) */}
+                       <div className="w-full lg:w-1/2 flex flex-col justify-center order-2 lg:order-1 text-left">
+                          <div className="flex items-center gap-3 mb-4 md:mb-6">
+                             <span className="font-mono text-[10px] md:text-xs tracking-[0.2em] text-blue-600 dark:text-blue-400 uppercase font-bold bg-blue-50 dark:bg-blue-900/20 px-3 py-1.5 rounded-md">
+                               Project {(idx + 1).toString().padStart(2, '0')}
+                             </span>
                           </div>
-                       )}
-                       
-                       {/* External Link Icon */}
-                       <div className="absolute top-4 right-4 md:top-6 md:right-6 bg-white/90 dark:bg-black/90 backdrop-blur-md w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center border border-gray-200 dark:border-gray-800 opacity-0 group-hover/card:opacity-100 transition-all translate-y-4 group-hover/card:translate-y-0 duration-500 z-20 shadow-sm">
-                         <ExternalLink className="w-4 h-4 md:w-5 md:h-5 text-black dark:text-white" />
+                          
+                          <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4 md:mb-6 text-black dark:text-white group-hover/card:text-blue-600 dark:group-hover/card:text-blue-400 transition-colors">
+                             {project.title}
+                          </h3>
+                          
+                          <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 mb-8 md:mb-10 leading-relaxed font-medium line-clamp-3">
+                             {project.description}
+                          </p>
+                          
+                          <div className="flex flex-wrap gap-2 mb-8 md:mb-10">
+                             {project.tech.map((t: string, i: number) => (
+                                <span key={i} className="text-[10px] md:text-xs font-semibold px-3 py-1.5 bg-gray-100 dark:bg-[#151515] text-gray-700 dark:text-gray-300 rounded-lg border border-gray-200 dark:border-gray-800">
+                                  {t}
+                                </span>
+                             ))}
+                          </div>
+                          
+                          {/* 📌 Link কে span দিয়ে রিপ্লেস করা হয়েছে যাতে লিংকের মধ্যে লিংক না থাকে */}
+                          <span className="inline-flex items-center justify-center sm:justify-start gap-2 font-bold text-sm text-white dark:text-black bg-black dark:bg-white w-full sm:w-fit px-8 py-3.5 rounded-full group/btn shadow-md">
+                             View Case Study <ArrowRight className="w-4 h-4 sm:group-hover/btn:translate-x-1.5 transition-transform" />
+                          </span>
+                       </div>
+
+                       {/* 🖼️ Image Side (Right) */}
+                       <div className="w-full lg:w-1/2 relative aspect-[4/3] md:aspect-[16/10] lg:aspect-[4/3] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden bg-gray-50 dark:bg-[#111] border border-gray-200/80 dark:border-gray-800/80 order-1 lg:order-2 shrink-0">
+                         {project.image ? (
+                            <img src={project.image} alt={project.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-105" />
+                         ) : (
+                            <div className="absolute inset-0 w-full h-full flex flex-col items-center justify-center font-mono text-xs text-gray-400">
+                              <LayoutTemplate className="w-10 h-10 mb-3 opacity-50" />
+                              [ Project Interface ]
+                            </div>
+                         )}
+                         
+                         {/* External Link Icon */}
+                         <div className="absolute top-4 right-4 md:top-6 md:right-6 bg-white/90 dark:bg-black/90 backdrop-blur-md w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center border border-gray-200 dark:border-gray-800 opacity-0 group-hover/card:opacity-100 transition-all translate-y-4 group-hover/card:translate-y-0 duration-500 z-20 shadow-sm">
+                           <ExternalLink className="w-4 h-4 md:w-5 md:h-5 text-black dark:text-white" />
+                         </div>
                        </div>
                      </div>
-
-                   </div>
+                   </Link>
                  </div>
                ))
              ) : (
