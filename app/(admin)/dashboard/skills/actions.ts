@@ -124,7 +124,7 @@ export async function deleteService(id: string) {
 }
 
 // ==========================================
-// 🏆 TRUSTED BRANDS ACTIONS (NEW)
+// 🏆 TRUSTED BRANDS ACTIONS
 // ==========================================
 
 export async function saveBrand(formData: FormData) {

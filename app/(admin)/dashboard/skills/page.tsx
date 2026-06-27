@@ -41,24 +41,44 @@ async function getServices() {
   }
 }
 
+// 📌 Fetch Trusted Brands Data
+async function getBrands() {
+  const client = await MongoClient.connect(process.env.MONGODB_URI as string);
+  try {
+    const db = client.db();
+    // order অনুযায়ী ছোট থেকে বড় সাজানো হবে (যেমন: ১, ২, ৩...)
+    const brands = await db.collection("brands").find({}).sort({ order: 1 }).toArray();
+    
+    return brands.map(brand => ({
+      _id: brand._id.toString(),
+      name: String(brand.name || ""),
+      logo: String(brand.logo || ""),
+      order: Number(brand.order || 0)
+    }));
+  } finally {
+    await client.close();
+  }
+}
+
 export default async function SkillsPage() {
   const skills = await getSkills();
   const services = await getServices();
+  const brands = await getBrands();
 
   return (
     <div className="space-y-10 max-w-6xl">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-black dark:text-white flex items-center gap-3">
-          <Zap className="w-8 h-8 text-blue-500" /> Skills & Experience
+          <Zap className="w-8 h-8 text-blue-500" /> Skills, Experience & Brands
         </h1>
         <p className="text-gray-500 dark:text-gray-400 mt-1">
-          Manage your technical skills and experience dropdowns for the homepage.
+          Manage your technical skills, experience dropdowns, and trusted brand logos for the homepage.
         </p>
       </div>
 
       {/* Client Component */}
-      <SkillsClient skills={skills} services={services} />
+      <SkillsClient skills={skills} services={services} brands={brands} />
     </div>
   );
 }
