@@ -1,7 +1,11 @@
 "use client";
 
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { ArrowRight, FileText, Code2, Layout, LayoutTemplate, ChevronRight, ChevronDown, ChevronUp, ExternalLink, Quote, Star } from "lucide-react";
+import { 
+  ArrowRight, FileText, Code2, Layout, LayoutTemplate, 
+  ChevronRight, ChevronDown, ChevronUp, ExternalLink, 
+  Quote, Star, Lightbulb, PenTool, Rocket, PhoneCall 
+} from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 
@@ -40,10 +44,11 @@ interface HomeClientProps {
   realSkills: any[];
   services?: any[];
   testimonials?: any[];
+  brands?: any[]; // 📌 নতুন যুক্ত করা হলো
   settings: any; 
 }
 
-export default function HomeClient({ realProjects, realSkills, services = [], testimonials = [], settings }: HomeClientProps) {
+export default function HomeClient({ realProjects, realSkills, services = [], testimonials = [], brands = [], settings }: HomeClientProps) {
   const { scrollYProgress } = useScroll();
   const yBackground = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
   const rotateBackground = useTransform(scrollYProgress, [0, 1], [0, 45]);
@@ -73,24 +78,21 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
   // ==========================================
   const baseTestimonials = testimonials || [];
   const desktopTestimonials = [...baseTestimonials, ...baseTestimonials]; 
-  const mobileTestimonials = [...baseTestimonials, ...baseTestimonials, ...baseTestimonials, ...baseTestimonials]; // ৪ গুণ করা হলো ইনফিনিট লুপের জন্য
+  const mobileTestimonials = [...baseTestimonials, ...baseTestimonials, ...baseTestimonials, ...baseTestimonials];
 
   const mobileScrollerRef = useRef<HTMLDivElement>(null);
   const [isMobileInteracting, setIsMobileInteracting] = useState(false);
   const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // 📱 Mobile Auto-Scroll Logic
+  // 📱 Mobile Auto-Scroll Logic (Testimonials)
   useEffect(() => {
     const scroller = mobileScrollerRef.current;
     if (!scroller || mobileTestimonials.length === 0) return;
 
     let animationId: number;
     const scroll = () => {
-      // যদি ইউজার টাচ না করে থাকেন, তবেই অটো স্ক্রল হবে
       if (!isMobileInteracting) {
-        scroller.scrollLeft += 1; // স্পিড কন্ট্রোল (মান বাড়ালে স্পিড বাড়বে)
-        
-        // ইনফিনিট লুপ লজিক: অর্ধেক স্ক্রল হয়ে গেলে আবার শুরুতে চলে আসবে (স্মুথভাবে)
+        scroller.scrollLeft += 1; 
         if (scroller.scrollLeft >= scroller.scrollWidth / 2) {
           scroller.scrollLeft -= scroller.scrollWidth / 2;
         }
@@ -102,8 +104,6 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
     return () => cancelAnimationFrame(animationId);
   }, [isMobileInteracting, mobileTestimonials.length]);
 
-  // 📱 Mobile Interaction Handlers
-  // onScroll ইভেন্টটি বাদ দেওয়া হয়েছে কারণ JS স্ক্রল করলে সেটি onScroll ফায়ার করে বাগ তৈরি করছিল।
   const handleTouchStart = () => {
     setIsMobileInteracting(true);
     if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
@@ -111,26 +111,37 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
 
   const handleTouchEnd = () => {
     if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-    // স্ক্রলিং থামার ৮০০ms পর আবার অটো স্ক্রল শুরু হবে যাতে মোমেন্টাম স্ক্রল শেষ হতে পারে
     scrollTimeout.current = setTimeout(() => {
       setIsMobileInteracting(false);
     }, 800);
   };
 
+  // 📌 Duplicate Brands for Marquee effect
+  const displayBrands = [...brands, ...brands, ...brands];
+
   return (
     <main className="relative min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] transition-colors duration-1000 ease-in-out selection:bg-blue-500/30 font-sans overflow-clip">
       
-      {/* 🌟 Custom CSS for Desktop Marquee Animation */}
+      {/* 🌟 Custom CSS for Marquee Animations */}
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes scroll-marquee {
           from { transform: translateX(0); }
-          to { transform: translateX(calc(-100% - 1.5rem)); } /* 1.5rem is for gap-6 */
+          to { transform: translateX(calc(-100% - 1.5rem)); } /* 1.5rem for gap-6 */
+        }
+        @keyframes scroll-brand-marquee {
+          from { transform: translateX(0); }
+          to { transform: translateX(calc(-100% - 3rem)); } /* 3rem for gap-12 */
         }
         .animate-marquee {
           animation: scroll-marquee 40s linear infinite;
         }
+        .animate-brand-marquee {
+          animation: scroll-brand-marquee 30s linear infinite;
+        }
         .pause-on-hover:hover .animate-marquee,
-        .pause-on-hover:focus-within .animate-marquee {
+        .pause-on-hover:focus-within .animate-marquee,
+        .pause-on-hover:hover .animate-brand-marquee,
+        .pause-on-hover:focus-within .animate-brand-marquee {
           animation-play-state: paused;
         }
       `}} />
@@ -195,6 +206,44 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
           </motion.div>
         </motion.section>
 
+        {/* ================= TRUSTED BRANDS SECTION (NEW) ================= */}
+        {brands.length > 0 && (
+          <motion.section 
+            initial={{ opacity: 0 }} 
+            whileInView={{ opacity: 1 }} 
+            viewport={{ once: true }} 
+            className="py-10 md:py-16 border-t border-gray-200/50 dark:border-gray-800/50 overflow-hidden flex flex-col items-center justify-center"
+          >
+            <p className="text-xs md:text-sm font-medium text-gray-400 uppercase tracking-widest mb-8 text-center">
+              Trusted by Innovative Companies
+            </p>
+            <div className="relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] pause-on-hover flex">
+              <div className="flex shrink-0 animate-brand-marquee gap-12 md:gap-20 items-center px-6">
+                {displayBrands.map((brand, idx) => (
+                  <div key={`brand1-${idx}`} className="shrink-0 flex items-center justify-center w-24 md:w-36 h-12 md:h-16">
+                    <img 
+                      src={brand.logo} 
+                      alt={brand.name} 
+                      className="max-h-full max-w-full object-contain grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300 filter dark:brightness-200 hover:dark:brightness-100" 
+                    />
+                  </div>
+                ))}
+              </div>
+              <div aria-hidden="true" className="flex shrink-0 animate-brand-marquee gap-12 md:gap-20 items-center px-6">
+                {displayBrands.map((brand, idx) => (
+                  <div key={`brand2-${idx}`} className="shrink-0 flex items-center justify-center w-24 md:w-36 h-12 md:h-16">
+                    <img 
+                      src={brand.logo} 
+                      alt={brand.name} 
+                      className="max-h-full max-w-full object-contain grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300 filter dark:brightness-200 hover:dark:brightness-100" 
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.section>
+        )}
+
         {/* ================= ABOUT SECTION ================= */}
         <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} className="py-20 md:py-40 border-t border-gray-200/50 dark:border-gray-800/50" id="about">
            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-24 items-center">
@@ -240,7 +289,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
             <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 text-black dark:text-white">
               Skills And Experience
             </motion.h2>
-            <motion.div variants={fadeUp} className="h-1 w-16 bg-blue-600 dark:bg-blue-50 mx-auto rounded-full mb-6"></motion.div>
+            <motion.div variants={fadeUp} className="h-1 w-16 bg-blue-600 dark:bg-blue-500 mx-auto rounded-full mb-6"></motion.div>
             <motion.p variants={fadeUp} className="text-sm md:text-base text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
               Web developer skilled in MERN stack and Next.js, specializing in dynamic websites and custom solutions.
             </motion.p>
@@ -359,6 +408,64 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
           )}
         </motion.section>
 
+        {/* ================= WORKING PROCESS SECTION (NEW) ================= */}
+        <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} className="py-20 md:py-32 border-t border-gray-200/50 dark:border-gray-800/50" id="process">
+          <div className="text-center mb-16 md:mb-20">
+            <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 text-black dark:text-white">
+              Working Process
+            </motion.h2>
+            <motion.div variants={fadeUp} className="h-1 w-16 bg-blue-600 dark:bg-blue-500 mx-auto rounded-full mb-6"></motion.div>
+            <motion.p variants={fadeUp} className="text-sm md:text-base text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
+              A transparent, step-by-step approach to ensure your project is delivered successfully from concept to deployment.
+            </motion.p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 relative">
+            {/* Connecting Line for Desktop */}
+            <div className="hidden lg:block absolute top-12 left-[10%] right-[10%] h-[2px] bg-gray-200 dark:bg-gray-800 z-0"></div>
+
+            <motion.div variants={fadeUp} className="relative z-10 flex flex-col items-center text-center group">
+              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#111] border border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 transition-colors duration-300">
+                <Lightbulb className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+              </div>
+              <h3 className="text-lg font-bold text-black dark:text-white mb-3">1. Discovery & Planning</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed px-2">
+                Understanding your core requirements, target audience, and business goals to outline a solid technical roadmap.
+              </p>
+            </motion.div>
+
+            <motion.div variants={fadeUp} className="relative z-10 flex flex-col items-center text-center group">
+              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#111] border border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 transition-colors duration-300">
+                <PenTool className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+              </div>
+              <h3 className="text-lg font-bold text-black dark:text-white mb-3">2. UI/UX & SEO Strategy</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed px-2">
+                Crafting intuitive wireframes and designs with a strong foundation in technical SEO, ensuring your site is built to rank and convert.
+              </p>
+            </motion.div>
+
+            <motion.div variants={fadeUp} className="relative z-10 flex flex-col items-center text-center group">
+              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#111] border border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 transition-colors duration-300">
+                <Code2 className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+              </div>
+              <h3 className="text-lg font-bold text-black dark:text-white mb-3">3. Development</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed px-2">
+                Writing clean, scalable, and highly optimized code utilizing modern frameworks like the MERN Stack and Next.js.
+              </p>
+            </motion.div>
+
+            <motion.div variants={fadeUp} className="relative z-10 flex flex-col items-center text-center group">
+              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#111] border border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 transition-colors duration-300">
+                <Rocket className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+              </div>
+              <h3 className="text-lg font-bold text-black dark:text-white mb-3">4. Testing & Launch</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed px-2">
+                Conducting rigorous quality assurance, bug fixing, and performance tuning before a seamless and secure deployment.
+              </p>
+            </motion.div>
+          </div>
+        </motion.section>
+
         {/* ================= 🚀 REDESIGNED CLEAN PROJECTS SECTION ================= */}
         <motion.section className="py-20 md:py-40 border-t border-gray-200/50 dark:border-gray-800/50" id="projects">
           <div className="mb-16 md:mb-24 text-center md:text-left">
@@ -460,7 +567,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               </motion.p>
             </div>
 
-            {/* ================= 💻 1. DESKTOP MARQUEE (CSS Animation - Unchanged) ================= */}
+            {/* ================= 💻 1. DESKTOP MARQUEE ================= */}
             <div className="hidden md:flex relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] pause-on-hover py-4">
               <div className="flex shrink-0 animate-marquee gap-6">
                 {desktopTestimonials.map((testimonial, idx) => (
@@ -532,7 +639,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               </div>
             </div>
 
-            {/* ================= 📱 2. MOBILE MARQUEE (Native Drag + Auto Scroll) ================= */}
+            {/* ================= 📱 2. MOBILE MARQUEE ================= */}
             <div 
               ref={mobileScrollerRef}
               onTouchStart={handleTouchStart}
@@ -574,6 +681,29 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
 
           </motion.section>
         )}
+
+        {/* ================= CALL TO ACTION (CTA) SECTION (NEW) ================= */}
+        <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeUp} className="py-20 md:py-32" id="cta">
+          <div className="w-full bg-blue-600 dark:bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-10 md:p-20 text-center relative overflow-hidden shadow-2xl">
+            {/* Background Decorative Elements */}
+            <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-white opacity-10 rounded-full blur-2xl"></div>
+            <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-black opacity-10 rounded-full blur-2xl"></div>
+            
+            <div className="relative z-10 max-w-3xl mx-auto">
+              <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight leading-tight">
+                Have an awesome project in mind? <br className="hidden md:block" /> Let's build something amazing together!
+              </h2>
+              <p className="text-blue-100 md:text-lg mb-10 max-w-xl mx-auto">
+                Ready to take your digital presence to the next level? Get in touch today and let's discuss how we can turn your vision into reality.
+              </p>
+              
+              <Link href="/contact" className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-blue-600 hover:bg-gray-50 hover:scale-105 active:scale-95 transition-all duration-300 font-bold text-sm md:text-base rounded-full shadow-lg">
+                <PhoneCall className="w-5 h-5" />
+                Book a Call
+              </Link>
+            </div>
+          </div>
+        </motion.section>
 
       </div>
     </main>
