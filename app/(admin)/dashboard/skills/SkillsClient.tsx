@@ -170,18 +170,65 @@ export default function SkillsClient({
               <div className="space-y-1.5">
                 <label className="text-xs font-bold uppercase tracking-wider text-gray-400">Select Icon</label>
                 <select name="icon" required defaultValue={editSkill?.icon || "React"} key={editSkill?._id + 'icon'} className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-2.5 outline-none focus:border-blue-500 transition-colors cursor-pointer appearance-none">
-                  <option value="React">React.js</option>
-                  <option value="NextJS">Next.js</option>
-                  <option value="Tailwind">Tailwind CSS</option>
-                  <option value="JavaScript">JavaScript</option>
-                  <option value="TypeScript">TypeScript</option>
-                  <option value="NodeJS">Node.js</option>
-                  <option value="Express">Express.js</option>
-                  <option value="MongoDB">MongoDB</option>
-                  <option value="Firebase">Firebase Auth</option>
-                  <option value="Figma">Figma</option>
-                  <option value="Git">GIT</option>
-                  <option value="WordPress">WordPress</option>
+                  {/* Web Fundamentals */}
+                  <optgroup label="Fundamentals">
+                    <option value="HTML5">HTML5</option>
+                    <option value="CSS3">CSS3</option>
+                    <option value="Sass">Sass</option>
+                    <option value="JavaScript">JavaScript</option>
+                    <option value="TypeScript">TypeScript</option>
+                  </optgroup>
+                  {/* Frontend */}
+                  <optgroup label="Frontend Frameworks/Libs">
+                    <option value="React">React.js</option>
+                    <option value="NextJS">Next.js</option>
+                    <option value="VueJS">Vue.js</option>
+                    <option value="Angular">Angular</option>
+                    <option value="Svelte">Svelte</option>
+                    <option value="Tailwind">Tailwind CSS</option>
+                  </optgroup>
+                  {/* Backend */}
+                  <optgroup label="Backend & Languages">
+                    <option value="PHP">PHP</option>
+                    <option value="Laravel">Laravel</option>
+                    <option value="NodeJS">Node.js</option>
+                    <option value="Express">Express.js</option>
+                    <option value="NestJS">NestJS</option>
+                    <option value="Python">Python</option>
+                    <option value="Django">Django</option>
+                    <option value="CPlusPlus">C++</option>
+                    <option value="CSharp">C#</option>
+                    <option value="Go">Go</option>
+                    <option value="Rust">Rust</option>
+                    <option value="Ruby">Ruby</option>
+                    <option value="RubyOnRails">Ruby on Rails</option>
+                  </optgroup>
+                  {/* Databases */}
+                  <optgroup label="Databases & ORMs">
+                    <option value="MySQL">MySQL</option>
+                    <option value="PostgreSQL">PostgreSQL</option>
+                    <option value="MongoDB">MongoDB</option>
+                    <option value="Redis">Redis</option>
+                    <option value="Prisma">Prisma</option>
+                  </optgroup>
+                  {/* Tools / DevOps */}
+                  <optgroup label="Cloud, DevOps & Tools">
+                    <option value="Git">GIT</option>
+                    <option value="Docker">Docker</option>
+                    <option value="Kubernetes">Kubernetes</option>
+                    <option value="AWS">AWS</option>
+                    <option value="Firebase">Firebase Auth</option>
+                    <option value="Supabase">Supabase</option>
+                    <option value="GraphQL">GraphQL</option>
+                    <option value="Vercel">Vercel</option>
+                    <option value="Netlify">Netlify</option>
+                    <option value="Linux">Linux</option>
+                  </optgroup>
+                  {/* Others */}
+                  <optgroup label="CMS & Design">
+                    <option value="Figma">Figma</option>
+                    <option value="WordPress">WordPress</option>
+                  </optgroup>
                 </select>
               </div>
 

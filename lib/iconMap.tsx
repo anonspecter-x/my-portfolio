@@ -1,5 +1,5 @@
 import React from "react";
-// টেকনোলজি আইকনগুলো SI থেকে (কারণ এগুলো স্টেবল আছে)
+// টেকনোলজি আইকনগুলো SI থেকে
 import { 
   SiReact, 
   SiNextdotjs, 
@@ -12,10 +12,38 @@ import {
   SiFirebase, 
   SiFigma, 
   SiGit, 
-  SiWordpress 
+  SiWordpress,
+  // 📌 অন্যান্য আইকনসমূহ
+  SiPhp,
+  SiLaravel,
+  SiPython,
+  SiDjango,
+  SiMysql,
+  SiPostgresql,
+  SiRedis,
+  SiDocker,
+  SiHtml5,
+  SiCss, 
+  SiSass,
+  SiVuedotjs,
+  SiAngular,
+  SiSvelte,
+  SiGraphql,
+  SiNestjs,
+  SiPrisma,
+  SiSupabase,
+  SiVercel,
+  SiNetlify,
+  SiCplusplus,
+  SiGo,
+  SiRust,
+  SiRuby,
+  SiRubyonrails,
+  SiKubernetes,
+  SiLinux
 } from "react-icons/si";
 
-// সোশ্যাল মিডিয়া আইকনগুলো FA (Font Awesome) থেকে (যাতে বিল্ড এরর না দেয়)
+// সোশ্যাল মিডিয়া ও অন্যান্য আইকন FA (Font Awesome) থেকে
 import {
   FaGithub,
   FaLinkedin,
@@ -23,8 +51,12 @@ import {
   FaWhatsapp,
   FaYoutube,
   FaFacebook,
-  FaInstagram
+  FaInstagram,
+  FaAws 
 } from "react-icons/fa";
+
+// 📌 C# এর জন্য Tabler Icons ব্যবহার করা হলো (যেহেতু SiCsharp এবং DiCsharp মিসিং)
+import { TbBrandCSharp } from "react-icons/tb";
 
 // 📌 প্রতিটি টেকনোলজি এবং সোশ্যাল মিডিয়ার জন্য অফিশিয়াল ব্র্যান্ড আইকন ম্যাপ
 export const iconMap: Record<string, React.ReactNode> = {
@@ -41,6 +73,39 @@ export const iconMap: Record<string, React.ReactNode> = {
   Figma: <SiFigma className="w-5 h-5 shrink-0 text-[#F24E1E]" />,
   Git: <SiGit className="w-5 h-5 shrink-0 text-[#F05032]" />,
   WordPress: <SiWordpress className="w-5 h-5 shrink-0 text-[#21759b]" />,
+
+  // --- 📌 New Technology Icons ---
+  HTML5: <SiHtml5 className="w-5 h-5 shrink-0 text-[#E34F26]" />,
+  CSS3: <SiCss className="w-5 h-5 shrink-0 text-[#1572B6]" />, 
+  Sass: <SiSass className="w-5 h-5 shrink-0 text-[#CC6699]" />,
+  PHP: <SiPhp className="w-5 h-5 shrink-0 text-[#777BB4]" />,
+  Laravel: <SiLaravel className="w-5 h-5 shrink-0 text-[#FF2D20]" />,
+  Python: <SiPython className="w-5 h-5 shrink-0 text-[#3776AB]" />,
+  Django: <SiDjango className="w-5 h-5 shrink-0 text-[#092E20] dark:text-[#0C4B33]" />,
+  VueJS: <SiVuedotjs className="w-5 h-5 shrink-0 text-[#4FC08D]" />,
+  Angular: <SiAngular className="w-5 h-5 shrink-0 text-[#DD0031]" />,
+  Svelte: <SiSvelte className="w-5 h-5 shrink-0 text-[#FF3E00]" />,
+  GraphQL: <SiGraphql className="w-5 h-5 shrink-0 text-[#E10098]" />,
+  NestJS: <SiNestjs className="w-5 h-5 shrink-0 text-[#E0234E]" />,
+  CPlusPlus: <SiCplusplus className="w-5 h-5 shrink-0 text-[#00599C]" />,
+  CSharp: <TbBrandCSharp className="w-5 h-5 shrink-0 text-[#239120]" />, // 📌 Updated to TbBrandCSharp
+  Go: <SiGo className="w-5 h-5 shrink-0 text-[#00ADD8]" />,
+  Rust: <SiRust className="w-5 h-5 shrink-0 text-black dark:text-white" />,
+  Ruby: <SiRuby className="w-5 h-5 shrink-0 text-[#CC342D]" />,
+  RubyOnRails: <SiRubyonrails className="w-5 h-5 shrink-0 text-[#CC0000]" />,
+  
+  // --- Databases & Cloud/DevOps ---
+  MySQL: <SiMysql className="w-5 h-5 shrink-0 text-[#4479A1]" />,
+  PostgreSQL: <SiPostgresql className="w-5 h-5 shrink-0 text-[#4169E1]" />,
+  Redis: <SiRedis className="w-5 h-5 shrink-0 text-[#DC382D]" />,
+  Prisma: <SiPrisma className="w-5 h-5 shrink-0 text-[#2D3748] dark:text-white" />,
+  Supabase: <SiSupabase className="w-5 h-5 shrink-0 text-[#3ECF8E]" />,
+  Docker: <SiDocker className="w-5 h-5 shrink-0 text-[#2496ED]" />,
+  Kubernetes: <SiKubernetes className="w-5 h-5 shrink-0 text-[#326CE5]" />,
+  AWS: <FaAws className="w-5 h-5 shrink-0 text-[#232F3E] dark:text-white" />, 
+  Vercel: <SiVercel className="w-5 h-5 shrink-0 text-black dark:text-white" />,
+  Netlify: <SiNetlify className="w-5 h-5 shrink-0 text-[#00C7B7]" />,
+  Linux: <SiLinux className="w-5 h-5 shrink-0 text-black dark:text-white" />,
 
   // --- Social Media Icons ---
   GitHub: <FaGithub className="w-5 h-5 shrink-0 text-black dark:text-white" />,
