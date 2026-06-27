@@ -5,7 +5,7 @@ import HomeClient from "./HomeClient";
 // প্রতি ৬০ সেকেন্ডে ডাটা আপডেট হবে (ISR), তাই ওয়েবসাইট সুপারফাস্ট থাকবে
 export const revalidate = 60; 
 
-// 📌 ডাটাবেজ থেকে ডায়নামিক সেটিংস নিয়ে হোম পেজের জন্য কাস্টম SEO জেনারেট করা
+// 📌 ডাটাবেজ থেকে ডায়নামিক সেটিংস নিয়ে হোম পেজের জন্য কাস্টম SEO জেনারেট করা
 export async function generateMetadata(): Promise<Metadata> {
   try {
     const client = await MongoClient.connect(process.env.MONGODB_URI as string);
@@ -69,8 +69,11 @@ async function getPageData() {
     // 📌 ডাটাবেজ থেকে সার্ভিসেস/এক্সপেরিয়েন্স আনা হচ্ছে
     const rawServices = await db.collection("services").find({}).sort({ createdAt: -1 }).toArray();
 
-    // 📌 ডাটাবেজ থেকে টেস্টিমোনিয়াল আনা হচ্ছে (প্রায়োরিটি অনুযায়ী)
+    // 📌 ডাটাবেজ থেকে টেস্টিমোনিয়াল আনা হচ্ছে (প্রায়োরিটি অনুযায়ী)
     const rawTestimonials = await db.collection("testimonials").find({}).sort({ priority: -1, createdAt: -1 }).toArray();
+
+    // 📌 ডাটাবেজ থেকে ব্র্যান্ড লোগো আনা হচ্ছে (নতুন)
+    const rawBrands = await db.collection("brands").find({}).sort({ order: 1 }).toArray();
 
     // ডাটাবেজ থেকে সেটিংস আনা হচ্ছে
     const settingsData = await db.collection("settings").findOne({});
@@ -124,6 +127,14 @@ async function getPageData() {
       photoUrl: t.photoUrl || null
     }));
 
+    // 📌 ব্র্যান্ড লোগো ফরম্যাট করা (নতুন)
+    const formattedBrands = rawBrands.map(b => ({
+      _id: b._id.toString(),
+      name: b.name,
+      logo: b.logo || "",
+      order: b.order
+    }));
+
     // 📌 FIXED: পুরো settings অবজেক্টটি পাস করা হলো যাতে Social Links গুলো HomeClient এ পৌঁছায়
     const formattedSettings = settingsData ? {
       ...settingsData,
@@ -135,17 +146,19 @@ async function getPageData() {
       skills: formattedSkills, 
       services: formattedServices,
       testimonials: formattedTestimonials,
+      brands: formattedBrands, // 👈 নতুন যুক্ত হলো
       settings: formattedSettings 
     };
 
   } catch (error) {
     console.error("Failed to fetch data:", error);
-    return { projects: [], skills: [], services: [], testimonials: [], settings: null };
+    // 👈 error এর ক্ষেত্রে brands: [] যুক্ত হলো
+    return { projects: [], skills: [], services: [], testimonials: [], brands: [], settings: null };
   }
 }
 
 export default async function Home() {
-  const { projects, skills, services, testimonials, settings } = await getPageData();
+  const { projects, skills, services, testimonials, brands, settings } = await getPageData(); // 👈 brands ডিস্ট্রাকচার হলো
 
   // ডাটাগুলো ক্লায়েন্ট কম্পোনেন্টে পাস করা হচ্ছে
   return (
@@ -154,6 +167,7 @@ export default async function Home() {
       realSkills={skills} 
       services={services} 
       testimonials={testimonials} 
+      brands={brands} // 👈 HomeClient এ পাঠানো হলো
       settings={settings} 
     />
   );
