@@ -189,11 +189,28 @@ export default function Header({ settings, tracks }: HeaderProps) {
             ? "w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] lg:w-[calc(100%-6rem)] bg-white/70 dark:bg-[#050505]/80 backdrop-blur-2xl saturate-200 border-gray-200/60 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] max-w-full md:max-w-[calc(85rem-6rem)] rounded-full mt-4 md:mt-5 py-2.5 md:py-3 px-5 sm:px-6 md:px-8" 
             : "w-full max-w-[85rem] bg-transparent dark:bg-transparent border-transparent rounded-none mt-0 py-4 sm:py-5 md:py-8 px-4 sm:px-6 md:px-12"}`}
         >
-          {/* 📌 Dynamic Logo: Original Size and Shape */}
+          {/* 📌 Dynamic Logo: Light & Dark Mode Supported */}
           <div className="flex items-center gap-3">
             <Link href="/" className="font-extrabold text-lg md:text-xl tracking-tighter text-black dark:text-white flex items-center gap-2.5 group">
-              {settings?.siteLogo ? (
-                <img src={settings.siteLogo} alt={devFullName} className="h-8 md:h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-500" />
+              {settings?.siteLogoLight || settings?.siteLogoDark || settings?.siteLogo ? (
+                <>
+                  {/* ☀️ Light Mode Logo */}
+                  {(settings?.siteLogoLight || settings?.siteLogo) && (
+                    <img 
+                      src={settings.siteLogoLight || settings.siteLogo} 
+                      alt={devFullName} 
+                      className={`h-8 md:h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-500 ${settings?.siteLogoDark ? 'block dark:hidden' : ''}`} 
+                    />
+                  )}
+                  {/* 🌙 Dark Mode Logo */}
+                  {settings?.siteLogoDark && (
+                    <img 
+                      src={settings.siteLogoDark} 
+                      alt={devFullName} 
+                      className={`h-8 md:h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-500 ${(settings?.siteLogoLight || settings?.siteLogo) ? 'hidden dark:block' : ''}`} 
+                    />
+                  )}
+                </>
               ) : (
                 <>
                   <span className="w-8 h-8 rounded-full bg-black dark:bg-white flex items-center justify-center text-white dark:text-black shadow-sm group-hover:scale-105 transition-transform duration-500">

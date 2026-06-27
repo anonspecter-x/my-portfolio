@@ -37,17 +37,25 @@ export async function updateSettings(formData: FormData) {
   });
 
   const developerPhoto = formData.get("developerPhoto") as File;
-  const siteLogo = formData.get("siteLogo") as File;
-  const siteFavicon = formData.get("siteFavicon") as File; // 📌 Favicon ফিল্ড যুক্ত করা হলো
+  const siteLogoLight = formData.get("siteLogoLight") as File; // 📌 Light Mode Logo
+  const siteLogoDark = formData.get("siteLogoDark") as File;   // 📌 Dark Mode Logo
+  const siteFavicon = formData.get("siteFavicon") as File;     // 📌 Favicon
 
   if (developerPhoto && developerPhoto.size > 0) {
     const photoUrl = await uploadFileToR2(developerPhoto, "settings");
     data.developerPhoto = photoUrl;
   }
 
-  if (siteLogo && siteLogo.size > 0) {
-    const logoUrl = await uploadFileToR2(siteLogo, "settings");
-    data.siteLogo = logoUrl;
+  // 📌 Light Mode Logo Upload Logic
+  if (siteLogoLight && siteLogoLight.size > 0) {
+    const logoLightUrl = await uploadFileToR2(siteLogoLight, "settings");
+    data.siteLogoLight = logoLightUrl;
+  }
+
+  // 📌 Dark Mode Logo Upload Logic
+  if (siteLogoDark && siteLogoDark.size > 0) {
+    const logoDarkUrl = await uploadFileToR2(siteLogoDark, "settings");
+    data.siteLogoDark = logoDarkUrl;
   }
 
   // 📌 Favicon R2 তে আপলোড করার লজিক

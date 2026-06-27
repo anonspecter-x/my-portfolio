@@ -101,12 +101,25 @@ export default async function Footer() {
           {/* Column 1: Branding */}
           <div className="col-span-2 lg:col-span-1 flex flex-col gap-4">
             <Link href="/" className="group w-fit block">
-              {settings?.siteLogo ? (
-                <img 
-                  src={settings.siteLogo} 
-                  alt={developerName} 
-                  className="h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-300" 
-                />
+              {settings?.siteLogoLight || settings?.siteLogoDark || settings?.siteLogo ? (
+                <>
+                  {/* ☀️ Light Mode Logo */}
+                  {(settings?.siteLogoLight || settings?.siteLogo) && (
+                    <img 
+                      src={settings.siteLogoLight || settings.siteLogo} 
+                      alt={developerName} 
+                      className={`h-12 md:h-14 w-auto object-contain group-hover:scale-105 transition-transform duration-300 ${settings?.siteLogoDark ? 'block dark:hidden' : ''}`} 
+                    />
+                  )}
+                  {/* 🌙 Dark Mode Logo */}
+                  {settings?.siteLogoDark && (
+                    <img 
+                      src={settings.siteLogoDark} 
+                      alt={developerName} 
+                      className={`h-12 md:h-14 w-auto object-contain group-hover:scale-105 transition-transform duration-300 ${(settings?.siteLogoLight || settings?.siteLogo) ? 'hidden dark:block' : ''}`} 
+                    />
+                  )}
+                </>
               ) : (
                 <span className="font-extrabold text-2xl tracking-tight text-black dark:text-white flex items-center gap-2">
                   <span className="w-7 h-7 rounded-full bg-black dark:bg-white flex items-center justify-center text-white dark:text-black shadow-sm group-hover:scale-105 transition-transform duration-500">

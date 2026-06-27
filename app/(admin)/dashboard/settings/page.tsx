@@ -139,19 +139,29 @@ export default async function SettingsPage() {
             <h2 className="text-lg font-bold text-black dark:text-white flex items-center gap-2 mb-4">
               <ImageIcon className="w-5 h-5 text-blue-500" /> Identity Media
             </h2>
-            {/* 📌 ৩ কলামের গ্রিড করা হলো যাতে ৩টি আইটেম সুন্দরভাবে বসে */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* 📌 ৪ কলামের গ্রিড করা হলো যাতে ৪টি আইটেম (Photo, 2 Logos, Favicon) সুন্দরভাবে বসে */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Developer Photo</label>
                 <input type="file" name="developerPhoto" accept="image/*" className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-2.5 outline-none focus:border-blue-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30" />
                 {settings?.developerPhoto && <p className="text-xs text-green-600 dark:text-green-500 font-medium mt-1">✓ Current photo is active.</p>}
               </div>
+              
+              {/* 📌 লাইট মোড লোগো */}
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Site Logo</label>
-                <input type="file" name="siteLogo" accept="image/*" className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-2.5 outline-none focus:border-blue-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30" />
-                {settings?.siteLogo && <p className="text-xs text-green-600 dark:text-green-500 font-medium mt-1">✓ Current logo is active.</p>}
+                <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Site Logo (Light Mode)</label>
+                <input type="file" name="siteLogoLight" accept="image/*" className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-2.5 outline-none focus:border-blue-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30" />
+                {settings?.siteLogoLight && <p className="text-xs text-green-600 dark:text-green-500 font-medium mt-1">✓ Current light logo is active.</p>}
               </div>
-              {/* 📌 নতুন Favicon আপলোডের অপশন */}
+
+              {/* 📌 ডার্ক মোড লোগো */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Site Logo (Dark Mode)</label>
+                <input type="file" name="siteLogoDark" accept="image/*" className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-2.5 outline-none focus:border-blue-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30" />
+                {settings?.siteLogoDark && <p className="text-xs text-green-600 dark:text-green-500 font-medium mt-1">✓ Current dark logo is active.</p>}
+              </div>
+
+              {/* 📌 Favicon */}
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Site Favicon (PNG/ICO)</label>
                 <input type="file" name="siteFavicon" accept=".ico,image/png,image/x-icon" className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-2.5 outline-none focus:border-blue-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30" />
