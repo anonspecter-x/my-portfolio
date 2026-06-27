@@ -245,8 +245,8 @@ export default function HomeClient({ realProjects, realSkills, services = [], se
                   <motion.div 
                     key={skill._id} 
                     variants={fadeUp} 
-                    // মোবাইল মোডে স্টিকি থাকবে এবং মার্জিন বটম এর কারণে স্ক্রল স্পেস পাবে
-                    className="sticky md:static w-full relative p-5 md:p-6 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-2xl transition-colors shadow-lg md:shadow-sm mt-4 mb-[8vh] md:mb-0 z-10"
+                    // ডেক্সটপ মোডে relative করে দেওয়া হলো যাতে আইকন না হারায়
+                    className="sticky md:relative w-full p-5 md:p-6 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-2xl transition-colors shadow-lg md:shadow-sm mt-4 mb-[8vh] md:mb-0 z-10"
                     style={{ 
                       // মোবাইলে কার্ডগুলো যেন একটির উপর আরেকটি সাজানো থাকে
                       top: `calc(100px + ${idx * 16}px)` 
