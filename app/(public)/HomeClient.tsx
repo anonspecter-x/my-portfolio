@@ -356,8 +356,8 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                   <motion.div 
                     key={skill._id} 
                     variants={fadeUp} 
-                    className="sticky md:relative w-full p-5 md:p-6 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-2xl transition-colors shadow-lg md:shadow-sm mt-4 mb-[8vh] md:mb-0 z-10"
-                    style={{ top: `calc(100px + ${idx * 16}px)` }}
+                    className="sticky top-[var(--sticky-top)] md:top-auto md:relative w-full p-5 md:p-6 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-2xl transition-colors shadow-lg md:shadow-sm mt-4 mb-[8vh] md:mb-0 z-10"
+                    style={{ '--sticky-top': `calc(100px + ${idx * 16}px)` } as React.CSSProperties}
                   >
                     
                     <div className="absolute -top-6 -left-2 bg-white dark:bg-[#0a0a0a] p-1.5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm">
