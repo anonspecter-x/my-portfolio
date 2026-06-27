@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { ArrowRight, FileText, Code2, Layout, LayoutTemplate, ChevronRight, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
+import { ArrowRight, FileText, Code2, Layout, LayoutTemplate, ChevronRight, ChevronDown, ChevronUp, ExternalLink, Quote, Star } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -39,10 +39,11 @@ interface HomeClientProps {
   realProjects: any[];
   realSkills: any[];
   services?: any[];
+  testimonials?: any[];
   settings: any; 
 }
 
-export default function HomeClient({ realProjects, realSkills, services = [], settings }: HomeClientProps) {
+export default function HomeClient({ realProjects, realSkills, services = [], testimonials = [], settings }: HomeClientProps) {
   const { scrollYProgress } = useScroll();
   const yBackground = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
   const rotateBackground = useTransform(scrollYProgress, [0, 1], [0, 45]);
@@ -392,6 +393,58 @@ export default function HomeClient({ realProjects, realSkills, services = [], se
             </div>
           )}
         </motion.section>
+
+        {/* ================= 🌟 TESTIMONIALS SECTION ================= */}
+        {testimonials.length > 0 && (
+          <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} className="py-20 md:py-40 border-t border-gray-200/50 dark:border-gray-800/50" id="testimonials">
+            <div className="mb-16 md:mb-20 text-center md:text-left">
+              <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 md:mb-6 text-black dark:text-white">
+                Client Feedback
+              </motion.h2>
+              <motion.p variants={fadeUp} className="text-sm md:text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto md:mx-0">
+                What people say about my work, dedication, and collaboration.
+              </motion.p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {testimonials.map((testimonial) => (
+                <motion.div 
+                  key={testimonial._id} 
+                  variants={fadeUp} 
+                  className="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col justify-between relative group hover:border-blue-500/30 dark:hover:border-blue-400/30 transition-colors"
+                >
+                  {/* Quote Icon in Background */}
+                  <div className="absolute top-6 right-6 text-gray-100 dark:text-[#151515] group-hover:text-blue-50 dark:group-hover:text-blue-900/10 transition-colors">
+                    <Quote className="w-12 h-12 md:w-16 md:h-16" />
+                  </div>
+                  
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-1 mb-5">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className={`w-4 h-4 ${i < testimonial.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-200 dark:text-gray-800"}`} />
+                      ))}
+                    </div>
+                    <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 leading-relaxed font-medium mb-8">
+                      "{testimonial.review}"
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-4 mt-auto relative z-10 pt-6 border-t border-gray-100 dark:border-gray-800/80">
+                    <img 
+                      src={testimonial.photoUrl || "https://via.placeholder.com/150"} 
+                      alt={testimonial.name} 
+                      className="w-12 h-12 rounded-full object-cover border border-gray-200 dark:border-gray-700 shrink-0" 
+                    />
+                    <div>
+                      <h4 className="font-bold text-black dark:text-white text-sm md:text-base">{testimonial.name}</h4>
+                      <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">{testimonial.role}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.section>
+        )}
 
       </div>
     </main>

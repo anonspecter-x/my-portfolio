@@ -1,5 +1,5 @@
 import { MongoClient } from "mongodb";
-import type { Metadata } from "next"; // 📌 মেটাডাটা টাইপ ইমপোর্ট করা হলো
+import type { Metadata } from "next"; 
 import HomeClient from "./HomeClient";
 
 // প্রতি ৬০ সেকেন্ডে ডাটা আপডেট হবে (ISR), তাই ওয়েবসাইট সুপারফাস্ট থাকবে
@@ -69,6 +69,9 @@ async function getPageData() {
     // 📌 ডাটাবেজ থেকে সার্ভিসেস/এক্সপেরিয়েন্স আনা হচ্ছে
     const rawServices = await db.collection("services").find({}).sort({ createdAt: -1 }).toArray();
 
+    // 📌 ডাটাবেজ থেকে টেস্টিমোনিয়াল আনা হচ্ছে (প্রায়োরিটি অনুযায়ী)
+    const rawTestimonials = await db.collection("testimonials").find({}).sort({ priority: -1, createdAt: -1 }).toArray();
+
     // ডাটাবেজ থেকে সেটিংস আনা হচ্ছে
     const settingsData = await db.collection("settings").findOne({});
 
@@ -110,6 +113,17 @@ async function getPageData() {
       image: s.image || ""
     }));
 
+    // 📌 টেস্টিমোনিয়াল ফরম্যাট করা
+    const formattedTestimonials = rawTestimonials.map(t => ({
+      _id: t._id.toString(),
+      name: t.name,
+      role: t.role,
+      review: t.review,
+      rating: t.rating,
+      priority: t.priority,
+      photoUrl: t.photoUrl || null
+    }));
+
     // 📌 FIXED: পুরো settings অবজেক্টটি পাস করা হলো যাতে Social Links গুলো HomeClient এ পৌঁছায়
     const formattedSettings = settingsData ? {
       ...settingsData,
@@ -120,18 +134,27 @@ async function getPageData() {
       projects: formattedProjects, 
       skills: formattedSkills, 
       services: formattedServices,
+      testimonials: formattedTestimonials,
       settings: formattedSettings 
     };
 
   } catch (error) {
     console.error("Failed to fetch data:", error);
-    return { projects: [], skills: [], services: [], settings: null };
+    return { projects: [], skills: [], services: [], testimonials: [], settings: null };
   }
 }
 
 export default async function Home() {
-  const { projects, skills, services, settings } = await getPageData();
+  const { projects, skills, services, testimonials, settings } = await getPageData();
 
   // ডাটাগুলো ক্লায়েন্ট কম্পোনেন্টে পাস করা হচ্ছে
-  return <HomeClient realProjects={projects} realSkills={skills} services={services} settings={settings} />;
+  return (
+    <HomeClient 
+      realProjects={projects} 
+      realSkills={skills} 
+      services={services} 
+      testimonials={testimonials} 
+      settings={settings} 
+    />
+  );
 }
