@@ -68,9 +68,29 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
       url: settings?.[`social_${platform.id}`]
     }));
 
+  // টেস্টিমোনিয়াল অ্যারে ডুপ্লিকেট করা হলো যেন ইনফিনিট লুপ স্ক্রল একদম পারফেক্ট হয়
+  const marqueeTestimonials = testimonials.length > 0 ? [...testimonials, ...testimonials, ...testimonials] : [];
+
   return (
     <main className="relative min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] transition-colors duration-1000 ease-in-out selection:bg-blue-500/30 font-sans overflow-clip">
       
+      {/* 🌟 Custom CSS for Marquee Animation */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes scroll-marquee {
+          from { transform: translateX(0); }
+          to { transform: translateX(calc(-100% - 1.5rem)); } /* 1.5rem is for gap-6 */
+        }
+        .animate-marquee {
+          animation: scroll-marquee 40s linear infinite;
+        }
+        /* Hover or Touch active state pauses the animation */
+        .pause-on-hover:hover .animate-marquee,
+        .pause-on-hover:active .animate-marquee,
+        .pause-on-hover:focus-within .animate-marquee {
+          animation-play-state: paused;
+        }
+      `}} />
+
       {/* 🌟 Background */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:30px_30px] md:bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_0%,#000_40%,transparent_110%)]"></div>
@@ -394,54 +414,92 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
           )}
         </motion.section>
 
-        {/* ================= 🌟 TESTIMONIALS SECTION ================= */}
+        {/* ================= 🌟 TESTIMONIALS SECTION (Auto-Scrolling Marquee) ================= */}
         {testimonials.length > 0 && (
-          <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} className="py-20 md:py-40 border-t border-gray-200/50 dark:border-gray-800/50" id="testimonials">
-            <div className="mb-16 md:mb-20 text-center md:text-left">
+          <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} className="py-20 md:py-40 border-t border-gray-200/50 dark:border-gray-800/50 overflow-hidden" id="testimonials">
+            
+            <div className="mb-12 md:mb-16 text-center">
               <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 md:mb-6 text-black dark:text-white">
                 Client Feedback
               </motion.h2>
-              <motion.p variants={fadeUp} className="text-sm md:text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto md:mx-0">
+              <motion.p variants={fadeUp} className="text-sm md:text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
                 What people say about my work, dedication, and collaboration.
               </motion.p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {testimonials.map((testimonial) => (
-                <motion.div 
-                  key={testimonial._id} 
-                  variants={fadeUp} 
-                  className="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col justify-between relative group hover:border-blue-500/30 dark:hover:border-blue-400/30 transition-colors"
-                >
-                  {/* Quote Icon in Background */}
-                  <div className="absolute top-6 right-6 text-gray-100 dark:text-[#151515] group-hover:text-blue-50 dark:group-hover:text-blue-900/10 transition-colors">
-                    <Quote className="w-12 h-12 md:w-16 md:h-16" />
-                  </div>
-                  
-                  <div className="relative z-10">
-                    <div className="flex items-center gap-1 mb-5">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className={`w-4 h-4 ${i < testimonial.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-200 dark:text-gray-800"}`} />
-                      ))}
+            {/* 📌 Marquee Wrapper (with gradient mask for smooth edges) */}
+            <div className="relative w-full flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] pause-on-hover py-4">
+              
+              {/* First Half of Marquee */}
+              <div className="flex shrink-0 animate-marquee gap-6">
+                {marqueeTestimonials.map((testimonial, idx) => (
+                  <div 
+                    key={`t1-${testimonial._id}-${idx}`} 
+                    className="w-[320px] md:w-[400px] shrink-0 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col justify-between relative group hover:border-blue-500/30 dark:hover:border-blue-400/30 transition-colors whitespace-normal text-left cursor-grab active:cursor-grabbing"
+                  >
+                    <div className="absolute top-6 right-6 text-gray-100 dark:text-[#151515] group-hover:text-blue-50 dark:group-hover:text-blue-900/10 transition-colors">
+                      <Quote className="w-12 h-12 md:w-16 md:h-16" />
                     </div>
-                    <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 leading-relaxed font-medium mb-8">
-                      "{testimonial.review}"
-                    </p>
+                    <div className="relative z-10">
+                      <div className="flex items-center gap-1 mb-5">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className={`w-4 h-4 ${i < testimonial.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-200 dark:text-gray-800"}`} />
+                        ))}
+                      </div>
+                      <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 leading-relaxed font-medium mb-8 line-clamp-4">
+                        "{testimonial.review}"
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-4 mt-auto relative z-10 pt-6 border-t border-gray-100 dark:border-gray-800/80">
+                      <img 
+                        src={testimonial.photoUrl || "https://via.placeholder.com/150"} 
+                        alt={testimonial.name} 
+                        className="w-12 h-12 rounded-full object-cover border border-gray-200 dark:border-gray-700 shrink-0 pointer-events-none" 
+                      />
+                      <div>
+                        <h4 className="font-bold text-black dark:text-white text-sm md:text-base">{testimonial.name}</h4>
+                        <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">{testimonial.role}</p>
+                      </div>
+                    </div>
                   </div>
+                ))}
+              </div>
 
-                  <div className="flex items-center gap-4 mt-auto relative z-10 pt-6 border-t border-gray-100 dark:border-gray-800/80">
-                    <img 
-                      src={testimonial.photoUrl || "https://via.placeholder.com/150"} 
-                      alt={testimonial.name} 
-                      className="w-12 h-12 rounded-full object-cover border border-gray-200 dark:border-gray-700 shrink-0" 
-                    />
-                    <div>
-                      <h4 className="font-bold text-black dark:text-white text-sm md:text-base">{testimonial.name}</h4>
-                      <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">{testimonial.role}</p>
+              {/* Second Half of Marquee (Duplicate for seamless loop) */}
+              <div aria-hidden="true" className="flex shrink-0 animate-marquee gap-6 ml-6">
+                {marqueeTestimonials.map((testimonial, idx) => (
+                  <div 
+                    key={`t2-${testimonial._id}-${idx}`} 
+                    className="w-[320px] md:w-[400px] shrink-0 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col justify-between relative group hover:border-blue-500/30 dark:hover:border-blue-400/30 transition-colors whitespace-normal text-left cursor-grab active:cursor-grabbing"
+                  >
+                    <div className="absolute top-6 right-6 text-gray-100 dark:text-[#151515] group-hover:text-blue-50 dark:group-hover:text-blue-900/10 transition-colors">
+                      <Quote className="w-12 h-12 md:w-16 md:h-16" />
+                    </div>
+                    <div className="relative z-10">
+                      <div className="flex items-center gap-1 mb-5">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className={`w-4 h-4 ${i < testimonial.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-200 dark:text-gray-800"}`} />
+                        ))}
+                      </div>
+                      <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 leading-relaxed font-medium mb-8 line-clamp-4">
+                        "{testimonial.review}"
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-4 mt-auto relative z-10 pt-6 border-t border-gray-100 dark:border-gray-800/80">
+                      <img 
+                        src={testimonial.photoUrl || "https://via.placeholder.com/150"} 
+                        alt={testimonial.name} 
+                        className="w-12 h-12 rounded-full object-cover border border-gray-200 dark:border-gray-700 shrink-0 pointer-events-none" 
+                      />
+                      <div>
+                        <h4 className="font-bold text-black dark:text-white text-sm md:text-base">{testimonial.name}</h4>
+                        <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">{testimonial.role}</p>
+                      </div>
                     </div>
                   </div>
-                </motion.div>
-              ))}
+                ))}
+              </div>
+
             </div>
           </motion.section>
         )}
