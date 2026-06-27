@@ -1,19 +1,20 @@
 import type { Config } from "tailwindcss";
 
-const config: Config = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const config = {
+  darkMode: "class",
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {
-      // 📌 এখানে ফন্ট ফ্যামিলি ডিক্লেয়ার করুন
-      fontFamily: {
-        sans: ['var(--font-montserrat)', 'sans-serif'], 
-      },
-    },
+    extend: {},
   },
-  plugins: [],
-};
+  plugins: [require("daisyui")],
+  daisyui: {
+    themes: ["light", "dark"],
+  },
+} satisfies Config & { daisyui: any };
+
 export default config;
