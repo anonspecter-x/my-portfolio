@@ -122,3 +122,62 @@ export async function deleteService(id: string) {
   revalidatePath("/dashboard/skills");
   revalidatePath("/");
 }
+
+// ==========================================
+// 🏆 TRUSTED BRANDS ACTIONS (NEW)
+// ==========================================
+
+export async function saveBrand(formData: FormData) {
+  const id = formData.get("id") as string;
+  const name = formData.get("name") as string;
+  const order = parseInt(formData.get("order") as string, 10) || 0;
+  const logoFile = formData.get("logo") as File | null;
+
+  if (!name) {
+    throw new Error("Brand name is required.");
+  }
+
+  const { client, db } = await connectToDatabase();
+
+  try {
+    let updateData: any = {
+      name,
+      order,
+      updatedAt: new Date(),
+    };
+
+    // 📌 নতুন লোগো আপলোড করা হলে Cloudflare R2 তে সেভ হবে
+    if (logoFile && logoFile.size > 0) {
+      updateData.logo = await uploadFileToR2(logoFile, "brands");
+    }
+
+    if (id && ObjectId.isValid(id)) {
+      await db.collection("brands").updateOne(
+        { _id: new ObjectId(id) }, 
+        { $set: updateData }
+      );
+    } else {
+      updateData.createdAt = new Date();
+      await db.collection("brands").insertOne(updateData);
+    }
+  } finally {
+    await client.close();
+  }
+
+  revalidatePath("/dashboard/skills");
+  revalidatePath("/");
+}
+
+export async function deleteBrand(id: string) {
+  if (!id || !ObjectId.isValid(id)) throw new Error("Invalid ID provided.");
+
+  const { client, db } = await connectToDatabase();
+  try {
+    await db.collection("brands").deleteOne({ _id: new ObjectId(id) });
+  } finally {
+    await client.close();
+  }
+
+  revalidatePath("/dashboard/skills");
+  revalidatePath("/");
+}
