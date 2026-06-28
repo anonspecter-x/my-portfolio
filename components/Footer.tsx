@@ -26,19 +26,19 @@ async function getFooterData() {
     const client = await MongoClient.connect(process.env.MONGODB_URI as string);
     const db = client.db();
     
+    // 📌 settings এর ভেতর থেকেই footerIcons পাওয়া যাবে, তাই আলাদা skills কল করার দরকার নেই
     const settings = await db.collection("settings").findOne({});
     const projects = await db.collection("projects").find({}).sort({ createdAt: -1 }).limit(5).toArray();
-    const skills = await db.collection("skills").find({}).sort({ percentage: -1 }).limit(16).toArray(); 
     
     await client.close();
-    return { settings, projects, skills };
+    return { settings, projects };
   } catch (error) {
-    return { settings: null, projects: [], skills: [] };
+    return { settings: null, projects: [] };
   }
 }
 
 export default async function Footer() {
-  const { settings, projects, skills } = await getFooterData();
+  const { settings, projects } = await getFooterData();
   const currentYear = new Date().getFullYear();
 
   const developerName = settings?.developerName || "Md Nazmus Shakib";
@@ -166,27 +166,27 @@ export default async function Footer() {
             </nav>
           </div>
 
-          {/* Column 4: Tech Stack */}
+          {/* Column 4: Tech Stack (📌 Updated to use settings.footerIcons) */}
           <div className="col-span-2 lg:col-span-1 flex flex-col gap-4">
             <h4 className="font-mono text-[10px] tracking-[0.2em] text-gray-400 dark:text-gray-500 uppercase font-bold text-center lg:text-left">Stack</h4>
-            {skills.length > 0 ? (
+            {settings?.footerIcons && settings.footerIcons.length > 0 ? (
               <div className="flex flex-wrap justify-center lg:justify-start gap-4 lg:gap-3 w-full lg:w-fit px-4 lg:px-0">
-                {skills.map((skill: any) => {
-                  const mappedIconKey = skill.icon ? skill.icon.charAt(0).toUpperCase() + skill.icon.slice(1) : skill.name;
-                  const IconComponent = iconMap[mappedIconKey] || iconMap[skill.name] || <Code2 className="w-5 h-5 text-gray-400" />;
+                {settings.footerIcons.map((iconKey: string, idx: number) => {
+                  // সরাসরি iconMap থেকে আইকন কল করা হচ্ছে
+                  const IconComponent = iconMap[iconKey] || <Code2 className="w-5 h-5 text-gray-400" />;
                   
                   return (
-                    <div key={skill._id} className="w-6 h-6 flex items-center justify-center group relative cursor-pointer hover:scale-110 transition-transform shrink-0">
+                    <div key={idx} className="w-6 h-6 flex items-center justify-center group relative cursor-pointer hover:scale-110 transition-transform shrink-0">
                       {IconComponent}
                       <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-black text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
-                        {skill.name}
+                        {iconKey}
                       </div>
                     </div>
                   );
                 })}
               </div>
             ) : (
-              <p className="text-xs text-gray-500 text-center lg:text-left">No skills added.</p>
+              <p className="text-xs text-gray-500 text-center lg:text-left">No skills selected.</p>
             )}
           </div>
 
