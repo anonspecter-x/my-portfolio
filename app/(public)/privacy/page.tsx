@@ -6,7 +6,7 @@ export function generateMetadata(): Metadata {
 
   return {
     title: "Privacy Policy & Data Security | Md Nazmus Shakib - Full Stack Developer",
-    description: "Read the Privacy Policy of Md Nazmus Shakib, a professional Full Stack Developer. Learn how we securely collect, process, and protect your data in compliance with GDPR and CCPA.",
+    description: "Privacy Policy of Md Nazmus Shakib, Full Stack Developer. Learn how we securely collect and protect your data in compliance with GDPR & CCPA.",
     keywords: [
       "Privacy Policy",
       "Data Protection",
