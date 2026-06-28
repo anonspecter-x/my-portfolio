@@ -82,7 +82,7 @@ export default function BrandsClient({ brands }: BrandsClientProps) {
               <Globe className="w-7 h-7" />
             </div>
             <div className="relative z-10">
-              <h4 className="text-4xl font-black text-black dark:text-white mb-1">{brands.length || 10}+</h4>
+              <h4 className="text-4xl font-black text-black dark:text-white mb-1">100+</h4>
               <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Global Clients</p>
             </div>
           </div>
@@ -126,30 +126,33 @@ export default function BrandsClient({ brands }: BrandsClientProps) {
                   href={brand.website !== "#" ? brand.website : "#"}
                   target={brand.website !== "#" ? "_blank" : "_self"}
                   rel={brand.website !== "#" ? "noopener noreferrer" : ""}
-                  className={`group block relative p-8 sm:p-10 md:p-12 bg-white dark:bg-[#080808] border border-gray-200 dark:border-gray-800 rounded-[2rem] md:rounded-[2.5rem] transition-all duration-500 hover:shadow-2xl dark:hover:shadow-[0_0_40px_-15px_rgba(59,130,246,0.2)] hover:-translate-y-1 hover:border-blue-500/40 dark:hover:border-blue-500/30 overflow-hidden ${brand.website !== "#" ? "cursor-pointer" : "cursor-default pointer-events-none"}`}
+                  className={`group block relative p-8 sm:p-10 md:p-12 bg-white dark:bg-[#080808] border border-gray-200 dark:border-gray-800 rounded-[2rem] md:rounded-[2.5rem] transition-all duration-500 hover:shadow-[0_10px_40px_-15px_rgba(59,130,246,0.2)] hover:-translate-y-1 hover:border-blue-500/40 dark:hover:border-blue-500/30 overflow-hidden ${brand.website !== "#" ? "cursor-pointer" : "cursor-default pointer-events-none"}`}
                 >
-                  {/* Subtle hover background glow */}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent to-blue-500/5 dark:to-blue-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-0"></div>
+                  {/* Subtle dynamic background glow on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 via-transparent to-purple-500/0 group-hover:from-blue-500/5 group-hover:to-purple-500/5 transition-colors duration-700 pointer-events-none z-0"></div>
+                  
+                  {/* Glassy overlay effect on hover to make brand name pop */}
+                  <div className="absolute inset-0 bg-white/0 dark:bg-black/0 group-hover:bg-white/10 group-hover:dark:bg-black/20 backdrop-blur-0 transition-all duration-500 z-10"></div>
                   
                   {/* External Link Indicator */}
                   {brand.website !== "#" && (
-                    <div className="absolute top-5 right-5 md:top-6 md:right-6 bg-gray-50 dark:bg-[#151515] w-10 h-10 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all translate-y-3 group-hover:translate-y-0 duration-500 z-20 border border-gray-200 dark:border-gray-800 shadow-sm">
+                    <div className="absolute top-5 right-5 md:top-6 md:right-6 bg-white/80 dark:bg-[#151515]/80 backdrop-blur-md w-10 h-10 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all translate-y-3 group-hover:translate-y-0 duration-500 z-30 border border-gray-200 dark:border-gray-800 shadow-sm">
                       <ArrowUpRight className="w-4 h-4 text-black dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
                     </div>
                   )}
 
-                  {/* Logo Display */}
-                  <div className="relative z-10 w-full aspect-square md:aspect-[4/3] flex items-center justify-center">
+                  {/* Colored Logo Display */}
+                  <div className="relative z-20 w-full aspect-square md:aspect-[4/3] flex items-center justify-center">
                     <img 
                       src={brand.logo} 
                       alt={brand.name} 
-                      className="max-w-[75%] max-h-[75%] object-contain filter grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-out dark:brightness-200 group-hover:dark:brightness-100 drop-shadow-none group-hover:drop-shadow-xl"
+                      className="max-w-[75%] max-h-[75%] object-contain opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-out drop-shadow-sm group-hover:drop-shadow-2xl"
                     />
                   </div>
 
-                  {/* Elegant Brand Tag */}
-                  <div className="absolute bottom-6 left-0 right-0 flex justify-center opacity-0 group-hover:opacity-100 transition-all translate-y-3 group-hover:translate-y-0 duration-500 z-20">
-                    <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-black dark:text-white bg-white/90 dark:bg-black/90 backdrop-blur-md px-4 py-1.5 rounded-full border border-gray-200 dark:border-gray-700 shadow-sm">
+                  {/* Elegant Brand Tag (Pill) on Hover */}
+                  <div className="absolute bottom-6 left-0 right-0 flex justify-center opacity-0 group-hover:opacity-100 transition-all translate-y-4 group-hover:translate-y-0 duration-500 z-30">
+                    <span className="text-[11px] font-bold tracking-widest uppercase text-black dark:text-white bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-xl px-5 py-2 rounded-full border border-gray-200 dark:border-gray-800 shadow-2xl">
                       {brand.name}
                     </span>
                   </div>
