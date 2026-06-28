@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { saveBlogPost, deleteBlogPost } from "./actions";
 import RichEditor from "@/components/RichEditor";
 import { PenTool, Trash2, Edit2, Image as ImageIcon, Search, Loader2, Code, ImagePlus, Settings, Tag, Clock } from "lucide-react";
+import imageCompression from 'browser-image-compression'; // 📌 নতুন যুক্ত করা হয়েছে
 
 interface Post {
   _id: string;
@@ -47,6 +48,25 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
   const handleSubmit = async (formData: FormData) => {
     setIsSubmitting(true);
     try {
+      // 📌 Image Compression Logic (নতুন যুক্ত করা হয়েছে)
+      const coverImageFile = formData.get("coverImage") as File;
+      
+      if (coverImageFile && coverImageFile.size > 0) {
+        const options = {
+          maxSizeMB: 1, // সর্বোচ্চ 1MB তে কম্প্রেস করবে
+          maxWidthOrHeight: 1920, // ডাইমেনশন লিমিট
+          useWebWorker: true, // ব্রাউজার ফ্রিজ হওয়া রোধ করবে
+        };
+        
+        try {
+          const compressedFile = await imageCompression(coverImageFile, options);
+          // 📌 অরিজিনাল বড় ফাইলের বদলে কম্প্রেস করা ফাইলটি ফর্মে সেট করে দিচ্ছি
+          formData.set("coverImage", compressedFile, compressedFile.name);
+        } catch (compressionError) {
+          console.error("Image compression failed:", compressionError);
+        }
+      }
+
       await saveBlogPost(formData);
       handleCancelEdit();
     } catch (error) {
