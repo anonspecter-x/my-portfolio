@@ -64,7 +64,6 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
   const [activeAccordion, setActiveAccordion] = useState(0);
 
   const displayProjects = realProjects.slice(0, 4);
-  const displayBlogs = blogs.slice(0, 3); // 📌 লেটেস্ট ৩টি ব্লগ
 
   // 📌 DYNAMIC SOCIAL FETCHING SYSTEM
   const activeSocials = socialPlatformSystem
@@ -119,6 +118,45 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
     }, 800);
   };
 
+  // ==========================================
+  // 📝 BLOGS AUTO-SCROLL LOGIC (Desktop & Mobile)
+  // ==========================================
+  const infiniteBlogs = blogs && blogs.length > 0 ? [...blogs, ...blogs, ...blogs, ...blogs] : [];
+  const blogScrollerRef = useRef<HTMLDivElement>(null);
+  const [isBlogInteracting, setIsBlogInteracting] = useState(false);
+  const blogScrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const scroller = blogScrollerRef.current;
+    if (!scroller || infiniteBlogs.length === 0) return;
+
+    let animationId: number;
+    const scroll = () => {
+      if (!isBlogInteracting) {
+        scroller.scrollLeft += 1; 
+        if (scroller.scrollLeft >= scroller.scrollWidth / 2) {
+          scroller.scrollLeft -= scroller.scrollWidth / 2;
+        }
+      }
+      animationId = requestAnimationFrame(scroll);
+    };
+
+    animationId = requestAnimationFrame(scroll);
+    return () => cancelAnimationFrame(animationId);
+  }, [isBlogInteracting, infiniteBlogs.length]);
+
+  const handleBlogInteractionStart = () => {
+    setIsBlogInteracting(true);
+    if (blogScrollTimeout.current) clearTimeout(blogScrollTimeout.current);
+  };
+
+  const handleBlogInteractionEnd = () => {
+    if (blogScrollTimeout.current) clearTimeout(blogScrollTimeout.current);
+    blogScrollTimeout.current = setTimeout(() => {
+      setIsBlogInteracting(false);
+    }, 800);
+  };
+
   // 📌 Duplicate Brands for Marquee effect
   const displayBrands = [...brands, ...brands, ...brands];
 
@@ -139,7 +177,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
           animation: scroll-marquee 40s linear infinite;
         }
         .animate-brand-marquee {
-          animation: scroll-brand-marquee 30s linear infinite;
+          animation: scroll-brand-marquee 60s linear infinite; /* 📌 লোগো স্লাইড স্লো করা হয়েছে */
         }
         .pause-on-hover:hover .animate-marquee,
         .pause-on-hover:focus-within .animate-marquee,
@@ -209,7 +247,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
           </motion.div>
         </motion.section>
 
-        {/* ================= TRUSTED BRANDS SECTION (NEW) ================= */}
+        {/* ================= TRUSTED BRANDS SECTION ================= */}
         {brands.length > 0 && (
           <motion.section 
             initial={{ opacity: 0 }} 
@@ -366,7 +404,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                     <div className="absolute -top-6 -left-2 bg-white dark:bg-[#0a0a0a] p-1.5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm">
                        <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-[#151515] border border-gray-200/50 dark:border-gray-800/50 flex items-center justify-center p-2">
                          {isImageIcon ? (
-                           <img src={skill.icon} alt={skill.name} className="w-full h-full object-contain" />
+                           <img src={skill.icon} alt={skill.name} className="w-full h-full object-cover" />
                          ) : (
                            iconMap[skill.icon] || iconMap[mappedIconKey] || <Code2 className="w-5 h-5 text-gray-400" />
                          )}
@@ -411,7 +449,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
           )}
         </motion.section>
 
-        {/* ================= WORKING PROCESS SECTION (NEW) ================= */}
+        {/* ================= WORKING PROCESS SECTION ================= */}
         <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} className="py-20 md:py-32 border-t border-gray-200/50 dark:border-gray-800/50" id="process">
           <div className="text-center mb-16 md:mb-20">
             <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 text-black dark:text-white">
@@ -424,7 +462,6 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 relative">
-            {/* Connecting Line for Desktop */}
             <div className="hidden lg:block absolute top-12 left-[10%] right-[10%] h-[2px] bg-gray-200 dark:bg-gray-800 z-0"></div>
 
             <motion.div variants={fadeUp} className="relative z-10 flex flex-col items-center text-center group">
@@ -469,7 +506,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
           </div>
         </motion.section>
 
-        {/* ================= 🚀 REDESIGNED CLEAN PROJECTS SECTION ================= */}
+        {/* ================= PROJECTS SECTION ================= */}
         <motion.section className="py-20 md:py-40 border-t border-gray-200/50 dark:border-gray-800/50" id="projects">
           <div className="mb-16 md:mb-24 text-center md:text-left">
              <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 md:mb-6">Selected Works</motion.h2>
@@ -491,7 +528,6 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                      className="block w-full bg-white dark:bg-[#0a0a0a] rounded-[2rem] md:rounded-[2.5rem] border border-gray-200 dark:border-gray-800 p-5 sm:p-6 md:p-8 lg:p-10 shadow-xl dark:shadow-[0_10px_40px_-15px_rgba(0,0,0,0.5)] mb-[10vh] md:mb-[15vh] relative group/card hover:scale-[1.01] hover:border-blue-500/40 dark:hover:border-blue-400/40 transition-all duration-300 cursor-pointer"
                    >
                      <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 w-full">
-                       {/* 📝 Content Side (Left) */}
                        <div className="w-full lg:w-1/2 flex flex-col justify-center order-2 lg:order-1 text-left">
                           <div className="flex items-center gap-3 mb-4 md:mb-6">
                              <span className="font-mono text-[10px] md:text-xs tracking-[0.2em] text-blue-600 dark:text-blue-400 uppercase font-bold bg-blue-50 dark:bg-blue-900/20 px-3 py-1.5 rounded-md">
@@ -520,7 +556,6 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                           </span>
                        </div>
 
-                       {/* 🖼️ Image Side (Right) */}
                        <div className="w-full lg:w-1/2 relative aspect-[4/3] md:aspect-[16/10] lg:aspect-[4/3] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden bg-gray-50 dark:bg-[#111] border border-gray-200/80 dark:border-gray-800/80 order-1 lg:order-2 shrink-0">
                          {project.image ? (
                             <img src={project.image} alt={project.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-105" />
@@ -531,7 +566,6 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                             </div>
                          )}
                          
-                         {/* External Link Icon */}
                          <div className="absolute top-4 right-4 md:top-6 md:right-6 bg-white/90 dark:bg-black/90 backdrop-blur-md w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center border border-gray-200 dark:border-gray-800 opacity-0 group-hover/card:opacity-100 transition-all translate-y-4 group-hover/card:translate-y-0 duration-500 z-20 shadow-sm">
                            <ExternalLink className="w-4 h-4 md:w-5 md:h-5 text-black dark:text-white" />
                          </div>
@@ -547,7 +581,6 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
              )}
           </div>
 
-          {/* 📌 View All Projects Button */}
           {realProjects.length > 0 && (
             <div className="mt-8 flex justify-center w-full relative z-50">
               <Link href="/projects" className="group flex items-center gap-2 px-8 py-4 bg-black dark:bg-white text-white dark:text-black font-semibold rounded-full hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-black/10 dark:shadow-white/10">
@@ -557,7 +590,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
           )}
         </motion.section>
 
-        {/* ================= 🌟 TESTIMONIALS SECTION (Marquee - Desktop vs Mobile) ================= */}
+        {/* ================= TESTIMONIALS SECTION ================= */}
         {baseTestimonials.length > 0 && (
           <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} className="py-20 md:py-40 border-t border-gray-200/50 dark:border-gray-800/50 overflow-hidden" id="testimonials">
             
@@ -570,7 +603,6 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               </motion.p>
             </div>
 
-            {/* ================= 💻 1. DESKTOP MARQUEE ================= */}
             <div className="hidden md:flex relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] pause-on-hover py-4">
               <div className="flex shrink-0 animate-marquee gap-6">
                 {desktopTestimonials.map((testimonial, idx) => (
@@ -606,7 +638,6 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                 ))}
               </div>
 
-              {/* Desktop Duplicate Loop */}
               <div aria-hidden="true" className="flex shrink-0 animate-marquee gap-6 ml-6">
                 {desktopTestimonials.map((testimonial, idx) => (
                   <div 
@@ -642,7 +673,6 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               </div>
             </div>
 
-            {/* ================= 📱 2. MOBILE MARQUEE ================= */}
             <div 
               ref={mobileScrollerRef}
               onTouchStart={handleTouchStart}
@@ -685,8 +715,8 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
           </motion.section>
         )}
 
-        {/* ================= 📝 LATEST BLOGS SECTION (NEW) ================= */}
-        {displayBlogs.length > 0 && (
+        {/* ================= 📝 LATEST BLOGS SECTION (UPDATED FOR SLIDING) ================= */}
+        {blogs && blogs.length > 0 && (
           <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} className="py-20 md:py-32 border-t border-gray-200/50 dark:border-gray-800/50" id="blog">
             <div className="mb-12 md:mb-16 text-center">
               <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 md:mb-6 text-black dark:text-white">
@@ -697,9 +727,20 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               </motion.p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {displayBlogs.map((blog, idx) => (
-                <motion.div key={blog._id || idx} variants={fadeUp} className="group relative bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-3xl overflow-hidden hover:border-blue-500/40 dark:hover:border-blue-400/40 hover:shadow-xl transition-all duration-300">
+            {/* 📌 Unified Auto-Scrolling Slider for both Desktop and Mobile */}
+            <div 
+              ref={blogScrollerRef}
+              onMouseEnter={handleBlogInteractionStart}
+              onMouseLeave={handleBlogInteractionEnd}
+              onTouchStart={handleBlogInteractionStart}
+              onTouchEnd={handleBlogInteractionEnd}
+              className="flex relative w-full overflow-x-auto [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)] py-4 gap-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            >
+              {infiniteBlogs.map((blog, idx) => (
+                <div 
+                  key={`blog-${blog._id || idx}-${idx}`} 
+                  className="w-[300px] md:w-[400px] shrink-0 group relative bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-3xl overflow-hidden hover:border-blue-500/40 dark:hover:border-blue-400/40 hover:shadow-xl transition-all duration-300"
+                >
                   <Link href={`/blog/${blog.slug}`} className="block h-full flex flex-col">
                     <div className="relative aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-[#111]">
                       {blog.coverImage ? (
@@ -732,7 +773,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                       </div>
                     </div>
                   </Link>
-                </motion.div>
+                </div>
               ))}
             </div>
 
@@ -744,10 +785,9 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
           </motion.section>
         )}
 
-        {/* ================= CALL TO ACTION (CTA) SECTION (NEW) ================= */}
+        {/* ================= CALL TO ACTION (CTA) SECTION ================= */}
         <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeUp} className="py-20 md:py-32" id="cta">
           <div className="w-full bg-blue-600 dark:bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-10 md:p-20 text-center relative overflow-hidden shadow-2xl">
-            {/* Background Decorative Elements */}
             <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-white opacity-10 rounded-full blur-2xl"></div>
             <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-black opacity-10 rounded-full blur-2xl"></div>
             
