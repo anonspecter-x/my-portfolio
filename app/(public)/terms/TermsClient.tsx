@@ -147,7 +147,7 @@ export default function TermsClient() {
                </h2>
                <div className="space-y-4 text-sm md:text-base text-gray-600 dark:text-gray-400 leading-relaxed">
                 <p>
-                  These Terms of Service constitute a legally binding agreement made between you, whether personally or on behalf of an entity ("Client" or "User"), and <strong>Md Nazmus Shakib</strong> ("Developer", "I", "me", or "my"), concerning your access to and use of the <a href="https://meetsakib.com" className="text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 hover:underline font-semibold transition-colors">meetsakib.com</a> website as well as any related software development services.
+                  These Terms of Service constitute a legally binding agreement made between you, whether personally or on behalf of an entity ("Client" or "User"), and <strong>Md Nazmus Shakib</strong> ("Developer", "I", "me", or "my"), concerning your access to and use of the <a href="https://www.meetsakib.com" className="text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 hover:underline font-semibold transition-colors">meetsakib.com</a> website as well as any related software development services.
                 </p>
                 <p>
                   By accessing the site or initiating a project, you agree that you have read, understood, and agreed to be bound by all of these Terms of Service. If you do not agree with all of these terms, then you are expressly prohibited from using the site or services.

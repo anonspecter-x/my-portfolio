@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PrivacyClient from "./PrivacyClient";
 
 export function generateMetadata(): Metadata {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://meetsakib.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.meetsakib.com";
 
   return {
     title: "Privacy Policy & Data Security | Md Nazmus Shakib - Full Stack Developer",
@@ -64,12 +64,12 @@ export default function PrivacyPage() {
     "@type": "WebPage",
     "name": "Privacy Policy | Md Nazmus Shakib",
     "description": "Privacy Policy and data handling practices for Md Nazmus Shakib's portfolio and services.",
-    "url": `${process.env.NEXT_PUBLIC_SITE_URL || "https://meetsakib.com"}/privacy`,
+    "url": `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.meetsakib.com"}/privacy`,
     "publisher": {
       "@type": "Person",
       "name": "Md Nazmus Shakib",
       "jobTitle": "Senior Full Stack Developer",
-      "url": process.env.NEXT_PUBLIC_SITE_URL || "https://meetsakib.com"
+      "url": process.env.NEXT_PUBLIC_SITE_URL || "https://www.meetsakib.com"
     }
   };
 

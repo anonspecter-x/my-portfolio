@@ -151,7 +151,7 @@ export default function PrivacyClient() {
                   Welcome to the digital portfolio and professional services of <strong>Md Nazmus Shakib</strong> (referred to as "we", "our", "us", or "the Developer"). We deeply respect your privacy and are committed to protecting any personally identifiable information you may provide us through our web platform.
                 </p>
                 <p>
-                  This Privacy Policy governs your use of <a href="https://meetsakib.com" className="text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 hover:underline font-semibold transition-colors">meetsakib.com</a> (the "Website"). It establishes a legally binding framework explaining what data is collected, the technical and operational methodologies used to process this data, and your rights concerning your personal information. By accessing or using the Website, you explicitly agree to the terms outlined in this policy.
+                  This Privacy Policy governs your use of <a href="https://www.meetsakib.com" className="text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 hover:underline font-semibold transition-colors">meetsakib.com</a> (the "Website"). It establishes a legally binding framework explaining what data is collected, the technical and operational methodologies used to process this data, and your rights concerning your personal information. By accessing or using the Website, you explicitly agree to the terms outlined in this policy.
                 </p>
                </div>
             </div>

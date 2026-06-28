@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import TermsClient from "./TermsClient";
 
 export function generateMetadata(): Metadata {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://meetsakib.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.meetsakib.com";
 
   return {
     title: "Terms of Service | Md Nazmus Shakib - Full Stack Developer",
@@ -53,12 +53,12 @@ export default function TermsPage() {
     "@type": "WebPage",
     "name": "Terms of Service | Md Nazmus Shakib",
     "description": "Terms and conditions for software development and consultation services provided by Md Nazmus Shakib.",
-    "url": `${process.env.NEXT_PUBLIC_SITE_URL || "https://meetsakib.com"}/terms`,
+    "url": `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.meetsakib.com"}/terms`,
     "publisher": {
       "@type": "Person",
       "name": "Md Nazmus Shakib",
       "jobTitle": "Senior Full Stack Developer",
-      "url": process.env.NEXT_PUBLIC_SITE_URL || "https://meetsakib.com"
+      "url": process.env.NEXT_PUBLIC_SITE_URL || "https://www.meetsakib.com"
     }
   };
 
