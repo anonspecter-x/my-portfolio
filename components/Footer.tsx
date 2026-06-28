@@ -156,7 +156,7 @@ export default async function Footer() {
             <nav className="flex flex-col gap-3">
               {projects.length > 0 ? (
                 projects.map((project: any) => (
-                  <Link key={project._id} href={`/projects/${project._id}`} className="text-sm font-semibold text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors w-fit truncate max-w-full">
+                  <Link key={project._id} href={project.link || "#"} className="text-sm font-semibold text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors w-fit truncate max-w-full">
                     {project.title}
                   </Link>
                 ))
