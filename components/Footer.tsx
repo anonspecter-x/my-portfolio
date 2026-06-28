@@ -155,22 +155,15 @@ export default async function Footer() {
             <h4 className="font-mono text-[10px] tracking-[0.2em] text-gray-400 dark:text-gray-500 uppercase font-bold">Projects</h4>
             <nav className="flex flex-col gap-3">
               {projects.length > 0 ? (
-                projects.map((project: any) => {
-                  // 📌 প্রফেশনাল ভ্যালিডেশন: ডাটাবেসে লিংক না থাকলে ইউজারকে মূল /projects পেজে রিডাইরেক্ট করবে
-                  const projectUrl = project.link && project.link.trim() !== "" ? project.link : "/projects";
-                  
-                  return (
-                    <Link 
-                      key={project._id} 
-                      href={projectUrl} 
-                      target={projectUrl.startsWith("http") ? "_blank" : "_self"} // বাইরের লিংক হলে নতুন ট্যাবে ওপেন হবে
-                      rel={projectUrl.startsWith("http") ? "noopener noreferrer" : ""}
-                      className="text-sm font-semibold text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors w-fit truncate max-w-full"
-                    >
-                      {project.title}
-                    </Link>
-                  );
-                })
+                projects.map((project: any) => (
+                  <Link 
+                    key={project._id} 
+                    href={`/projects/${project.slug}`} 
+                    className="text-sm font-semibold text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors w-fit truncate max-w-full"
+                  >
+                    {project.title}
+                  </Link>
+                ))
               ) : (
                 <p className="text-xs text-gray-500">No projects yet.</p>
               )}
