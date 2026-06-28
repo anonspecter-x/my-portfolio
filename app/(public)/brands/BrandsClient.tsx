@@ -109,7 +109,7 @@ export default function BrandsClient({ brands }: BrandsClientProps) {
         </div>
       </motion.div>
 
-      {/* ================= 🌟 BRANDS GRID (Projects পেজের মতো) ================= */}
+      {/* ================= 🌟 BRANDS GRID ================= */}
       {brands.length > 0 ? (
         <motion.div 
           initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }} variants={stagger}
@@ -135,7 +135,7 @@ export default function BrandsClient({ brands }: BrandsClientProps) {
                   <img 
                     src={brand.logo} 
                     alt={brand.name} 
-                    className="max-w-[85%] max-h-[85%] object-contain dark:invert group-hover:scale-105 transition-all duration-700 ease-out"
+                    className="max-w-[95%] max-h-[95%] w-full object-contain dark:invert group-hover:scale-105 transition-all duration-700 ease-out"
                   />
                 </div>
 
@@ -156,7 +156,7 @@ export default function BrandsClient({ brands }: BrandsClientProps) {
         </div>
       )}
 
-      {/* ================= 🌟 BOTTOM CTA SECTION (About পেজের Manifesto/CTA স্টাইলে) ================= */}
+      {/* ================= 🌟 BOTTOM CTA SECTION ================= */}
       <motion.section 
         initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={stagger}
         className="mt-32 md:mt-48 bg-black dark:bg-white text-white dark:text-black rounded-[3rem] p-10 md:p-20 relative overflow-hidden flex flex-col items-center text-center"
