@@ -28,15 +28,19 @@ async function getBrands() {
     const client = await MongoClient.connect(process.env.MONGODB_URI as string);
     const db = client.db();
     
-    // 📌 brands কালেকশন থেকে ডেটা আনা হচ্ছে (প্রয়োজনে নাম পরিবর্তন করতে পারেন)
-    const brands = await db.collection("brands").find({}).sort({ createdAt: -1 }).toArray();
+    // 📌 Admin panel er 'order' onujayi sort kora holo. Order na thakle latest aage ashbe.
+    const brands = await db.collection("brands")
+      .find({})
+      .sort({ order: 1, createdAt: -1 })
+      .toArray();
+      
     await client.close();
     
     return brands.map(brand => ({
       _id: brand._id.toString(),
       name: brand.name,
       logo: brand.logo,
-      website: brand.website || "#", // ওয়েবসাইট লিংক থাকলে যাবে, না থাকলে #
+      website: brand.website || "#", // ওয়েবসাইট লিংক থাকলে যাবে, না থাকলে #
     }));
   } catch (error) {
     console.error("Failed to fetch brands:", error);
