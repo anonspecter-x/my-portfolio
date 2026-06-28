@@ -6,7 +6,7 @@ export function generateMetadata(): Metadata {
 
   return {
     title: "Terms of Service | Md Nazmus Shakib - Full Stack Developer",
-    description: "Read the official Terms of Service for hiring and collaborating with Md Nazmus Shakib. Includes project scopes, payment terms, and intellectual property rights.",
+    description: "Read the Terms of Service for hiring Full Stack Developer Md Nazmus Shakib. Includes project scopes, payment terms, and IP rights.",
     keywords: [
       "Terms of Service",
       "Terms and Conditions",
