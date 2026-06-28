@@ -2,11 +2,12 @@
 
 import React, { useState, useRef } from "react";
 import { 
-  saveSkill, deleteSkill, saveService, deleteService, saveBrand, deleteBrand 
-} from "./actions";
+  saveSkill, deleteSkill, saveService, deleteService, saveBrand, deleteBrand, saveFooterSkills 
+} from "./actions"; // 📌 saveFooterSkills ইমপোর্ট করা হলো
 import { 
   Zap, Plus, Trash2, Edit2, X, Briefcase, 
-  Image as ImageIcon, ChevronDown, Loader2, Code2, Award, Building2
+  Image as ImageIcon, ChevronDown, Loader2, Code2, Award, Building2,
+  CheckSquare
 } from "lucide-react";
 
 // 📌 আলাদা করা iconMap ফাইলটি ইমপোর্ট করা হলো
@@ -18,6 +19,7 @@ interface Skill {
   subtitle?: string;
   percentage: number;
   icon: string;
+  showInFooter?: boolean; // 📌 ফুটারের জন্য নতুন প্রোপার্টি
 }
 
 interface Service {
@@ -49,6 +51,9 @@ export default function SkillsClient({
   const [editSkill, setEditSkill] = useState<Skill | null>(null);
   const [isSubmittingSkill, setIsSubmittingSkill] = useState(false);
   const [deletingSkillId, setDeletingSkillId] = useState<string | null>(null);
+  
+  // States for Footer Skills Management
+  const [isSubmittingFooter, setIsSubmittingFooter] = useState(false); // 📌 ফুটার সাবমিট স্টেট
   
   // States for Services
   const [editService, setEditService] = useState<Service | null>(null);
@@ -295,6 +300,75 @@ export default function SkillsClient({
               </div>
             )}
           </div>
+
+          {/* ================= 📌 NEW: FOOTER SKILLS MANAGEMENT SECTION ================= */}
+          <div className="lg:col-span-12 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm mt-4">
+            <h2 className="text-lg font-bold text-black dark:text-white flex items-center gap-2 mb-2">
+              <CheckSquare className="w-5 h-5 text-green-500" /> Footer Skills Visibility
+            </h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
+              Select the skills you want to highlight in the footer section. Checked skills will be displayed on the footer.
+            </p>
+
+            <form 
+              action={async (formData) => {
+                setIsSubmittingFooter(true);
+                try {
+                  await saveFooterSkills(formData);
+                  alert("✅ Footer skills visibility updated successfully!");
+                } catch (error) {
+                  console.error(error);
+                  alert("❌ Failed to update footer skills.");
+                } finally {
+                  setIsSubmittingFooter(false);
+                }
+              }}
+            >
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                {skills.map((skill) => (
+                  <label key={skill._id} className="cursor-pointer group flex flex-col items-center justify-center gap-3 p-5 border border-gray-200 dark:border-gray-800 rounded-2xl hover:border-green-500/50 dark:hover:border-green-500/50 transition-all duration-300 relative bg-gray-50 dark:bg-[#111]">
+                    
+                    {/* Checkbox */}
+                    <input
+                      type="checkbox"
+                      name="footerSkills"
+                      value={skill._id}
+                      defaultChecked={skill.showInFooter}
+                      className="absolute top-3 right-3 w-4 h-4 accent-green-500 cursor-pointer"
+                    />
+                    
+                    {/* Icon */}
+                    <div className="w-12 h-12 rounded-xl bg-white dark:bg-[#222] flex items-center justify-center shadow-sm border border-gray-100 dark:border-gray-800 group-hover:scale-105 transition-transform">
+                      {iconMap[skill.icon] || <Code2 className="w-6 h-6 text-gray-400" />}
+                    </div>
+                    
+                    {/* Title */}
+                    <span className="text-xs font-bold text-center text-gray-700 dark:text-gray-300 line-clamp-1 w-full truncate px-1">
+                      {skill.name}
+                    </span>
+                  </label>
+                ))}
+
+                {skills.length === 0 && (
+                  <div className="col-span-full text-center py-10 text-sm text-gray-500">
+                    No skills available. Please add some skills first.
+                  </div>
+                )}
+              </div>
+
+              {/* Submit Button */}
+              <div className="flex justify-end pt-5 border-t border-gray-200 dark:border-gray-800">
+                <button 
+                  disabled={isSubmittingFooter || skills.length === 0} 
+                  type="submit" 
+                  className="bg-green-600 text-white text-sm font-bold px-8 py-3 rounded-xl hover:bg-green-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shadow-sm"
+                >
+                  {isSubmittingFooter ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save Footer Selection"}
+                </button>
+              </div>
+            </form>
+          </div>
+
         </div>
       )}
 
