@@ -3,9 +3,8 @@
 import { motion } from "framer-motion";
 import { 
   ShieldCheck, Lock, Eye, Database, 
-  Server, UserCheck, Mail, ArrowRight, 
-  CheckCircle2, Cookie, RefreshCw, FileText,
-  AlertTriangle
+  Server, UserCheck, Mail, CheckCircle2, 
+  Cookie, RefreshCw, FileText, AlertTriangle
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -13,7 +12,7 @@ import { useState, useEffect } from "react";
 export default function PrivacyClient() {
   const [activeSection, setActiveSection] = useState("introduction");
 
-  // 東 Animation Variants (Matched with other pages)
+  // 📌 Animation Variants
   const fadeUp: any = {
     hidden: { opacity: 0, y: 40 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
@@ -24,7 +23,7 @@ export default function PrivacyClient() {
     visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
   };
 
-  // 東 Scroll Spy logic for Sticky Sidebar
+  // 📌 Scroll Spy logic for Sticky Sidebar
   useEffect(() => {
     const handleScroll = () => {
       const sections = document.querySelectorAll("section[id]");
@@ -49,7 +48,7 @@ export default function PrivacyClient() {
     const element = document.getElementById(id);
     if (element) {
       window.scrollTo({
-        top: element.offsetTop - 120,
+        top: element.offsetTop - 120, // 120px offset for sticky header space
         behavior: "smooth",
       });
     }
@@ -67,21 +66,24 @@ export default function PrivacyClient() {
   ];
 
   return (
-    <main className="relative min-h-screen pt-32 pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto overflow-hidden">
+    // ⚠️ FIXED: Removed overflow-hidden from main tag to allow sticky positioning
+    <main className="relative min-h-screen pt-32 pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto">
       
-      {/* 耳 Animated Background Elements (Matched with other pages) */}
-      <motion.div 
-        animate={{ y: [0, -20, 0], opacity: [0.5, 0.8, 0.5] }}
-        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-40 left-[-10%] w-[300px] h-[300px] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none -z-10"
-      />
-      <motion.div 
-        animate={{ y: [0, 20, 0], opacity: [0.5, 0.8, 0.5] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-40 right-[-10%] w-[300px] h-[300px] bg-purple-500/5 blur-[120px] rounded-full pointer-events-none -z-10"
-      />
+      {/* 🎨 Animated Background Elements - Wrapped in its own overflow-hidden div */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
+        <motion.div 
+          animate={{ y: [0, -20, 0], opacity: [0.5, 0.8, 0.5] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-40 left-[-10%] w-[300px] h-[300px] bg-blue-500/5 blur-[120px] rounded-full"
+        />
+        <motion.div 
+          animate={{ y: [0, 20, 0], opacity: [0.5, 0.8, 0.5] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-40 right-[-10%] w-[300px] h-[300px] bg-purple-500/5 blur-[120px] rounded-full"
+        />
+      </div>
 
-      {/* 東 Header (Matched with Projects/Blog/Contact) */}
+      {/* 🌟 Header */}
       <motion.div initial="hidden" animate="visible" variants={stagger} className="max-w-3xl mb-16 md:mb-24 relative z-10">
         <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-xs font-semibold mb-6 text-gray-600 dark:text-gray-400 shadow-sm">
           <ShieldCheck className="w-3.5 h-3.5" /> Legal Document — Updated: June 2026
@@ -94,10 +96,10 @@ export default function PrivacyClient() {
         </motion.p>
       </motion.div>
 
-      {/* 東 Content Grid Layout */}
+      {/* 🌟 Content Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start relative z-10">
         
-        {/* 東 Left Side: Sticky Table of Contents */}
+        {/* 📌 Left Side: PERFECTLY STICKY Table of Contents */}
         <motion.div 
           initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
           className="hidden lg:block lg:col-span-4 sticky top-32 self-start"
@@ -131,7 +133,7 @@ export default function PrivacyClient() {
           </div>
         </motion.div>
 
-        {/* 東 Right Side: Policy Detailed Content */}
+        {/* 📌 Right Side: Policy Detailed Content */}
         <motion.div 
           initial="hidden" animate="visible" variants={stagger}
           className="lg:col-span-8 space-y-8 md:space-y-10 pb-20"
