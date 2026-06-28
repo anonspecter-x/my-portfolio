@@ -42,9 +42,15 @@ export default function ContactClient({ contactData }: ContactClientProps) {
     }
   };
 
+  // 📌 Animation Variants (Updated to match other pages)
   const fadeUp: any = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+    hidden: { opacity: 0, y: 40 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
+  };
+
+  const stagger: any = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
   };
 
   const email = contactData?.email || "hello@example.com";
@@ -55,33 +61,44 @@ export default function ContactClient({ contactData }: ContactClientProps) {
     // এখানে 'relative' ক্লাস যুক্ত করা হয়েছে
     <main className="relative min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] pt-32 pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto overflow-hidden">
       
-      {/* 🎨 Background Elements */}
-      <div className="absolute top-40 left-[-10%] w-[300px] h-[300px] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none -z-10"></div>
-      <div className="absolute bottom-40 right-[-10%] w-[300px] h-[300px] bg-purple-500/5 blur-[120px] rounded-full pointer-events-none -z-10"></div>
+      {/* 🎨 Animated Background Elements (Updated to match other pages) */}
+      <motion.div 
+        animate={{ y: [0, -20, 0], opacity: [0.5, 0.8, 0.5] }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-40 left-[-10%] w-[300px] h-[300px] bg-blue-500/10 blur-[120px] rounded-full pointer-events-none -z-10"
+      />
+      <motion.div 
+        animate={{ y: [0, 20, 0], opacity: [0.5, 0.8, 0.5] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute bottom-40 right-[-10%] w-[300px] h-[300px] bg-purple-500/10 blur-[120px] rounded-full pointer-events-none -z-10"
+      />
 
       {/* 🌟 Header (Left-aligned & Styled like other pages) */}
       <motion.div 
-        initial="hidden" animate="visible" variants={fadeUp}
+        initial="hidden" animate="visible" variants={stagger}
         className="max-w-3xl mb-16 md:mb-24"
       >
-        <div className="inline-flex items-center w-fit gap-2 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-xs font-semibold mb-6 text-gray-600 dark:text-gray-400">
+        <motion.div variants={fadeUp} className="inline-flex items-center w-fit gap-2 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-xs font-semibold mb-6 text-gray-600 dark:text-gray-400">
           <MessageSquare className="w-3.5 h-3.5" /> Let's Connect
-        </div>
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-black dark:text-white leading-[1.1] mb-6">
+        </motion.div>
+        <motion.h1 variants={fadeUp} className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-black dark:text-white leading-[1.1] mb-6">
           Ready to build <br className="hidden md:block" />
           <span className="text-gray-400">your next big idea?</span>
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400 text-lg">
+        </motion.h1>
+        <motion.p variants={fadeUp} className="text-gray-600 dark:text-gray-400 text-lg">
           Whether you need a full-stack application, technical consultation, or just want to say hi—my inbox is always open.
-        </p>
+        </motion.p>
       </motion.div>
 
       {/* 🌟 Grid Layout (Fixed heights using items-stretch) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
+      <motion.div 
+        initial="hidden" animate="visible" variants={stagger}
+        className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch"
+      >
         
         {/* 🌟 Left Side: Contact Info Panel */}
         <motion.div 
-          initial="hidden" animate="visible" variants={fadeUp} transition={{ delay: 0.1 }}
+          variants={fadeUp}
           className="lg:col-span-5 h-full"
         >
           {/* h-full and flex-col added to make it stretch */}
@@ -175,7 +192,7 @@ export default function ContactClient({ contactData }: ContactClientProps) {
 
         {/* 🌟 Right Side: Contact Form */}
         <motion.div 
-          initial="hidden" animate="visible" variants={fadeUp} transition={{ delay: 0.2 }}
+          variants={fadeUp}
           className="lg:col-span-7 h-full"
         >
           <div className="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 p-6 md:p-10 rounded-[2rem] shadow-sm h-full flex flex-col relative overflow-hidden">
@@ -235,7 +252,7 @@ export default function ContactClient({ contactData }: ContactClientProps) {
 
           </div>
         </motion.div>
-      </div>
+      </motion.div>
     </main>
   );
 }
