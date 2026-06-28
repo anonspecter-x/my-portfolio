@@ -2,11 +2,12 @@
 
 import React, { useState, useRef } from "react";
 import { 
-  saveSkill, deleteSkill, saveService, deleteService, saveBrand, deleteBrand 
-} from "./actions";
+  saveSkill, deleteSkill, saveService, deleteService, saveBrand, deleteBrand, saveFooterIcons 
+} from "./actions"; // 📌 saveFooterIcons ইমপোর্ট করা হলো
 import { 
   Zap, Plus, Trash2, Edit2, X, Briefcase, 
-  Image as ImageIcon, ChevronDown, Loader2, Code2, Award, Building2
+  Image as ImageIcon, ChevronDown, Loader2, Code2, Award, Building2,
+  CheckSquare
 } from "lucide-react";
 
 // 📌 আলাদা করা iconMap ফাইলটি ইমপোর্ট করা হলো
@@ -37,11 +38,13 @@ interface Brand {
 export default function SkillsClient({ 
   skills, 
   services, 
-  brands = [] 
+  brands = [],
+  footerIcons = [] // 📌 ফুটার আইকনের লিস্ট রিসিভ করার জন্য
 }: { 
   skills: Skill[]; 
   services: Service[]; 
   brands?: Brand[]; 
+  footerIcons?: string[]; // 📌 টাইপ অ্যাড করা হলো
 }) {
   const [activeTab, setActiveTab] = useState<"skills" | "services" | "brands">("skills");
   
@@ -49,6 +52,9 @@ export default function SkillsClient({
   const [editSkill, setEditSkill] = useState<Skill | null>(null);
   const [isSubmittingSkill, setIsSubmittingSkill] = useState(false);
   const [deletingSkillId, setDeletingSkillId] = useState<string | null>(null);
+  
+  // States for Footer Skills Management
+  const [isSubmittingFooter, setIsSubmittingFooter] = useState(false);
   
   // States for Services
   const [editService, setEditService] = useState<Service | null>(null);
@@ -91,6 +97,9 @@ export default function SkillsClient({
     setEditBrand(null);
     formRef.current?.reset();
   };
+
+  // 📌 iconMap থেকে সব আইকনের নাম বের করা হলো
+  const allAvailableIcons = Object.keys(iconMap);
 
   return (
     <div className="space-y-8">
@@ -248,7 +257,7 @@ export default function SkillsClient({
           {/* --- Skills List --- */}
           <div className="lg:col-span-8 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm">
             <h2 className="text-lg font-bold text-black dark:text-white flex items-center gap-2 mb-6">
-              <Zap className="w-5 h-5 text-gray-400" /> Live Skills ({skills.length})
+              <Zap className="w-5 h-5 text-gray-400" /> Live Homepage Skills ({skills.length})
             </h2>
             {skills.length === 0 ? (
               <div className="text-center py-16 border border-dashed border-gray-200 dark:border-gray-800 rounded-xl">
@@ -295,6 +304,69 @@ export default function SkillsClient({
               </div>
             )}
           </div>
+
+          {/* ================= 📌 NEW: FOOTER SKILLS MANAGEMENT SECTION (Full Library) ================= */}
+          <div className="lg:col-span-12 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm mt-4">
+            <h2 className="text-lg font-bold text-black dark:text-white flex items-center gap-2 mb-2">
+              <CheckSquare className="w-5 h-5 text-green-500" /> Footer Tech Stack Visibility
+            </h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
+              Select any technology from the full library below to display in the footer section. You can choose as many as you want.
+            </p>
+
+            <form 
+              action={async (formData) => {
+                setIsSubmittingFooter(true);
+                try {
+                  await saveFooterIcons(formData);
+                } catch (error) {
+                  console.error(error);
+                  alert("❌ Failed to update footer skills.");
+                } finally {
+                  setIsSubmittingFooter(false);
+                }
+              }}
+            >
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                {/* 📌 iconMap থেকে সব আইকন ম্যাপ করা হচ্ছে */}
+                {allAvailableIcons.map((iconKey) => (
+                  <label key={iconKey} className="cursor-pointer group flex flex-col items-center justify-center gap-3 p-5 border border-gray-200 dark:border-gray-800 rounded-2xl hover:border-green-500/50 dark:hover:border-green-500/50 transition-all duration-300 relative bg-gray-50 dark:bg-[#111]">
+                    
+                    {/* Checkbox */}
+                    <input
+                      type="checkbox"
+                      name="footerIcons"
+                      value={iconKey}
+                      defaultChecked={footerIcons.includes(iconKey)}
+                      className="absolute top-3 right-3 w-4 h-4 accent-green-500 cursor-pointer"
+                    />
+                    
+                    {/* Icon */}
+                    <div className="w-12 h-12 rounded-xl bg-white dark:bg-[#222] flex items-center justify-center shadow-sm border border-gray-100 dark:border-gray-800 group-hover:scale-105 transition-transform">
+                      {iconMap[iconKey] || <Code2 className="w-6 h-6 text-gray-400" />}
+                    </div>
+                    
+                    {/* Title */}
+                    <span className="text-xs font-bold text-center text-gray-700 dark:text-gray-300 line-clamp-1 w-full truncate px-1">
+                      {iconKey}
+                    </span>
+                  </label>
+                ))}
+              </div>
+
+              {/* Submit Button */}
+              <div className="flex justify-end pt-5 border-t border-gray-200 dark:border-gray-800">
+                <button 
+                  disabled={isSubmittingFooter} 
+                  type="submit" 
+                  className="bg-green-600 text-white text-sm font-bold px-8 py-3 rounded-xl hover:bg-green-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shadow-sm"
+                >
+                  {isSubmittingFooter ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save Footer Selection"}
+                </button>
+              </div>
+            </form>
+          </div>
+
         </div>
       )}
 

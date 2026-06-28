@@ -46,7 +46,6 @@ async function getBrands() {
   const client = await MongoClient.connect(process.env.MONGODB_URI as string);
   try {
     const db = client.db();
-    // order অনুযায়ী ছোট থেকে বড় সাজানো হবে (যেমন: ১, ২, ৩...)
     const brands = await db.collection("brands").find({}).sort({ order: 1 }).toArray();
     
     return brands.map(brand => ({
@@ -60,10 +59,24 @@ async function getBrands() {
   }
 }
 
+// 📌 NEW: Fetch Footer Icons Data
+async function getFooterIcons() {
+  const client = await MongoClient.connect(process.env.MONGODB_URI as string);
+  try {
+    const db = client.db();
+    const settings = await db.collection("settings").findOne({});
+    // ডাটাবেস থেকে footerIcons অ্যারে বের করে আনছি
+    return settings?.footerIcons || [];
+  } finally {
+    await client.close();
+  }
+}
+
 export default async function SkillsPage() {
   const skills = await getSkills();
   const services = await getServices();
   const brands = await getBrands();
+  const footerIcons = await getFooterIcons(); // 📌 ফেচ করা হলো
 
   return (
     <div className="space-y-10 max-w-6xl">
@@ -78,7 +91,12 @@ export default async function SkillsPage() {
       </div>
 
       {/* Client Component */}
-      <SkillsClient skills={skills} services={services} brands={brands} />
+      <SkillsClient 
+        skills={skills} 
+        services={services} 
+        brands={brands} 
+        footerIcons={footerIcons} // 📌 প্রপস হিসেবে পাস করা হলো
+      />
     </div>
   );
 }

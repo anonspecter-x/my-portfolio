@@ -181,3 +181,27 @@ export async function deleteBrand(id: string) {
   revalidatePath("/dashboard/skills");
   revalidatePath("/");
 }
+
+// ==========================================
+// 📌 NEW: FOOTER ICONS VISIBILITY ACTION
+// ==========================================
+
+export async function saveFooterIcons(formData: FormData) {
+  // চেকবক্স থেকে সিলেক্ট করা সব আইকনের নাম অ্যারে হিসেবে নেওয়া হলো
+  const selectedIcons = formData.getAll("footerIcons") as string[];
+  const { client, db } = await connectToDatabase();
+
+  try {
+    // সেটিংস কালেকশনে আইকনের লিস্ট সেভ করা হলো
+    await db.collection("settings").updateOne(
+      {}, 
+      { $set: { footerIcons: selectedIcons } },
+      { upsert: true }
+    );
+  } finally {
+    await client.close();
+  }
+
+  revalidatePath("/dashboard/skills");
+  revalidatePath("/");
+}
