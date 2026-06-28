@@ -64,31 +64,6 @@ export async function deleteSkill(id: string) {
   revalidatePath("/");
 }
 
-// 📌 NEW: FOOTER SKILLS VISIBILITY ACTION
-export async function saveFooterSkills(formData: FormData) {
-  const selectedIds = formData.getAll("footerSkills") as string[];
-  const { client, db } = await connectToDatabase();
-
-  try {
-    // ১. প্রথমে সব স্কিলের showInFooter স্ট্যাটাস false করে দেওয়া হচ্ছে
-    await db.collection("skills").updateMany({}, { $set: { showInFooter: false } });
-
-    // ২. এবার যেগুলো সিলেক্ট করা হয়েছে, শুধু সেগুলোকে true করা হচ্ছে
-    if (selectedIds.length > 0) {
-      const objectIds = selectedIds.map((id) => new ObjectId(id));
-      await db.collection("skills").updateMany(
-        { _id: { $in: objectIds } },
-        { $set: { showInFooter: true } }
-      );
-    }
-  } finally {
-    await client.close();
-  }
-
-  revalidatePath("/dashboard/skills");
-  revalidatePath("/");
-}
-
 // ==========================================
 // 💼 SERVICES / EXPERIENCE ACTIONS
 // ==========================================
