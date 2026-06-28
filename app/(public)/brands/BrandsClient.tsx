@@ -121,7 +121,7 @@ export default function BrandsClient({ brands }: BrandsClientProps) {
                 href={brand.website !== "#" ? brand.website : "#"}
                 target={brand.website !== "#" ? "_blank" : "_self"}
                 rel={brand.website !== "#" ? "noopener noreferrer" : ""}
-                className={`group flex flex-col items-center justify-center p-8 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-[2rem] overflow-hidden hover:border-blue-500/30 transition-all duration-500 shadow-sm hover:shadow-xl hover:-translate-y-1 relative aspect-square ${brand.website !== "#" ? "cursor-pointer" : "cursor-default pointer-events-none"}`}
+                className={`group flex flex-col items-center justify-center p-4 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-[2rem] overflow-hidden hover:border-blue-500/30 transition-all duration-500 shadow-sm hover:shadow-xl hover:-translate-y-1 relative aspect-square ${brand.website !== "#" ? "cursor-pointer" : "cursor-default pointer-events-none"}`}
               >
                 {/* External Link Indicator */}
                 {brand.website !== "#" && (
@@ -135,7 +135,7 @@ export default function BrandsClient({ brands }: BrandsClientProps) {
                   <img 
                     src={brand.logo} 
                     alt={brand.name} 
-                    className="max-w-[70%] max-h-[70%] object-contain opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
+                    className="max-w-[85%] max-h-[85%] object-contain dark:invert group-hover:scale-105 transition-all duration-700 ease-out"
                   />
                 </div>
 
