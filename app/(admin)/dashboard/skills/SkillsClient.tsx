@@ -238,6 +238,10 @@ export default function SkillsClient({
                     <option value="Figma">Figma</option>
                     <option value="WordPress">WordPress</option>
                   </optgroup>
+                  {/* Custom */}
+                  <optgroup label="Other / Custom">
+                    <option value="Custom">Custom / Code</option>
+                  </optgroup>
                 </select>
               </div>
 

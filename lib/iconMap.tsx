@@ -43,7 +43,7 @@ import {
   SiLinux
 } from "react-icons/si";
 
-// সোশ্যাল মিডিয়া ও অন্যান্য আইকন FA (Font Awesome) থেকে
+// সোশ্যাল মিডিয়া ও অন্যান্য আইকন FA (Font Awesome) থেকে
 import {
   FaGithub,
   FaLinkedin,
@@ -52,13 +52,14 @@ import {
   FaYoutube,
   FaFacebook,
   FaInstagram,
-  FaAws 
+  FaAws,
+  FaCode // 📌 Custom কোড আইকনের জন্য যোগ করা হলো
 } from "react-icons/fa";
 
 // 📌 C# এর জন্য Tabler Icons ব্যবহার করা হলো (যেহেতু SiCsharp এবং DiCsharp মিসিং)
 import { TbBrandCSharp } from "react-icons/tb";
 
-// 📌 প্রতিটি টেকনোলজি এবং সোশ্যাল মিডিয়ার জন্য অফিশিয়াল ব্র্যান্ড আইকন ম্যাপ
+// 📌 প্রতিটি টেকনোলজি এবং সোশ্যাল মিডিয়ার জন্য অফিশিয়াল ব্র্যান্ড আইকন ম্যাপ
 export const iconMap: Record<string, React.ReactNode> = {
   // --- Technology Icons ---
   React: <SiReact className="w-5 h-5 shrink-0 text-[#61dafb]" />,
@@ -114,5 +115,8 @@ export const iconMap: Record<string, React.ReactNode> = {
   WhatsApp: <FaWhatsapp className="w-5 h-5 shrink-0 text-[#25D366]" />,
   YouTube: <FaYoutube className="w-5 h-5 shrink-0 text-[#FF0000]" />,
   Facebook: <FaFacebook className="w-5 h-5 shrink-0 text-[#1877F2]" />,
-  Instagram: <FaInstagram className="w-5 h-5 shrink-0 text-[#E4405F]" />
+  Instagram: <FaInstagram className="w-5 h-5 shrink-0 text-[#E4405F]" />,
+  
+  // --- 📌 Custom Icon ---
+  Custom: <FaCode className="w-5 h-5 shrink-0 text-gray-600 dark:text-gray-400" />
 };
