@@ -61,7 +61,7 @@ export default function BrandsClient({ brands }: BrandsClientProps) {
         </motion.p>
       </motion.div>
 
-      {/* ================= 🌟 STATS BAR (About/Contact পেজের কার্ডের মতো) ================= */}
+      {/* ================= 🌟 STATS BAR ================= */}
       <motion.div 
         initial="hidden" animate="visible" variants={fadeUp}
         className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-24 md:mb-32"
@@ -135,7 +135,7 @@ export default function BrandsClient({ brands }: BrandsClientProps) {
                   <img 
                     src={brand.logo} 
                     alt={brand.name} 
-                    className="max-w-[95%] max-h-[95%] w-full object-contain dark:invert group-hover:scale-105 transition-all duration-700 ease-out"
+                    className="max-w-[95%] max-h-[95%] w-full object-contain dark:brightness-0 dark:invert group-hover:scale-105 transition-all duration-700 ease-out"
                   />
                 </div>
 
