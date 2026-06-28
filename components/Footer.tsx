@@ -66,6 +66,7 @@ export default async function Footer() {
     { name: "About", url: "/about" },
     { name: "Projects", url: "/projects" },
     { name: "Blog", url: "/blog" },
+    { name: "Brands", url: "/brands" },
     { name: "Contact", url: "/contact" },
   ];
 

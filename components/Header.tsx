@@ -49,6 +49,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
     { name: "About", href: "/about" },
     { name: "Projects", href: "/projects" },
     { name: "Blog", href: "/blog" },
+    { name: "Brands", href: "/brands" }, 
   ];
 
   // ⚙️ Logic: Add Contact only if on /contact page
