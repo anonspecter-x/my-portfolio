@@ -12,7 +12,8 @@ import {
   Search,
   Layers,
   Code2,
-  Rocket
+  Rocket,
+  Info // 📌 Added Info icon for the disclaimer
 } from "lucide-react";
 import Link from "next/link";
 
@@ -70,7 +71,7 @@ export default function BrandsClient({ brands }: BrandsClientProps) {
       <div className="absolute top-40 left-[-10%] w-[300px] h-[300px] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none -z-10"></div>
       <div className="absolute bottom-40 right-[-10%] w-[300px] h-[300px] bg-purple-500/5 blur-[120px] rounded-full pointer-events-none -z-10"></div>
 
-      {/* ================= 🌟 THE HERO SECTION (REVERTED TO ORIGINAL) ================= */}
+      {/* ================= 🌟 THE HERO SECTION ================= */}
       <motion.div 
         initial="hidden" animate="visible" variants={stagger}
         className="max-w-3xl mb-16 md:mb-24"
@@ -117,7 +118,6 @@ export default function BrandsClient({ brands }: BrandsClientProps) {
       {/* ================= 🌟 INFINITE MARQUEE ================= */}
       {brands.length > 3 && (
         <div className="mb-24 overflow-hidden relative w-full border-y border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-[#0a0a0a]/50 py-8">
-          {/* Fading Edges */}
           <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#fafafa] dark:from-[#030303] to-transparent z-10"></div>
           <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#fafafa] dark:from-[#030303] to-transparent z-10"></div>
           
@@ -145,14 +145,12 @@ export default function BrandsClient({ brands }: BrandsClientProps) {
                 rel={brand.website !== "#" ? "noopener noreferrer" : ""}
                 className={`group flex flex-col items-center justify-center p-4 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-[2rem] overflow-hidden hover:border-blue-500/30 transition-all duration-500 shadow-sm hover:shadow-xl hover:-translate-y-1 relative aspect-square ${brand.website !== "#" ? "cursor-pointer" : "cursor-default pointer-events-none"}`}
               >
-                {/* External Link Indicator */}
                 {brand.website !== "#" && (
                   <div className="absolute top-4 right-4 bg-gray-50 dark:bg-[#111] w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 duration-300 border border-gray-200 dark:border-gray-800 shadow-sm z-20">
                     <ArrowUpRight className="w-4 h-4 text-black dark:text-white group-hover:text-blue-500 transition-colors" />
                   </div>
                 )}
 
-                {/* Logo */}
                 <div className="relative z-10 w-full h-full flex items-center justify-center">
                   <img 
                     src={brand.logo} 
@@ -161,7 +159,6 @@ export default function BrandsClient({ brands }: BrandsClientProps) {
                   />
                 </div>
 
-                {/* 📌 FIXED: Brand Tag / Badge (Works on Hover and Click/Tap) */}
                 <div className="absolute bottom-6 left-0 right-0 flex justify-center opacity-0 group-hover:opacity-100 group-focus:opacity-100 group-active:opacity-100 transition-all translate-y-2 group-hover:translate-y-0 group-active:translate-y-0 duration-500 z-20">
                   <span className="text-[10px] font-bold tracking-widest uppercase text-gray-600 dark:text-gray-400 bg-gray-50/90 dark:bg-[#111]/90 backdrop-blur-md px-3 py-1.5 rounded border border-gray-200 dark:border-gray-800 shadow-sm">
                     {brand.name}
@@ -177,6 +174,21 @@ export default function BrandsClient({ brands }: BrandsClientProps) {
           <p className="text-gray-500 dark:text-gray-400 text-lg font-medium">Brand showcase is currently being updated.</p>
         </div>
       )}
+
+      {/* ================= 🌟 LEGAL DISCLAIMER (NEWLY ADDED) ================= */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="mt-12 flex items-start sm:items-center gap-3 p-4 sm:p-5 rounded-2xl bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 max-w-full"
+      >
+        <Info className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5 sm:mt-0" />
+        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 leading-relaxed text-left">
+          <strong className="text-gray-700 dark:text-gray-300">Disclaimer:</strong> The logos and brand names displayed on this page are strictly for portfolio and illustrative purposes, representing past collaborations, clients, or completed projects. All trademarks, logos, and copyrights belong to their respective owners. I do not claim any ownership over these third-party intellectual properties, nor does their display imply a direct endorsement.
+        </p>
+      </motion.div>
+      {/* ====================================================================== */}
 
       {/* ================= 🌟 HOW WE COLLABORATE (Timeline Section) ================= */}
       <motion.section 
