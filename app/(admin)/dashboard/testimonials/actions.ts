@@ -34,6 +34,7 @@ export async function addTestimonial(formData: FormData) {
     rating,
     priority,
     photoUrl,
+    approved: true, // 📌 অ্যাডমিন প্যানেল থেকে অ্যাড করলে সরাসরি লাইভ হবে
     createdAt: new Date()
   });
 
@@ -100,6 +101,20 @@ export async function deleteTestimonial(id: string) {
     }
     await collection.deleteOne({ _id: new ObjectId(id) });
   }
+
+  await client.close();
+  revalidatePath("/dashboard/testimonials");
+}
+
+// 📌 ৪. নতুন অ্যাকশন: পাবলিক পেজ থেকে আসা পেন্ডিং রিভিউ এপ্রুভ করা
+export async function approveTestimonial(id: string) {
+  const client = await MongoClient.connect(uri);
+  const db = client.db();
+  
+  await db.collection("testimonials").updateOne(
+    { _id: new ObjectId(id) },
+    { $set: { approved: true, priority: 0 } } // এপ্রুভ হওয়ার পর ডিফল্ট প্রায়োরিটি ০ থাকবে
+  );
 
   await client.close();
   revalidatePath("/dashboard/testimonials");

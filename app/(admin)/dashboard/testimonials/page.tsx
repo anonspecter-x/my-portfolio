@@ -14,15 +14,16 @@ async function getTestimonials(): Promise<TestimonialType[]> {
   
   await client.close();
   
-  // 📌 🛠️ ফিক্স: স্প্রেড অপারেটর (...t) এর বদলে ম্যানুয়ালি প্রোপার্টিগুলো ম্যাপ করা হলো
+  // 📌 approved ফিল্ড ম্যাপ করা হলো
   return testimonials.map((t) => ({ 
     _id: t._id.toString(),
     name: t.name,
     role: t.role,
     review: t.review,
     rating: t.rating,
-    priority: t.priority,
-    photoUrl: t.photoUrl
+    priority: t.priority || 0,
+    photoUrl: t.photoUrl || "",
+    approved: t.approved !== false // ডেটাবেজে approved না থাকলে ডিফল্ট true হিসেবে ধরবে
   })) as TestimonialType[];
 }
 
@@ -37,7 +38,7 @@ export default async function TestimonialsPage() {
           <MessageSquareQuote className="w-8 h-8 text-blue-500" /> Client Testimonials
         </h1>
         <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm md:text-base">
-          Manage client reviews, assign display priorities, and upload client photos dynamically.
+          Manage client reviews, approve pending feedback, assign display priorities, and upload client photos dynamically.
         </p>
       </div>
 
