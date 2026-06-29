@@ -5,7 +5,7 @@ import {
   ArrowRight, FileText, Code2, Layout, LayoutTemplate, 
   ChevronRight, ChevronDown, ChevronUp, ExternalLink, 
   Quote, Star, Lightbulb, PenTool, Rocket, PhoneCall,
-  Calendar, Clock // 📌 নতুন আইকন যুক্ত করা হয়েছে
+  Calendar, Clock // 📌 নতুন আইকন যুক্ত করা হয়েছে
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
@@ -46,7 +46,7 @@ interface HomeClientProps {
   services?: any[];
   testimonials?: any[];
   brands?: any[]; 
-  blogs?: any[]; // 📌 ব্লগ ডাটার জন্য প্রপ যুক্ত করা হয়েছে
+  blogs?: any[]; // 📌 ব্লগ ডাটার জন্য প্রপ যুক্ত করা হয়েছে
   settings: any; 
 }
 
@@ -177,7 +177,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
           animation: scroll-marquee 40s linear infinite;
         }
         .animate-brand-marquee {
-          animation: scroll-brand-marquee 60s linear infinite; /* 📌 লোগো স্লাইড স্লো করা হয়েছে */
+          animation: scroll-brand-marquee 60s linear infinite; /* 📌 লোগো স্লাইড স্লো করা হয়েছে */
         }
         .pause-on-hover:hover .animate-marquee,
         .pause-on-hover:focus-within .animate-marquee,
@@ -603,7 +603,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               </motion.p>
             </div>
 
-            <div className="hidden md:flex relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] pause-on-hover py-4">
+            <div className="hidden md:flex relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] pause-on-hover pt-4 pb-12">
               <div className="flex shrink-0 animate-marquee gap-6">
                 {desktopTestimonials.map((testimonial, idx) => (
                   <div 
@@ -677,7 +677,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               ref={mobileScrollerRef}
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
-              className="flex md:hidden relative w-full overflow-x-auto [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)] py-4 gap-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              className="flex md:hidden relative w-full overflow-x-auto [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)] pt-4 pb-12 gap-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             >
               {mobileTestimonials.map((testimonial, idx) => (
                 <div 
@@ -734,7 +734,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               onMouseLeave={handleBlogInteractionEnd}
               onTouchStart={handleBlogInteractionStart}
               onTouchEnd={handleBlogInteractionEnd}
-              className="flex relative w-full overflow-x-auto [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)] py-4 gap-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              className="flex relative w-full overflow-x-auto [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)] pt-4 pb-12 gap-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             >
               {infiniteBlogs.map((blog, idx) => (
                 <div 
