@@ -5,7 +5,7 @@ import { submitPublicReview } from "./actions";
 import { motion } from "framer-motion";
 import { 
   Send, User, MessageSquareQuote, CheckCircle2, 
-  Briefcase, Star, ImagePlus, ShieldCheck, Loader2, Quote, Sparkles
+  Briefcase, Star, ImagePlus, ShieldCheck, Quote, Sparkles
 } from "lucide-react";
 import imageCompression from 'browser-image-compression';
 import { Turnstile } from '@marsidev/react-turnstile'; 
@@ -68,7 +68,8 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
   };
 
   return (
-    <main className="relative min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] pt-32 pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto overflow-hidden">
+    // 📌 Updated Top Padding (pt-32 lg:pt-40) to prevent header overlap
+    <main className="relative min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] pt-32 lg:pt-40 pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto overflow-hidden">
       
       {/* 🎨 Animated Background Elements */}
       <motion.div 
@@ -83,13 +84,14 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
       />
 
       {/* 🌟 2-Column Grid Layout */}
+      {/* Removed items-stretch to let columns size naturally on mobile */}
       <motion.div 
         initial="hidden" animate="visible" variants={stagger}
-        className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-stretch"
+        className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16"
       >
         
         {/* 🌟 Left Side: Info & Guidelines */}
-        <motion.div variants={fadeUp} className="lg:col-span-5 flex flex-col justify-center h-full pt-4 lg:pt-0">
+        <motion.div variants={fadeUp} className="lg:col-span-5 flex flex-col pt-4 lg:pt-0">
           <div className="inline-flex items-center w-fit gap-2 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-xs font-semibold mb-6 text-gray-600 dark:text-gray-400 shadow-sm">
             <MessageSquareQuote className="w-3.5 h-3.5" /> Client Feedback
           </div>
@@ -127,13 +129,12 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
         </motion.div>
 
         {/* 🌟 Right Side: The Form */}
-        <motion.div variants={fadeUp} className="lg:col-span-7 h-full">
-          <div className="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 p-6 md:p-10 rounded-[2rem] shadow-sm relative overflow-hidden h-full flex flex-col">
+        <motion.div variants={fadeUp} className="lg:col-span-7">
+          <div className="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 p-6 md:p-10 rounded-[2rem] shadow-sm relative overflow-hidden">
             
             <form 
               ref={formRef} 
               action={handleAction} 
-              // 📌 Instant Loading State Trigger to prevent double-clicks
               onSubmit={(e) => {
                 if (!turnstileToken) {
                   e.preventDefault();
@@ -143,9 +144,10 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
                   setStatus("loading");
                 }
               }}
-              className="space-y-6 relative z-10 flex-1 flex flex-col"
+              // 📌 Removed forced flex stretching to fix squishing issues
+              className="space-y-6 relative z-10"
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
                 <div className="space-y-2">
                   <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 flex items-center gap-1.5">
                     <User className="w-3.5 h-3.5" /> Full Name *
@@ -167,22 +169,23 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
                 </div>
               </div>
 
-              <div className="space-y-2 flex-1">
+              <div className="space-y-2">
                 <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 flex items-center gap-1.5">
                   <MessageSquareQuote className="w-3.5 h-3.5" /> Your Review *
                 </label>
                 <textarea 
                   name="review" required placeholder="How was your experience working with me?" maxLength={500}
-                  className="w-full min-h-[120px] h-full bg-gray-50 dark:bg-[#050505] border border-gray-200 dark:border-gray-800 text-black dark:text-white text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-all resize-none placeholder:text-gray-400 shadow-sm"
+                  className="w-full min-h-[140px] bg-gray-50 dark:bg-[#050505] border border-gray-200 dark:border-gray-800 text-black dark:text-white text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-all resize-none placeholder:text-gray-400 shadow-sm"
                 ></textarea>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+              {/* 📌 Changed items-center to items-start so Photo and Rating align perfectly at the top */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-start">
                 <div className="space-y-2">
-                  <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 flex items-center gap-1.5">
+                  <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 flex items-center gap-1.5 h-[18px]">
                     <Star className="w-3.5 h-3.5" /> Rating
                   </label>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 h-[42px]">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <button
                         key={star}
@@ -190,7 +193,7 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
                         onClick={() => setRating(star)}
                         onMouseEnter={() => setHoverRating(star)}
                         onMouseLeave={() => setHoverRating(0)}
-                        className="focus:outline-none transition-transform hover:scale-110"
+                        className="focus:outline-none transition-transform hover:scale-110 flex items-center justify-center"
                       >
                         <Star 
                           className={`w-7 h-7 ${
@@ -205,12 +208,13 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 flex items-center gap-1.5">
+                  <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 flex items-center gap-1.5 h-[18px]">
                     <ImagePlus className="w-3.5 h-3.5" /> Profile Photo (Optional)
                   </label>
+                  {/* 📌 Added better file input padding to align with the stars height (h-[42px]) */}
                   <input 
                     type="file" name="photo" accept="image/*" 
-                    className="w-full bg-gray-50 dark:bg-[#050505] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-3 py-2 outline-none focus:border-blue-500 transition-colors file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-gray-200 file:text-gray-700 hover:file:bg-gray-300 dark:file:bg-[#222] dark:file:text-gray-300 cursor-pointer shadow-sm" 
+                    className="w-full h-[42px] bg-gray-50 dark:bg-[#050505] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-3 py-2 outline-none focus:border-blue-500 transition-colors file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-gray-200 file:text-gray-700 hover:file:bg-gray-300 dark:file:bg-[#222] dark:file:text-gray-300 cursor-pointer shadow-sm" 
                   />
                 </div>
               </div>
@@ -235,7 +239,7 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
               </div>
 
               {status === "error" && (
-                <p className="text-sm font-bold text-red-500 bg-red-50 dark:bg-red-950/20 px-4 py-2 rounded-lg border border-red-200 dark:border-red-900/50">
+                <p className="text-sm font-bold text-red-500 bg-red-50 dark:bg-red-950/20 px-4 py-3 rounded-xl border border-red-200 dark:border-red-900/50">
                   {errorMessage}
                 </p>
               )}
