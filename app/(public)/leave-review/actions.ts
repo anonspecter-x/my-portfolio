@@ -1,8 +1,8 @@
 "use server";
 
 import { MongoClient } from "mongodb";
-// আপনার যদি S3 বা R2 আপলোডের আলাদা ইউটিলিটি থাকে, তবে সেটি ইমপোর্ট করে নিন। 
-// উদাহরণস্বরূপ: import { uploadToR2 } from "@/lib/r2";
+// 📌 R2 আপলোডারটি ইমপোর্ট করুন (আপনার প্রজেক্টের সঠিক পাথ অনুযায়ী)
+import { uploadFileToR2 } from "@/lib/r2"; 
 
 export async function submitPublicReview(formData: FormData) {
   // 1. Extract Turnstile Token
@@ -12,9 +12,9 @@ export async function submitPublicReview(formData: FormData) {
     throw new Error("Security verification failed. Please check the CAPTCHA.");
   }
 
-  // 2. Validate Turnstile Token with Cloudflare
+  // 2. Validate Turnstile Token
   const verifyEndpoint = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
-  const secretKey = process.env.TURNSTILE_SECRET_KEY; // .env.local থেকে আসবে
+  const secretKey = process.env.TURNSTILE_SECRET_KEY; 
 
   const verificationResponse = await fetch(verifyEndpoint, {
     method: "POST",
@@ -35,20 +35,15 @@ export async function submitPublicReview(formData: FormData) {
   const rating = parseInt(formData.get("rating") as string, 10);
   const photoFile = formData.get("photo") as File;
 
-  // Basic Server-Side Validation (Prevents malicious empty inputs)
   if (!name || !review || isNaN(rating) || rating < 1 || rating > 5) {
     throw new Error("Invalid input data provided.");
   }
 
-  // 4. Handle Image Upload (Cloudflare R2 / AWS S3)
+  // 📌 4. Handle Image Upload (FIXED)
   let photoUrl = "";
   if (photoFile && photoFile.size > 0) {
-    // 📌 আপনার সার্ভারের ইমেজ আপলোডের লজিক এখানে বসাবেন
-    // উদাহরণস্বরূপ:
-    // const buffer = Buffer.from(await photoFile.arrayBuffer());
-    // photoUrl = await uploadToR2(buffer, `reviews/${uuidv4()}-${photoFile.name}`);
-    
-    photoUrl = "https://your-cdn.com/placeholder.jpg"; // আপলোডের পর পাওয়া URL এখানে বসবে
+    // এখানে আপনার আসল R2 ফাংশনটি কল করা হলো
+    photoUrl = await uploadFileToR2(photoFile, "testimonials");
   }
 
   // 5. Save to MongoDB Securely
@@ -58,12 +53,12 @@ export async function submitPublicReview(formData: FormData) {
   try {
     await db.collection("testimonials").insertOne({
       name,
-      role: role || "Client", // Optional fallback
+      role: role || "Client",
       review,
       rating,
-      priority: 0, // ডিফল্ট 0, যাতে আপনি পরে এডমিন প্যানেল থেকে প্রায়োরিটি সেট করতে পারেন
-      photoUrl,
-      approved: false, // 📌 সিকিউরিটির জন্য ডিফল্টভাবে 'false' রাখতে পারেন, যেন এডমিন এপ্রুভ করার আগে লাইভ না হয়
+      priority: 0,
+      photoUrl, // 📌 এখন আসল URL ডেটাবেজে সেভ হবে
+      approved: false, 
       createdAt: new Date(),
     });
   } catch (error) {

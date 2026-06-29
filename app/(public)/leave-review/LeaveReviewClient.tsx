@@ -27,7 +27,7 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
     }
 
     try {
-      // 📌 Image Compression Logic
+      // 📌 Image Compression Logic (FIXED)
       const photoFile = formData.get("photo") as File;
       if (photoFile && photoFile.size > 0) {
         const options = {
@@ -35,8 +35,18 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
           maxWidthOrHeight: 800, 
           useWebWorker: true, 
         };
-        const compressedFile = await imageCompression(photoFile, options);
-        formData.set("photo", compressedFile, compressedFile.name);
+        
+        // ছবি কম্প্রেস করা হলো (এটি Blob রিটার্ন করে)
+        const compressedBlob = await imageCompression(photoFile, options);
+        
+        // Blob-টিকে পুনরায় File অবজেক্টে কনভার্ট করা হলো যাতে Server Action এটি ঠিকঠাক রিসিভ করতে পারে
+        const compressedFile = new File([compressedBlob], photoFile.name, {
+          type: photoFile.type || "image/jpeg",
+          lastModified: Date.now(),
+        });
+
+        // ফর্মে নতুন File-টি সেট করা হলো
+        formData.set("photo", compressedFile);
       }
 
       // Append Rating and Turnstile Token securely
@@ -84,7 +94,6 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
       />
 
       {/* 🌟 2-Column Grid Layout */}
-      {/* Removed items-stretch to let columns size naturally on mobile */}
       <motion.div 
         initial="hidden" animate="visible" variants={stagger}
         className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16"
@@ -144,7 +153,6 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
                   setStatus("loading");
                 }
               }}
-              // 📌 Removed forced flex stretching to fix squishing issues
               className="space-y-6 relative z-10"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
@@ -179,7 +187,6 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
                 ></textarea>
               </div>
 
-              {/* 📌 Changed items-center to items-start so Photo and Rating align perfectly at the top */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-start">
                 <div className="space-y-2">
                   <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 flex items-center gap-1.5 h-[18px]">
@@ -211,7 +218,6 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
                   <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 flex items-center gap-1.5 h-[18px]">
                     <ImagePlus className="w-3.5 h-3.5" /> Profile Photo (Optional)
                   </label>
-                  {/* 📌 Added better file input padding to align with the stars height (h-[42px]) */}
                   <input 
                     type="file" name="photo" accept="image/*" 
                     className="w-full h-[42px] bg-gray-50 dark:bg-[#050505] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-3 py-2 outline-none focus:border-blue-500 transition-colors file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-gray-200 file:text-gray-700 hover:file:bg-gray-300 dark:file:bg-[#222] dark:file:text-gray-300 cursor-pointer shadow-sm" 
