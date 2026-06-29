@@ -506,7 +506,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
           </div>
         </motion.section>
 
-        {/* ================= PROJECTS SECTION (REDESIGNED) ================= */}
+        {/* ================= PROJECTS SECTION (REDESIGNED: EDGE-TO-EDGE) ================= */}
         <motion.section className="py-20 md:py-40 border-t border-gray-200/50 dark:border-gray-800/50" id="projects">
           <div className="mb-16 md:mb-24 text-center md:text-left">
              <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 md:mb-6">Selected Works</motion.h2>
@@ -525,43 +525,44 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                  >
                    <Link 
                      href={project.link || "#"} 
-                     className="block w-full bg-white dark:bg-[#0a0a0a] rounded-[1.5rem] md:rounded-[2rem] border border-gray-100 dark:border-gray-800/60 p-5 sm:p-6 md:p-8 shadow-lg dark:shadow-[0_8px_30px_-15px_rgba(0,0,0,0.5)] hover:shadow-2xl mb-[8vh] md:mb-[12vh] relative group/card hover:-translate-y-1 transition-all duration-500 cursor-pointer overflow-hidden"
+                     className="group/card block w-full bg-white dark:bg-[#050505] rounded-[1.5rem] md:rounded-[2.5rem] border border-gray-200/60 dark:border-gray-800/60 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] dark:shadow-[0_4px_20px_rgb(0,0,0,0.4)] dark:hover:shadow-[0_8px_30px_rgb(0,0,0,0.6)] mb-[8vh] md:mb-[12vh] relative hover:-translate-y-1 transition-all duration-500 overflow-hidden"
                    >
-                     <div className="flex flex-col lg:flex-row items-center gap-6 md:gap-10 lg:gap-12 w-full">
-                       {/* Text Content Side */}
-                       <div className="w-full lg:w-1/2 flex flex-col justify-center order-2 lg:order-1 text-left">
-                          <div className="flex items-center gap-3 mb-3 md:mb-4">
+                     <div className="flex flex-col lg:flex-row w-full">
+                       
+                       {/* Text Content Side (With Padding) */}
+                       <div className="w-full lg:w-[55%] flex flex-col justify-center order-2 lg:order-1 text-left p-6 sm:p-10 lg:p-16 relative z-10 bg-white dark:bg-[#050505]">
+                          <div className="flex items-center gap-3 mb-4 md:mb-5">
                              <span className="font-mono text-[10px] md:text-xs tracking-[0.1em] text-blue-600 dark:text-blue-400 uppercase font-bold bg-blue-50/50 dark:bg-blue-900/10 px-2.5 py-1 rounded">
                                Project {(idx + 1).toString().padStart(2, '0')}
                              </span>
                           </div>
                           
-                          <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-3 md:mb-4 text-black dark:text-white group-hover/card:text-blue-600 dark:group-hover/card:text-blue-400 transition-colors">
+                          <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-bold tracking-tight mb-4 text-black dark:text-white group-hover/card:text-blue-600 dark:group-hover/card:text-blue-400 transition-colors leading-tight">
                              {project.title}
                           </h3>
                           
-                          <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 mb-5 md:mb-6 leading-relaxed font-medium line-clamp-3">
+                          <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 mb-6 lg:mb-8 leading-relaxed font-medium line-clamp-3">
                              {project.description}
                           </p>
                           
-                          {/* 📌 REFINED TECH STACK */}
-                          <div className="flex flex-wrap gap-1.5 md:gap-2 mb-6 md:mb-8">
+                          {/* 📌 SLEEK TECH STACK */}
+                          <div className="flex flex-wrap gap-2 mb-8 lg:mb-10">
                              {project.tech.map((t: string, i: number) => (
-                                <span key={i} className="text-[10px] md:text-[11px] font-medium px-2.5 py-1 bg-gray-50 dark:bg-white/5 text-gray-600 dark:text-gray-300 rounded-md border border-gray-200/60 dark:border-gray-700/50">
+                                <span key={i} className="text-[10px] md:text-xs font-semibold px-3 py-1.5 bg-gray-50 dark:bg-white/5 text-gray-600 dark:text-gray-300 rounded-full border border-gray-200/60 dark:border-gray-800">
                                   {t}
                                 </span>
                              ))}
                           </div>
                           
-                          <span className="inline-flex items-center justify-center sm:justify-start gap-2 font-bold text-[13px] md:text-sm text-white dark:text-black bg-black dark:bg-white w-full sm:w-fit px-6 md:px-7 py-2.5 md:py-3 rounded-full group/btn shadow-md">
-                             View Case Study <ArrowRight className="w-4 h-4 sm:group-hover/btn:translate-x-1 transition-transform" />
+                          <span className="inline-flex items-center justify-center sm:justify-start gap-2 font-bold text-[13px] md:text-sm text-white dark:text-black bg-black dark:bg-white w-full sm:w-fit px-7 py-3 md:py-3.5 rounded-full group/btn shadow-md hover:scale-[1.02] transition-transform">
+                             View Case Study <ArrowRight className="w-4 h-4 sm:group-hover/btn:translate-x-1.5 transition-transform" />
                           </span>
                        </div>
 
-                       {/* Image Side */}
-                       <div className="w-full lg:w-1/2 relative aspect-[16/10] rounded-xl md:rounded-2xl overflow-hidden bg-gray-50 dark:bg-[#111] border border-gray-200/50 dark:border-gray-800/50 order-1 lg:order-2 shrink-0">
+                       {/* Image Side (Bleed / Edge-to-Edge) */}
+                       <div className="w-full lg:w-[45%] relative order-1 lg:order-2 bg-gray-100 dark:bg-[#111] min-h-[250px] sm:min-h-[350px] lg:min-h-full border-b lg:border-b-0 lg:border-l border-gray-200/60 dark:border-gray-800/60 overflow-hidden shrink-0">
                          {project.image ? (
-                            <img src={project.image} alt={project.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-105" />
+                            <img src={project.image} alt={project.title} className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-1000 group-hover/card:scale-105" />
                          ) : (
                             <div className="absolute inset-0 w-full h-full flex flex-col items-center justify-center font-mono text-xs text-gray-400">
                               <LayoutTemplate className="w-10 h-10 mb-3 opacity-50" />
@@ -569,10 +570,11 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                             </div>
                          )}
                          
-                         <div className="absolute top-4 right-4 md:top-5 md:right-5 bg-white/90 dark:bg-black/90 backdrop-blur-md w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center border border-gray-200 dark:border-gray-800 opacity-0 group-hover/card:opacity-100 transition-all translate-y-2 group-hover/card:translate-y-0 duration-300 z-20 shadow-sm">
-                           <ExternalLink className="w-4 h-4 text-black dark:text-white" />
+                         <div className="absolute top-4 right-4 md:top-6 md:right-6 bg-white/90 dark:bg-black/90 backdrop-blur-md w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center border border-gray-200 dark:border-gray-800 opacity-0 group-hover/card:opacity-100 transition-all translate-y-4 group-hover/card:translate-y-0 duration-500 z-20 shadow-sm">
+                           <ExternalLink className="w-4 h-4 md:w-5 md:h-5 text-black dark:text-white" />
                          </div>
                        </div>
+                       
                      </div>
                    </Link>
                  </div>
@@ -718,7 +720,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
           </motion.section>
         )}
 
-        {/* ================= 📝 LATEST BLOGS SECTION (REDESIGNED) ================= */}
+        {/* ================= 📝 LATEST BLOGS SECTION (EDITORIAL/UNBOXED STYLE) ================= */}
         {blogs && blogs.length > 0 && (
           <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} className="py-20 md:py-32 border-t border-gray-200/50 dark:border-gray-800/50" id="blog">
             <div className="mb-12 md:mb-16 text-center">
@@ -730,49 +732,49 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               </motion.p>
             </div>
 
-            {/* 📌 Unified Auto-Scrolling Slider for both Desktop and Mobile */}
+            {/* 📌 Unified Auto-Scrolling Slider */}
             <div 
               ref={blogScrollerRef}
               onMouseEnter={handleBlogInteractionStart}
               onMouseLeave={handleBlogInteractionEnd}
               onTouchStart={handleBlogInteractionStart}
               onTouchEnd={handleBlogInteractionEnd}
-              className="flex relative w-full overflow-x-auto [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)] pt-4 pb-12 gap-5 md:gap-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              className="flex relative w-full overflow-x-auto [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)] pt-4 pb-12 gap-8 md:gap-12 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             >
               {infiniteBlogs.map((blog, idx) => (
                 <div 
                   key={`blog-${blog._id || idx}-${idx}`} 
-                  className="w-[280px] md:w-[360px] shrink-0 group relative bg-white dark:bg-[#0a0a0a] border border-gray-100 dark:border-gray-800/80 rounded-2xl overflow-hidden hover:shadow-xl dark:hover:shadow-[0_8px_30px_-15px_rgba(255,255,255,0.05)] transition-all duration-300 flex flex-col"
+                  className="w-[280px] md:w-[360px] shrink-0 group relative flex flex-col"
                 >
                   <Link href={`/blog/${blog.slug}`} className="block h-full flex flex-col">
-                    <div className="relative aspect-[16/9] overflow-hidden bg-gray-50 dark:bg-[#111]">
+                    <div className="relative aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-[#111] rounded-[1.5rem] md:rounded-[2rem] border border-gray-200/50 dark:border-gray-800/50 mb-5 md:mb-6">
                       {blog.coverImage ? (
-                        <img src={blog.coverImage} alt={blog.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <img src={blog.coverImage} alt={blog.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-400">
                           <FileText className="w-10 h-10 opacity-30" />
                         </div>
                       )}
                       {blog.category && (
-                        <div className="absolute top-3 left-3 bg-white/95 dark:bg-black/95 backdrop-blur-md px-2.5 py-1 rounded-md text-[10px] font-semibold tracking-wide uppercase border border-gray-200/50 dark:border-gray-800/50 text-gray-700 dark:text-gray-300">
+                        <div className="absolute top-4 left-4 bg-white/95 dark:bg-black/95 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] md:text-xs font-bold tracking-wider uppercase border border-gray-200/50 dark:border-gray-800/50 text-black dark:text-white shadow-sm">
                           {blog.category}
                         </div>
                       )}
                     </div>
-                    <div className="p-5 md:p-6 flex flex-col flex-1">
-                      <div className="flex items-center gap-3 text-[11px] md:text-xs text-gray-500 dark:text-gray-400 mb-3 font-medium">
+                    <div className="flex flex-col flex-1 px-1">
+                      <div className="flex items-center gap-4 text-xs md:text-sm text-gray-500 dark:text-gray-400 mb-3 font-medium">
                         {blog.createdAt && (
-                          <span className="flex items-center gap-1.5"><Calendar className="w-3 h-3" /> {new Date(blog.createdAt).toLocaleDateString()}</span>
+                          <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4" /> {new Date(blog.createdAt).toLocaleDateString()}</span>
                         )}
                         {blog.readingTime && (
-                          <span className="flex items-center gap-1.5"><Clock className="w-3 h-3" /> {blog.readingTime}</span>
+                          <span className="flex items-center gap-1.5"><Clock className="w-4 h-4" /> {blog.readingTime}</span>
                         )}
                       </div>
-                      <h3 className="text-lg md:text-xl font-bold text-black dark:text-white mb-2 md:mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 leading-snug">
+                      <h3 className="text-xl md:text-2xl font-bold text-black dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 leading-snug">
                         {blog.title}
                       </h3>
-                      <div className="mt-auto pt-4 flex items-center gap-1.5 text-xs md:text-sm font-semibold text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                        Read Article <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                      <div className="mt-auto pt-2 flex items-center gap-2 text-sm font-bold text-black dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        Read Article <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
                       </div>
                     </div>
                   </Link>
@@ -781,7 +783,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
             </div>
 
             <motion.div variants={fadeUp} className="mt-8 md:mt-12 flex justify-center w-full">
-              <Link href="/blog" className="group flex items-center gap-2 px-6 md:px-8 py-3 md:py-4 bg-gray-50 dark:bg-[#111] text-black dark:text-white font-semibold text-sm md:text-base rounded-full hover:bg-gray-100 dark:hover:bg-[#222] transition-all border border-gray-200 dark:border-gray-800">
+              <Link href="/blog" className="group flex items-center gap-2 px-8 py-3.5 md:py-4 bg-gray-100 dark:bg-[#111] text-black dark:text-white font-semibold text-sm md:text-base rounded-full hover:bg-gray-200 dark:hover:bg-[#222] transition-all border border-gray-200 dark:border-gray-800">
                 View All Articles <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
             </motion.div>
