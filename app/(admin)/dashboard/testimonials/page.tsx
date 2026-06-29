@@ -14,17 +14,22 @@ async function getTestimonials(): Promise<TestimonialType[]> {
   
   await client.close();
   
-  // 📌 approved ফিল্ড ম্যাপ করা হলো
-  return testimonials.map((t) => ({ 
-    _id: t._id.toString(),
-    name: t.name,
-    role: t.role,
-    review: t.review,
-    rating: t.rating,
-    priority: t.priority || 0,
-    photoUrl: t.photoUrl || "",
-    approved: t.approved !== false // ডেটাবেজে approved না থাকলে ডিফল্ট true হিসেবে ধরবে
-  })) as TestimonialType[];
+  // 📌 approved ফিল্ড ম্যাপ করা হলো (ফিক্স করা হয়েছে)
+  return testimonials.map((t) => {
+    // ডাটাবেজে approved ফিল্ডটি এক্সপ্লিসিটলি false (বুলিয়ান) থাকলে পেন্ডিং, না হলে লাইভ
+    const isApproved = t.approved === false ? false : true; 
+
+    return { 
+      _id: t._id.toString(),
+      name: t.name,
+      role: t.role,
+      review: t.review,
+      rating: t.rating,
+      priority: t.priority || 0,
+      photoUrl: t.photoUrl || "",
+      approved: isApproved
+    };
+  }) as TestimonialType[];
 }
 
 export default async function TestimonialsPage() {
