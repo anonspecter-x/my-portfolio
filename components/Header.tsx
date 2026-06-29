@@ -48,8 +48,8 @@ export default function Header({ settings, tracks }: HeaderProps) {
   const baseNavLinks = [
     { name: "About", href: "/about" },
     { name: "Projects", href: "/projects" },
-    { name: "Blog", href: "/blog" },
-    { name: "Brands", href: "/brands" }, 
+    { name: "Brands", href: "/brands" },
+    { name: "Blog", href: "/blog" }, 
   ];
 
   // ⚙️ Logic: Add Contact only if on /contact page
