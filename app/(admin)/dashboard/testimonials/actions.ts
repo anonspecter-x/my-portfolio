@@ -39,7 +39,10 @@ export async function addTestimonial(formData: FormData) {
   });
 
   await client.close();
+  
+  // 📌 ক্যাশ রিভ্যালিডেট
   revalidatePath("/dashboard/testimonials");
+  revalidatePath("/"); // হোমপেজ আপডেট
 }
 
 // 📌 ২. টেস্টিমোনিয়াল আপডেট করা (R2 থেকে পুরনো ছবি রিমুভ সহ)
@@ -49,7 +52,10 @@ export async function updateTestimonial(id: string, formData: FormData) {
   const collection = db.collection("testimonials");
 
   const existingTestimonial = await collection.findOne({ _id: new ObjectId(id) });
-  if (!existingTestimonial) throw new Error("Testimonial not found");
+  if (!existingTestimonial) {
+    await client.close();
+    throw new Error("Testimonial not found");
+  }
 
   const name = formData.get("name") as string;
   const role = formData.get("role") as string;
@@ -84,7 +90,10 @@ export async function updateTestimonial(id: string, formData: FormData) {
   );
 
   await client.close();
+  
+  // 📌 ক্যাশ রিভ্যালিডেট
   revalidatePath("/dashboard/testimonials");
+  revalidatePath("/");
 }
 
 // 📌 ৩. টেস্টিমোনিয়াল ডিলিট করা (R2 থেকে ছবি রিমুভ সহ)
@@ -103,10 +112,13 @@ export async function deleteTestimonial(id: string) {
   }
 
   await client.close();
+  
+  // 📌 ক্যাশ রিভ্যালিডেট
   revalidatePath("/dashboard/testimonials");
+  revalidatePath("/");
 }
 
-// 📌 ৪. নতুন অ্যাকশন: পাবলিক পেজ থেকে আসা পেন্ডিং রিভিউ এপ্রুভ করা
+// 📌 ৪. পাবলিক পেজ থেকে আসা পেন্ডিং রিভিউ এপ্রুভ করা
 export async function approveTestimonial(id: string) {
   const client = await MongoClient.connect(uri);
   const db = client.db();
@@ -117,5 +129,8 @@ export async function approveTestimonial(id: string) {
   );
 
   await client.close();
+  
+  // 📌 ক্যাশ রিভ্যালিডেট
   revalidatePath("/dashboard/testimonials");
+  revalidatePath("/");
 }

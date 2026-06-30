@@ -2,6 +2,10 @@ import { MongoClient } from "mongodb";
 import { MessageSquareQuote } from "lucide-react";
 import TestimonialManager, { TestimonialType } from "./TestimonialManager";
 
+// 📌 FIX: ক্যাশ ডিজেবল করা হলো যাতে অ্যাডমিন প্যানেলে সবসময় ফ্রেশ ডেটা দেখায়
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+
 async function getTestimonials(): Promise<TestimonialType[]> {
   const client = await MongoClient.connect(process.env.MONGODB_URI as string);
   const db = client.db();
@@ -14,7 +18,7 @@ async function getTestimonials(): Promise<TestimonialType[]> {
   
   await client.close();
   
-  // 📌 approved ফিল্ড ম্যাপ করা হলো (ফিক্স করা হয়েছে)
+  // 📌 approved ফিল্ড ম্যাপ করা হলো
   return testimonials.map((t) => {
     // ডাটাবেজে approved ফিল্ডটি এক্সপ্লিসিটলি false (বুলিয়ান) থাকলে পেন্ডিং, না হলে লাইভ
     const isApproved = t.approved === false ? false : true; 
