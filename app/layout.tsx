@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { MongoClient } from "mongodb";
-import NextTopLoader from "nextjs-toploader"; // 📌 প্যাকেজটি ইমপোর্ট করা হলো
+import NextTopLoader from "nextjs-toploader"; 
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
-// 📌 ডাটাবেজ থেকে গ্লোবাল সেটিংস (Favicon) আনার ফাংশন
 async function getGlobalSettings() {
   try {
     const client = await MongoClient.connect(process.env.MONGODB_URI as string);
@@ -20,20 +19,30 @@ async function getGlobalSettings() {
   }
 }
 
-// 📌 স্ট্যাটিক মেটাডাটার বদলে ডাইনামিক মেটাডাটা জেনারেট করা হচ্ছে
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getGlobalSettings();
-  
-  // ডাটাবেজে ফেভিকন থাকলে সেটি নেবে, না থাকলে ডিফল্ট /favicon.ico নেবে
   const faviconUrl = settings?.siteFavicon || "/favicon.ico"; 
+  const baseUrl = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://nazmus.dev";
 
   return {
-    metadataBase: new URL(
-      process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://nazmus.dev"
-    ),
-    title: "Md Nazmus Shakib | Full Stack MERN Developer",
+    metadataBase: new URL(baseUrl),
+    // 📌 টাইটেল টেমপ্লেট ব্যবহার করা হলো যেন অন্য পেজে ডাইনামিক হয়
+    title: {
+      default: "Md Nazmus Shakib | Full Stack MERN Developer",
+      template: "%s | Md Nazmus Shakib", 
+    },
     description: "Professional Web Developer Portfolio",
-    // 📌 ফেভিকন ইন্টিগ্রেশন
+    // 📌 গ্লোবাল Open Graph যুক্ত করা হলো
+    openGraph: {
+      title: {
+        default: "Md Nazmus Shakib | Full Stack MERN Developer",
+        template: "%s | Md Nazmus Shakib",
+      },
+      description: "Professional Web Developer Portfolio",
+      url: baseUrl,
+      siteName: "Md Nazmus Shakib Portfolio",
+      type: "website",
+    },
     icons: {
       icon: faviconUrl,
       shortcut: faviconUrl,
@@ -51,17 +60,16 @@ export default function RootLayout({
     <html lang="en" data-theme="light" suppressHydrationWarning data-scroll-behavior="smooth">
       <body suppressHydrationWarning className={`${inter.className} antialiased bg-[#fafafa] dark:bg-[#030303] text-black dark:text-white transition-colors duration-500`}>
         
-        {/* 📌 প্রফেশনাল গ্লোবাল টপ লোডার */}
         <NextTopLoader
-          color="#2563eb" // আপনার প্রোজেক্টের blue-600 থিমের সাথে মিল রেখে
+          color="#2563eb"
           initialPosition={0.08}
           crawlSpeed={200}
           height={3}
           crawl={true}
-          showSpinner={false} // ডানপাশের স্পিনার অফ করা হয়েছে ক্লিন লুকের জন্য
+          showSpinner={false}
           easing="ease"
           speed={200}
-          shadow="0 0 10px #2563eb,0 0 5px #2563eb" // সুন্দর গ্লো ইফেক্ট
+          shadow="0 0 10px #2563eb,0 0 5px #2563eb"
           zIndex={1600}
           showAtBottom={false}
         />
