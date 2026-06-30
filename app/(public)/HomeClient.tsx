@@ -5,7 +5,7 @@ import {
   ArrowRight, FileText, Code2, Layout, LayoutTemplate, 
   ChevronRight, ChevronDown, ChevronUp, ExternalLink, 
   Quote, Star, Lightbulb, PenTool, Rocket, PhoneCall,
-  Calendar, Clock 
+  Calendar, Clock, Plus 
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
@@ -601,9 +601,16 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 md:mb-6 text-black dark:text-white">
                 Client Feedback
               </motion.h2>
-              <motion.p variants={fadeUp} className="text-sm md:text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              <motion.p variants={fadeUp} className="text-sm md:text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-6">
                 What people say about my work, dedication, and collaboration.
               </motion.p>
+              
+              {/* 📌 New "Leave a Review" Button */}
+              <motion.div variants={fadeUp} className="flex justify-center">
+                <Link href="/leave-review" className="group inline-flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-[#111] text-black dark:text-white font-medium rounded-full hover:bg-gray-50 dark:hover:bg-[#222] transition-all border border-gray-200 dark:border-gray-800 text-sm shadow-sm">
+                  <Plus className="w-4 h-4 text-blue-600 dark:text-blue-400 group-hover:rotate-90 transition-transform duration-300" /> Leave a Review
+                </Link>
+              </motion.div>
             </div>
 
             <div className="hidden md:flex relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] pause-on-hover pt-4 pb-12">
