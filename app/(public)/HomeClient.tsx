@@ -719,8 +719,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
             <motion.div variants={fadeUp} className="mt-8 md:mt-12 flex justify-center w-full relative z-10">
               <Link href="/leave-review" className="group flex items-center gap-2 px-6 md:px-8 py-3 md:py-4 bg-gray-50 dark:bg-[#111] text-black dark:text-white font-semibold text-sm md:text-base rounded-full hover:bg-gray-100 dark:hover:bg-[#222] transition-all border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md">
                  <Plus className="w-4 h-4 text-blue-600 dark:text-blue-400" /> 
-                 Leave a Review 
-                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" />
+                 Leave a Review
               </Link>
             </motion.div>
 
