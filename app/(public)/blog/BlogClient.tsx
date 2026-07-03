@@ -29,7 +29,7 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
   return (
     <main className="relative min-h-screen pt-32 pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto overflow-hidden">
       
-      {/* 🎨 Animated Background Elements */}
+      {/* 📌 Animated Background Elements */}
       <motion.div 
         animate={{ y: [0, -20, 0], opacity: [0.5, 0.8, 0.5] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
@@ -56,38 +56,46 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
 
       {/* 📌 Blog List Grid */}
       {posts.length > 0 ? (
-        <motion.div initial="hidden" animate="visible" variants={stagger} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        <motion.div initial="hidden" animate="visible" variants={stagger} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {posts.map((post) => (
             <motion.div key={post._id} variants={fadeUp}>
               <Link 
                 href={`/blog/${post.slug}`}
-                className="group flex flex-col bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-[2rem] overflow-hidden hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-500 shadow-sm hover:shadow-xl hover:-translate-y-1 h-full"
+                className="group flex flex-col bg-white dark:bg-[#0a0a0a] border border-gray-100 dark:border-gray-800/60 rounded-2xl overflow-hidden hover:border-gray-200 dark:hover:border-gray-700 transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1 h-full"
               >
-                {/* Cover Image */}
-                <div className="w-full aspect-[16/10] bg-gray-100 dark:bg-[#111] relative overflow-hidden border-b border-gray-200 dark:border-gray-800">
+                {/* 📌 Cover Image (16:9 Ratio) */}
+                <div className="w-full aspect-video bg-gray-50 dark:bg-[#111] relative overflow-hidden border-b border-gray-100 dark:border-gray-800/60">
                   {post.coverImage ? (
-                    <img src={post.coverImage} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                    <img src={post.coverImage} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out" />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center bg-[url('https://transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03]"></div>
                   )}
+                  {/* Hover Icon */}
                   <div className="absolute top-4 right-4 bg-white/90 dark:bg-black/90 backdrop-blur-md w-8 h-8 rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 duration-300">
                     <ArrowUpRight className="w-4 h-4 text-black dark:text-white" />
                   </div>
-                  {/* 📌 Category Badge Over Image */}
-                  <div className="absolute top-4 left-4 bg-white/90 dark:bg-black/90 backdrop-blur-md px-3 py-1 rounded-full shadow-sm">
-                    <span className="text-[10px] font-bold tracking-wider uppercase text-blue-600 dark:text-blue-400">
+                </div>
+
+                {/* 📌 Content Section */}
+                <div className="p-6 md:p-7 flex flex-col flex-1">
+                  
+                  {/* Category Badge moved inside text area */}
+                  <div className="mb-4">
+                    <span className="inline-block px-3 py-1 text-[11px] font-bold tracking-wider uppercase text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-full transition-colors">
                       {post.category}
                     </span>
                   </div>
-                </div>
 
-                {/* Content */}
-                <div className="p-6 md:p-8 flex flex-col flex-1">
-                  <div className="flex items-center gap-4 text-[11px] font-bold tracking-wider uppercase text-gray-400 mb-4">
-                    <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> {post.createdAt}</span>
-                    <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> {post.readingTime}</span>
+                  <div className="flex items-center gap-4 text-[12px] font-medium text-gray-500 dark:text-gray-400 mb-3">
+                    <span className="flex items-center gap-1.5">
+                      <Calendar className="w-3.5 h-3.5" /> {post.createdAt}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5" /> {post.readingTime}
+                    </span>
                   </div>
-                  <h2 className="text-xl md:text-2xl font-bold tracking-tight text-black dark:text-white leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+
+                  <h2 className="text-xl md:text-2xl font-bold tracking-tight text-gray-900 dark:text-white leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-3">
                     {post.title}
                   </h2>
                 </div>

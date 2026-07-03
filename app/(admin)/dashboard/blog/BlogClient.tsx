@@ -3,8 +3,8 @@
 import { useState, useRef } from "react";
 import { saveBlogPost, deleteBlogPost } from "./actions";
 import RichEditor from "@/components/RichEditor";
-import { PenTool, Trash2, Edit2, Image as ImageIcon, Search, Loader2, Code, ImagePlus, Settings, Tag, Clock } from "lucide-react";
-import imageCompression from 'browser-image-compression'; // 📌 নতুন যুক্ত করা হয়েছে
+import { PenTool, Trash2, Edit2, Image as ImageIcon, Search, Loader2, Code, ImagePlus, Settings, Tag, Clock, Calendar } from "lucide-react";
+import imageCompression from 'browser-image-compression'; 
 
 interface Post {
   _id: string;
@@ -21,6 +21,13 @@ interface Post {
   tags?: string[];
   readingTime?: string;
 }
+
+// 📌 Date Format Helper (To convert ISO string to datetime-local format)
+const formatDateTimeLocal = (dateString?: string) => {
+  const date = dateString ? new Date(dateString) : new Date();
+  const pad = (n: number) => n.toString().padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+};
 
 export default function BlogClient({ posts }: { posts: Post[] }) {
   const [editPost, setEditPost] = useState<Post | null>(null);
@@ -48,7 +55,7 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
   const handleSubmit = async (formData: FormData) => {
     setIsSubmitting(true);
     try {
-      // 📌 Image Compression Logic (নতুন যুক্ত করা হয়েছে)
+      // 📌 Image Compression Logic
       const coverImageFile = formData.get("coverImage") as File;
       
       if (coverImageFile && coverImageFile.size > 0) {
@@ -122,7 +129,7 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Category</label>
               <select name="category" defaultValue={editPost?.category || "Technology"} key={editPost ? editPost._id + 'cat' : 'new-cat'} className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-colors cursor-pointer">
@@ -140,6 +147,20 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
                 <option value="published">🟢 Published</option>
                 <option value="draft">🟡 Save as Draft</option>
               </select>
+            </div>
+
+            {/* 📌 New Publish Date Field */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-gray-500 flex items-center gap-1">
+                <Calendar className="w-3.5 h-3.5"/> Publish Date
+              </label>
+              <input 
+                type="datetime-local" 
+                name="createdAt" 
+                defaultValue={formatDateTimeLocal(editPost?.createdAt)}
+                key={editPost ? editPost._id + 'date' : 'new-date'}
+                className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-colors cursor-pointer" 
+              />
             </div>
           </div>
 
@@ -272,10 +293,11 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
             {filteredPosts.map((post) => (
               <div key={post._id} className="group bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 rounded-xl p-3 flex gap-3 relative overflow-hidden transition-all hover:border-gray-300 dark:hover:border-gray-700 hover:shadow-sm">
                 
+                {/* 📌 Image is now 16:9 ratio (aspect-video) */}
                 {post.coverImage ? (
-                  <img src={post.coverImage} alt={post.title} className="w-16 h-16 rounded-lg object-cover border border-gray-200 dark:border-gray-800 shrink-0" />
+                  <img src={post.coverImage} alt={post.title} className="w-28 aspect-video rounded-lg object-cover border border-gray-200 dark:border-gray-800 shrink-0" />
                 ) : (
-                  <div className="w-16 h-16 rounded-lg bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-gray-400 shrink-0">
+                  <div className="w-28 aspect-video rounded-lg bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-gray-400 shrink-0">
                     <ImageIcon className="w-5 h-5" />
                   </div>
                 )}

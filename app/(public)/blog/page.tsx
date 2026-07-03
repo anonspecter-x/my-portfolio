@@ -27,7 +27,8 @@ async function getPosts() {
   try {
     const client = await MongoClient.connect(process.env.MONGODB_URI as string);
     const db = client.db();
-    // 📌 শুধুমাত্র পাবলিশড পোস্টগুলো আনা হচ্ছে
+    
+    // 📌 শুধুমাত্র পাবলিশড পোস্টগুলো আনা হচ্ছে এবং ডেট অনুযায়ী সর্ট করা হচ্ছে
     const posts = await db.collection("posts").find({ status: "published" }).sort({ createdAt: -1 }).toArray();
     await client.close();
     
@@ -38,6 +39,7 @@ async function getPosts() {
       coverImage: post.coverImage || null,
       category: post.category || "Uncategorized",
       readingTime: post.readingTime || "1 min read",
+      // 📌 কাস্টম ডেট ফরম্যাট করা হচ্ছে
       createdAt: post.createdAt ? new Date(post.createdAt).toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',

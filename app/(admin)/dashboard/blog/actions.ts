@@ -21,6 +21,10 @@ export async function saveBlogPost(formData: FormData) {
     const tagsString = formData.get("tags") as string || "";
     const tags = tagsString.split(",").map(tag => tag.trim()).filter(Boolean); // কমা দিয়ে ট্যাগ আলাদা করা
 
+    // 📌 কাস্টম পাবলিশ ডেট রিসিভ করা (অ্যাডমিন প্যানেল থেকে)
+    const customCreatedAt = formData.get("createdAt") as string;
+    const createdAtDate = customCreatedAt ? new Date(customCreatedAt) : new Date();
+
     if (!title || !content) {
       throw new Error("Title and Content are required.");
     }
@@ -42,7 +46,8 @@ export async function saveBlogPost(formData: FormData) {
       status,
       category,
       tags,
-      readingTime,       
+      readingTime,
+      createdAt: createdAtDate, // 📌 কাস্টম ডেট এখানে অ্যাড করা হলো
       updatedAt: new Date() 
     };
 
@@ -54,7 +59,6 @@ export async function saveBlogPost(formData: FormData) {
     if (id) {
       await db.collection("posts").updateOne({ _id: new ObjectId(id) }, { $set: updateData });
     } else {
-      updateData.createdAt = new Date();
       updateData.slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
       await db.collection("posts").insertOne(updateData);
     }
