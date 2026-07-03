@@ -108,7 +108,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
     localStorage.setItem("theme", newTheme);
   };
 
-  // ⏱️ Time Update Logic (Dynamic real-time update)
+  // ⏱️ Time Update Logic
   useEffect(() => {
     const updateTime = () => {
       const options: Intl.DateTimeFormatOptions = { 
@@ -291,8 +291,8 @@ export default function Header({ settings, tracks }: HeaderProps) {
 
             <div className="w-px h-5 bg-gray-200 dark:bg-gray-800 hidden md:block mx-1"></div>
             
-            {/* 🎵 Dynamic Music Player UI (Redesigned matching image_05044b.png) */}
-            <div className="relative" ref={musicRef}>
+            {/* 🎵 Dynamic Music Player UI (Centered on Mobile, Dropdown on Desktop) */}
+            <div className="relative md:static lg:relative" ref={musicRef}>
               <button 
                 onClick={() => setIsMusicOpen(!isMusicOpen)}
                 className={`w-9 h-9 md:w-10 md:h-10 rounded-full transition-all flex items-center justify-center relative overflow-hidden group border
@@ -307,118 +307,125 @@ export default function Header({ settings, tracks }: HeaderProps) {
                 }
               </button>
 
+              {/* Mobile Backdrop Overlay (Only visible on small screens when open) */}
               <AnimatePresence>
                 {isMusicOpen && (
                   <motion.div 
-                    initial={{ opacity: 0, y: 15, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute right-[-40px] sm:right-0 top-[50px] md:top-[56px] w-[310px] bg-white dark:bg-[#0a0a0a] border border-gray-100 dark:border-gray-800 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.8)] origin-top-right overflow-hidden flex flex-col"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={() => setIsMusicOpen(false)}
+                    className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[90] md:hidden"
+                  />
+                )}
+              </AnimatePresence>
+
+              <AnimatePresence>
+                {isMusicOpen && (
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                    // Desktop: Absolute below icon. Mobile: Fixed centered.
+                    className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-[340px] z-[100] md:absolute md:top-[calc(100%+16px)] md:-right-2 md:left-auto md:translate-x-0 md:translate-y-0 md:w-[340px] bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-2xl border border-gray-200/50 dark:border-white/10 rounded-[32px] shadow-[0_24px_60px_-15px_rgba(0,0,0,0.2)] dark:shadow-[0_24px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col"
                   >
+                    {/* Glowing background matching cover art */}
+                    <div 
+                      className="absolute inset-0 opacity-20 dark:opacity-30 blur-3xl saturate-200 pointer-events-none transition-all duration-1000"
+                      style={{ backgroundImage: `url(${currentTrack?.cover})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                    ></div>
+                    
                     {/* Top Section - Now Playing Info & Controls */}
-                    <div className="p-5 pb-6">
-                      {/* Header: NOW PLAYING */}
-                      <div className="flex items-center justify-between mb-5">
-                        <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 flex items-center gap-2">
-                          <Music className="w-3 h-3" /> NOW PLAYING
-                        </h4>
+                    <div className="relative z-10 p-6 pb-5">
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-2 bg-black/5 dark:bg-white/10 px-3 py-1 rounded-full">
+                          <Disc3 className={`w-3.5 h-3.5 text-gray-700 dark:text-gray-300 ${isPlaying ? 'animate-spin text-blue-600 dark:text-blue-400' : ''}`} style={{ animationDuration: '3s' }} />
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                            Now Playing
+                          </span>
+                        </div>
                         
-                        {/* Blue Equalizer Animation from Image */}
                         {isPlaying ? (
-                          <div className="flex items-end gap-[3px] h-[14px]">
-                            <motion.span animate={{ height: ["40%", "100%", "40%"] }} transition={{ repeat: Infinity, duration: 0.8 }} className="w-1.5 bg-blue-500 rounded-sm"></motion.span>
-                            <motion.span animate={{ height: ["100%", "50%", "100%"] }} transition={{ repeat: Infinity, duration: 0.8, delay: 0.2 }} className="w-1.5 bg-blue-500 rounded-sm"></motion.span>
-                            <motion.span animate={{ height: ["60%", "100%", "60%"] }} transition={{ repeat: Infinity, duration: 0.8, delay: 0.4 }} className="w-1.5 bg-blue-500 rounded-sm"></motion.span>
+                          <div className="flex items-end gap-1 h-3.5">
+                            <motion.span animate={{ height: ["40%", "100%", "40%"] }} transition={{ repeat: Infinity, duration: 0.7 }} className="w-1 bg-blue-500 rounded-full"></motion.span>
+                            <motion.span animate={{ height: ["100%", "50%", "100%"] }} transition={{ repeat: Infinity, duration: 0.7, delay: 0.2 }} className="w-1 bg-blue-500 rounded-full"></motion.span>
+                            <motion.span animate={{ height: ["60%", "100%", "60%"] }} transition={{ repeat: Infinity, duration: 0.7, delay: 0.4 }} className="w-1 bg-blue-500 rounded-full"></motion.span>
                           </div>
                         ) : (
-                          <div className="flex items-end gap-[3px] h-[14px] opacity-40 grayscale">
-                            <span className="w-1.5 h-2 bg-gray-400 rounded-sm"></span>
-                            <span className="w-1.5 h-3 bg-gray-400 rounded-sm"></span>
-                            <span className="w-1.5 h-1.5 bg-gray-400 rounded-sm"></span>
+                          <div className="flex items-end gap-1 h-3.5 opacity-30 grayscale">
+                            <span className="w-1 h-2 bg-gray-500 rounded-full"></span>
+                            <span className="w-1 h-3.5 bg-gray-500 rounded-full"></span>
+                            <span className="w-1 h-1.5 bg-gray-500 rounded-full"></span>
                           </div>
                         )}
                       </div>
 
-                      {/* Current Track Details */}
-                      <div className="flex items-center gap-4 mb-8">
-                        <div className="w-[60px] h-[60px] shrink-0 rounded-2xl overflow-hidden shadow-md">
+                      {/* Floating Cover Art */}
+                      <div className="flex flex-col items-center mb-6">
+                        <div className="w-[140px] h-[140px] rounded-2xl overflow-hidden shadow-2xl mb-4 relative">
                           <img 
                             src={currentTrack?.cover} 
                             alt={currentTrack?.title} 
                             className={`w-full h-full object-cover transition-transform duration-[3s] ${isPlaying ? 'scale-110' : 'scale-100'}`} 
                           />
                         </div>
-                        <div className="overflow-hidden">
-                          <h3 className="text-lg font-bold text-black dark:text-white truncate leading-tight mb-1">{currentTrack?.title}</h3>
-                          <p className="text-[13px] font-semibold text-gray-500 dark:text-gray-400 truncate">{currentTrack?.artist}</p>
+                        <div className="text-center w-full px-2">
+                          <h3 className="text-lg font-bold text-black dark:text-white truncate">{currentTrack?.title}</h3>
+                          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 truncate mt-1">{currentTrack?.artist}</p>
                         </div>
                       </div>
 
-                      {/* Media Controls */}
-                      <div className="flex items-center justify-center gap-7">
-                        <button onClick={handlePrev} className="text-gray-300 dark:text-gray-600 hover:text-black dark:hover:text-white transition-colors">
+                      {/* Media Controls Box */}
+                      <div className="flex items-center justify-between px-6 py-2">
+                        <button onClick={handlePrev} className="text-gray-400 hover:text-black dark:text-gray-500 dark:hover:text-white transition-colors active:scale-95">
                           <SkipBack className="w-6 h-6" fill="currentColor" />
                         </button>
                         
                         <button 
                           onClick={togglePlay}
-                          className="w-14 h-14 bg-[#111] dark:bg-white text-white dark:text-black rounded-full flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-all"
+                          className="w-16 h-16 bg-black dark:bg-white text-white dark:text-black rounded-full flex items-center justify-center shadow-xl hover:scale-105 active:scale-95 transition-all"
                         >
                           {isPlaying ? (
-                            <Pause className="w-6 h-6" fill="currentColor" />
+                            <Pause className="w-7 h-7" fill="currentColor" />
                           ) : (
-                            <Play className="w-6 h-6 ml-1" fill="currentColor" />
+                            <Play className="w-7 h-7 ml-1" fill="currentColor" />
                           )}
                         </button>
                         
-                        <button onClick={handleNext} className="text-gray-300 dark:text-gray-600 hover:text-black dark:hover:text-white transition-colors">
+                        <button onClick={handleNext} className="text-gray-400 hover:text-black dark:text-gray-500 dark:hover:text-white transition-colors active:scale-95">
                           <SkipForward className="w-6 h-6" fill="currentColor" />
                         </button>
                       </div>
                     </div>
 
                     {/* Bottom Section - Up Next Playlist */}
-                    <div className="bg-gray-50/80 dark:bg-[#151515]/80 p-5 pt-4 border-t border-gray-100 dark:border-gray-800/60">
-                      <h4 className="text-[10px] font-bold uppercase tracking-[0.15em] text-black/90 dark:text-white/90 mb-3">UP NEXT</h4>
+                    <div className="relative z-10 bg-black/5 dark:bg-white/5 backdrop-blur-xl p-5 border-t border-gray-200/30 dark:border-white/5">
+                      <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-3 ml-1">Up Next</h4>
                       
-                      <div className="flex flex-col gap-2.5 max-h-[160px] overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-[3px] [&::-webkit-scrollbar-thumb]:bg-gray-200 dark:[&::-webkit-scrollbar-thumb]:bg-gray-700 [&::-webkit-scrollbar-track]:bg-transparent">
+                      <div className="flex flex-col gap-2 max-h-[140px] overflow-y-auto pr-1 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-700 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full">
                         {displayTracks.map((track, idx) => {
                           const isThisPlaying = currentTrackIndex === idx;
+                          if(isThisPlaying) return null; // Only show up next tracks or keep all (customizable)
+
                           return (
                             <div 
                               key={track._id} 
                               onClick={() => playSpecificTrack(idx)} 
-                              className={`group flex items-center gap-3 p-2.5 rounded-2xl cursor-pointer transition-all duration-300 ${
-                                isThisPlaying 
-                                  ? 'bg-white dark:bg-[#222] shadow-[0_4px_15px_rgba(0,0,0,0.03)] dark:shadow-none border border-gray-100 dark:border-white/5' 
-                                  : 'hover:bg-black/5 dark:hover:bg-white/5 border border-transparent'
-                              }`}
+                              className="group flex items-center gap-3 p-2 rounded-xl cursor-pointer hover:bg-white/60 dark:hover:bg-white/10 transition-all duration-300"
                             >
-                              <div className="relative w-9 h-9 shrink-0 rounded-lg overflow-hidden shadow-sm bg-black">
-                                <img 
-                                  src={track.cover} 
-                                  alt={track.title} 
-                                  className={`w-full h-full object-cover transition-opacity ${isThisPlaying ? 'opacity-70' : 'opacity-100 group-hover:opacity-80'}`} 
-                                />
-                                {isThisPlaying && (
-                                  <div className="absolute inset-0 flex items-center justify-center">
-                                    <Volume2 className="w-4 h-4 text-white" />
-                                  </div>
-                                )}
+                              <div className="relative w-10 h-10 shrink-0 rounded-lg overflow-hidden shadow-sm">
+                                <img src={track.cover} alt={track.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                  <Play className="w-4 h-4 text-white ml-0.5" fill="currentColor" />
+                                </div>
                               </div>
 
                               <div className="flex-1 overflow-hidden">
-                                <h5 className={`text-[13px] font-bold truncate transition-colors ${
-                                  isThisPlaying 
-                                    ? 'text-blue-600 dark:text-blue-400' 
-                                    : 'text-gray-800 dark:text-gray-200'
-                                  }`}>
+                                <h5 className="text-[13px] font-bold text-gray-800 dark:text-gray-200 truncate group-hover:text-black dark:group-hover:text-white transition-colors">
                                   {track.title}
                                 </h5>
-                                {!isThisPlaying && (
-                                  <p className="text-[11px] font-medium text-gray-500 truncate mt-0.5">{track.artist}</p>
-                                )}
+                                <p className="text-[11px] font-medium text-gray-500 truncate mt-0.5">{track.artist}</p>
                               </div>
                             </div>
                           );
