@@ -120,7 +120,6 @@ export default function Header({ settings, tracks }: HeaderProps) {
     };
     
     updateTime();
-    // 1000ms (1 second) interval ensures exact minute change
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, []);
@@ -186,7 +185,6 @@ export default function Header({ settings, tracks }: HeaderProps) {
         <header 
           className={`pointer-events-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] border flex items-center justify-between
           ${isScrolled 
-            // Desktop Zoom Fix Retained
             ? "w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] lg:w-[calc(100%-6rem)] bg-white/70 dark:bg-[#050505]/80 backdrop-blur-2xl saturate-200 border-gray-200/60 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] max-w-full md:max-w-[calc(85rem-6rem)] rounded-full mt-4 md:mt-5 py-2.5 md:py-3 px-5 sm:px-6 md:px-8" 
             : "w-full max-w-[85rem] bg-transparent dark:bg-transparent border-transparent rounded-none mt-0 py-4 sm:py-5 md:py-8 px-4 sm:px-6 md:px-12"}`}
         >
@@ -195,7 +193,6 @@ export default function Header({ settings, tracks }: HeaderProps) {
             <Link href="/" className="font-extrabold text-lg md:text-xl tracking-tighter text-black dark:text-white flex items-center gap-2.5 group">
               {settings?.siteLogoLight || settings?.siteLogoDark || settings?.siteLogo ? (
                 <>
-                  {/* ☀️ Light Mode Logo */}
                   {(settings?.siteLogoLight || settings?.siteLogo) && (
                     <img 
                       src={settings.siteLogoLight || settings.siteLogo} 
@@ -203,7 +200,6 @@ export default function Header({ settings, tracks }: HeaderProps) {
                       className={`h-8 md:h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-500 ${settings?.siteLogoDark ? 'block dark:hidden' : ''}`} 
                     />
                   )}
-                  {/* 🌙 Dark Mode Logo */}
                   {settings?.siteLogoDark && (
                     <img 
                       src={settings.siteLogoDark} 
@@ -267,7 +263,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
           {/* Right Action Buttons */}
           <div className="flex items-center gap-2 md:gap-3">
             
-            {/* ⏱️ Pro Feature: Clean Local Time (Digital Style) */}
+            {/* ⏱️ Pro Feature: Clean Local Time */}
             {localTime && (
               <div className="hidden lg:flex items-center gap-1.5 text-gray-500 dark:text-gray-400 mr-2">
                 <span className="text-[9px] font-bold tracking-widest uppercase opacity-70">UTC +6</span>
@@ -307,40 +303,84 @@ export default function Header({ settings, tracks }: HeaderProps) {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute right-[-40px] sm:right-0 top-[50px] md:top-[56px] w-[280px] sm:w-[320px] bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 rounded-[1.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-4 origin-top-right overflow-hidden"
+                    className="absolute right-[-40px] sm:right-0 top-[50px] md:top-[56px] w-[300px] sm:w-[340px] bg-white/90 dark:bg-[#0a0a0a]/90 backdrop-blur-3xl border border-gray-200/50 dark:border-white/10 rounded-[1.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] dark:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.7)] p-4 origin-top-right overflow-hidden"
                   >
-                    <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-blue-500/10 to-purple-500/10 blur-[40px] rounded-full pointer-events-none"></div>
+                    {/* Beautiful gradient glow inside the modal */}
+                    <div className="absolute -top-10 -right-10 w-40 h-40 bg-gradient-to-br from-indigo-500/20 via-purple-500/20 to-pink-500/20 blur-3xl rounded-full pointer-events-none"></div>
                     
-                    <div className="flex items-center justify-between mb-4 relative z-10">
-                      <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 flex items-center gap-2">
-                        <Disc3 className={`w-3.5 h-3.5 ${isPlaying ? "animate-spin text-blue-500" : ""}`} /> 
+                    <div className="flex items-center justify-between mb-5 relative z-10 px-1">
+                      <h4 className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 flex items-center gap-2">
+                        {isPlaying ? (
+                          <span className="relative flex h-3 w-3">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
+                          </span>
+                        ) : (
+                          <Disc3 className="w-3.5 h-3.5" />
+                        )}
                         {isPlaying ? "Now Playing" : "Vibe Station"}
                       </h4>
-                      {isPlaying && <div className="flex gap-1">
-                        <span className="w-1 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                        <span className="w-1 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                        <span className="w-1 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
-                      </div>}
+                      
+                      {isPlaying && (
+                        <div className="flex gap-[3px] h-3.5 items-end">
+                          <span className="w-1 bg-blue-500 rounded-full animate-[bounce_1s_infinite]" style={{ height: '100%', animationDelay: '0ms' }}></span>
+                          <span className="w-1 bg-blue-500 rounded-full animate-[bounce_1s_infinite]" style={{ height: '60%', animationDelay: '150ms' }}></span>
+                          <span className="w-1 bg-blue-500 rounded-full animate-[bounce_1s_infinite]" style={{ height: '80%', animationDelay: '300ms' }}></span>
+                        </div>
+                      )}
                     </div>
                     
-                    <div className="flex flex-col gap-2 relative z-10 max-h-[250px] overflow-y-auto pr-1">
+                    <div className="flex flex-col gap-2 relative z-10 max-h-[320px] overflow-y-auto pr-1 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-gray-200 dark:[&::-webkit-scrollbar-thumb]:bg-gray-800 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full">
                       {displayTracks.map((track, idx) => {
                         const isThisPlaying = currentTrackIndex === idx && isPlaying;
                         return (
-                          <div key={track._id} onClick={() => togglePlay(idx)} className={`group flex items-center gap-3 p-2 rounded-xl transition-all cursor-pointer border ${isThisPlaying ? 'bg-blue-50 dark:bg-blue-900/10 border-blue-200 dark:border-blue-800/30' : 'border-transparent hover:bg-gray-50 dark:hover:bg-[#111] hover:border-gray-200/50 dark:hover:border-gray-800/50'}`}>
-                            <div className="relative">
-                              <img src={track.cover} alt={track.title} className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform" />
-                              {isThisPlaying && <div className="absolute inset-0 bg-black/40 rounded-lg flex items-center justify-center backdrop-blur-[2px]">
-                                <Pause className="w-4 h-4 text-white" />
-                              </div>}
+                          <div 
+                            key={track._id} 
+                            onClick={() => togglePlay(idx)} 
+                            className={`group flex items-center gap-3.5 p-2 rounded-2xl transition-all duration-300 cursor-pointer ${
+                              isThisPlaying 
+                                ? 'bg-white dark:bg-white/10 shadow-[0_8px_20px_rgba(0,0,0,0.04)] dark:shadow-none border border-gray-200/60 dark:border-white/10' 
+                                : 'bg-transparent border border-transparent hover:bg-gray-50 dark:hover:bg-white/5'
+                            }`}
+                          >
+                            <div className="relative w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-xl overflow-hidden shadow-sm">
+                              <img 
+                                src={track.cover} 
+                                alt={track.title} 
+                                className={`w-full h-full object-cover transition-transform duration-700 ${isThisPlaying ? 'scale-105' : 'group-hover:scale-110'}`} 
+                              />
+                              
+                              {/* Glassy Overlay for Controls */}
+                              <div className={`absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center transition-opacity duration-300 ${isThisPlaying ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                                {isThisPlaying ? (
+                                  <Pause className="w-5 h-5 text-white" />
+                                ) : (
+                                  <Play className="w-5 h-5 text-white ml-0.5" />
+                                )}
+                              </div>
                             </div>
+
                             <div className="flex-1 overflow-hidden">
-                              <h5 className={`text-[12px] sm:text-[13px] font-bold leading-tight truncate ${isThisPlaying ? 'text-blue-600 dark:text-blue-400' : 'text-black dark:text-white'}`}>{track.title}</h5>
-                              <p className="text-[10px] sm:text-[11px] font-medium text-gray-500 truncate mt-0.5">{track.artist}</p>
+                              <h5 className={`text-[13px] sm:text-[14px] font-bold leading-tight truncate transition-colors ${
+                                isThisPlaying 
+                                  ? 'text-blue-600 dark:text-blue-400' 
+                                  : 'text-gray-900 dark:text-gray-100 group-hover:text-black dark:group-hover:text-white'
+                                }`}>
+                                {track.title}
+                              </h5>
+                              <p className="text-[11px] sm:text-[12px] font-medium text-gray-500 dark:text-gray-400 truncate mt-1 transition-colors group-hover:text-gray-600 dark:group-hover:text-gray-300">
+                                {track.artist}
+                              </p>
                             </div>
-                            <button className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-colors shrink-0 shadow-sm ${isThisPlaying ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black'}`}>
-                              {isThisPlaying ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3 ml-0.5" />}
-                            </button>
+
+                            {/* Active Indicator on the right */}
+                            <div className="w-6 h-6 flex items-center justify-center shrink-0">
+                               {isThisPlaying ? (
+                                   <Disc3 className="w-4 h-4 text-blue-500 animate-spin" style={{ animationDuration: '3s' }} />
+                               ) : (
+                                   <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                               )}
+                            </div>
                           </div>
                         );
                       })}
