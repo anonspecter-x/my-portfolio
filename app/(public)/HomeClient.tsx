@@ -771,20 +771,26 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                         </div>
                       )}
                     </div>
-                    <div className="p-5 md:p-6 flex flex-col flex-1">
-                      <div className="flex items-center gap-3 text-[11px] md:text-xs text-gray-500 dark:text-gray-400 mb-3 font-medium">
+                    <div className="p-6 md:p-7 flex flex-col flex-1">
+                      <div className="flex items-center gap-4 text-[13px] font-medium text-gray-500 dark:text-gray-400/80 mb-4">
                         {blog.createdAt && (
-                          <span className="flex items-center gap-1.5"><Calendar className="w-3 h-3" /> {new Date(blog.createdAt).toLocaleDateString()}</span>
+                          <span className="flex items-center gap-1.5">
+                            <Calendar className="w-3.5 h-3.5 stroke-[2] opacity-70" /> 
+                            {new Date(blog.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          </span>
                         )}
                         {blog.readingTime && (
-                          <span className="flex items-center gap-1.5"><Clock className="w-3 h-3" /> {blog.readingTime}</span>
+                          <span className="flex items-center gap-1.5">
+                            <Clock className="w-3.5 h-3.5 stroke-[2] opacity-70" /> 
+                            {blog.readingTime}
+                          </span>
                         )}
                       </div>
-                      <h3 className="text-lg md:text-xl font-bold text-black dark:text-white mb-2 md:mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 leading-snug">
+                      <h3 className="text-[20px] font-bold tracking-tight text-[#111] dark:text-gray-100 leading-[1.35] mb-5 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 line-clamp-2">
                         {blog.title}
                       </h3>
-                      <div className="mt-auto pt-4 flex items-center gap-1.5 text-xs md:text-sm font-semibold text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                        Read Article <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                      <div className="mt-auto pt-5 flex items-center gap-1.5 text-[13px] font-semibold tracking-wide text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors border-t border-gray-100 dark:border-white/5">
+                        Read Article <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                       </div>
                     </div>
                   </Link>
