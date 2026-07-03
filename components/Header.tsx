@@ -33,7 +33,10 @@ export default function Header({ settings, tracks }: HeaderProps) {
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
   const pathname = usePathname(); 
+  
+  // Refs for tracking clicks outside
   const musicRef = useRef<HTMLDivElement>(null);
+  const mobileMusicRef = useRef<HTMLDivElement>(null);
 
   const fallbackTracks = [
     { _id: "1", title: "Lines Of Light", artist: "Local Playlist", cover: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=100&auto=format&fit=crop", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
@@ -54,17 +57,14 @@ export default function Header({ settings, tracks }: HeaderProps) {
     { name: "Blog", href: "/blog" }, 
   ];
 
-  // ⚙️ Logic: Add Contact only if on /contact page
   const desktopNavLinks = pathname === "/contact" 
     ? [...baseNavLinks, { name: "Contact", href: "/contact" }] 
     : baseNavLinks;
 
-  // Mobile menu should always show Home if not on Home page
   const mobileNavLinks = pathname === "/" 
     ? desktopNavLinks 
     : [{ name: "Home", href: "/" }, ...desktopNavLinks];
 
-  // 📌 Dynamic Social Links Logic based on Settings
   const availableSocials = [
     { id: "github", name: "GitHub" },
     { id: "linkedin", name: "LinkedIn" },
@@ -82,7 +82,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
       href: settings[`social_${social.id}`]
     }));
 
-  // Scroll Logic for Header Design
+  // Scroll Logic
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -126,10 +126,14 @@ export default function Header({ settings, tracks }: HeaderProps) {
     return () => clearInterval(interval);
   }, []);
 
-  // Click Outside Music Dropdown
+  // Click Outside Logic (Fixed for both Mobile & Desktop Modals)
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (musicRef.current && !musicRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      if (
+        musicRef.current && !musicRef.current.contains(target) &&
+        (!mobileMusicRef.current || !mobileMusicRef.current.contains(target))
+      ) {
         setIsMusicOpen(false);
       }
     };
@@ -137,28 +141,28 @@ export default function Header({ settings, tracks }: HeaderProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // 🎵 Mobile Scroll to Close Music Player Logic
+  // 🎵 Mobile Scroll to Close Music Player Logic (Optimized)
   useEffect(() => {
     const handleMobileScrollOrTouch = (e: Event) => {
-      // If the scroll happens inside the music player (e.g., Up Next list), don't close it
-      if (musicRef.current && musicRef.current.contains(e.target as Node)) {
-        return;
-      }
+      const target = e.target as Node;
+      // Do not close if the user is scrolling inside the Up Next list
+      if (musicRef.current && musicRef.current.contains(target)) return;
+      if (mobileMusicRef.current && mobileMusicRef.current.contains(target)) return;
       
-      // Close only on mobile devices (width < 768px) when scrolling the main page
+      // Close only on mobile devices
       if (window.innerWidth < 768 && isMusicOpen) {
         setIsMusicOpen(false);
       }
     };
 
     if (isMusicOpen) {
-      window.addEventListener("scroll", handleMobileScrollOrTouch, { passive: true });
-      window.addEventListener("touchmove", handleMobileScrollOrTouch, { passive: true });
+      window.addEventListener("scroll", handleMobileScrollOrTouch, { passive: true, capture: true });
+      window.addEventListener("touchmove", handleMobileScrollOrTouch, { passive: true, capture: true });
     }
 
     return () => {
-      window.removeEventListener("scroll", handleMobileScrollOrTouch);
-      window.removeEventListener("touchmove", handleMobileScrollOrTouch);
+      window.removeEventListener("scroll", handleMobileScrollOrTouch, { capture: true });
+      window.removeEventListener("touchmove", handleMobileScrollOrTouch, { capture: true });
     };
   }, [isMusicOpen]);
 
@@ -202,6 +206,125 @@ export default function Header({ settings, tracks }: HeaderProps) {
     const prevIndex = (currentTrackIndex - 1 + displayTracks.length) % displayTracks.length;
     playSpecificTrack(prevIndex);
   };
+
+  // 📌 Reusable Music Modal Component for both Desktop (Dropdown) and Mobile (Centered Overlay)
+  const renderMusicModal = (isMobile: boolean) => (
+    <motion.div
+      ref={isMobile ? mobileMusicRef : null}
+      initial={{ opacity: 0, scale: 0.95, y: isMobile ? 15 : 10 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95, y: isMobile ? 15 : 10 }}
+      transition={{ type: "spring", stiffness: 300, damping: 25 }}
+      className={isMobile
+        ? "relative w-[90vw] max-w-[340px] bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-2xl border border-gray-200/50 dark:border-white/10 rounded-[32px] shadow-[0_24px_60px_-15px_rgba(0,0,0,0.2)] dark:shadow-[0_24px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col pointer-events-auto"
+        : "absolute top-[calc(100%+16px)] -right-2 w-[340px] bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-2xl border border-gray-200/50 dark:border-white/10 rounded-[32px] shadow-[0_24px_60px_-15px_rgba(0,0,0,0.2)] dark:shadow-[0_24px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col origin-top-right z-[100]"
+      }
+    >
+      {/* Glowing background matching cover art */}
+      <div 
+        className="absolute inset-0 opacity-20 dark:opacity-30 blur-3xl saturate-200 pointer-events-none transition-all duration-1000"
+        style={{ backgroundImage: `url(${currentTrack?.cover})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+      ></div>
+      
+      {/* Top Section - Now Playing Info & Controls */}
+      <div className="relative z-10 p-6 pb-5">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2 bg-black/5 dark:bg-white/10 px-3 py-1 rounded-full">
+            <Disc3 className={`w-3.5 h-3.5 text-gray-700 dark:text-gray-300 ${isPlaying ? 'animate-spin text-blue-600 dark:text-blue-400' : ''}`} style={{ animationDuration: '3s' }} />
+            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+              Now Playing
+            </span>
+          </div>
+          
+          {isPlaying ? (
+            <div className="flex items-end gap-1 h-3.5">
+              <motion.span animate={{ height: ["40%", "100%", "40%"] }} transition={{ repeat: Infinity, duration: 0.7 }} className="w-1 bg-blue-500 rounded-full"></motion.span>
+              <motion.span animate={{ height: ["100%", "50%", "100%"] }} transition={{ repeat: Infinity, duration: 0.7, delay: 0.2 }} className="w-1 bg-blue-500 rounded-full"></motion.span>
+              <motion.span animate={{ height: ["60%", "100%", "60%"] }} transition={{ repeat: Infinity, duration: 0.7, delay: 0.4 }} className="w-1 bg-blue-500 rounded-full"></motion.span>
+            </div>
+          ) : (
+            <div className="flex items-end gap-1 h-3.5 opacity-30 grayscale">
+              <span className="w-1 h-2 bg-gray-500 rounded-full"></span>
+              <span className="w-1 h-3.5 bg-gray-500 rounded-full"></span>
+              <span className="w-1 h-1.5 bg-gray-500 rounded-full"></span>
+            </div>
+          )}
+        </div>
+
+        {/* Floating Cover Art */}
+        <div className="flex flex-col items-center mb-6">
+          <div className="w-[140px] h-[140px] rounded-2xl overflow-hidden shadow-2xl mb-4 relative">
+            <img 
+              src={currentTrack?.cover} 
+              alt={currentTrack?.title} 
+              className={`w-full h-full object-cover transition-transform duration-[3s] ${isPlaying ? 'scale-110' : 'scale-100'}`} 
+            />
+          </div>
+          <div className="text-center w-full px-2">
+            <h3 className="text-lg font-bold text-black dark:text-white truncate">{currentTrack?.title}</h3>
+            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 truncate mt-1">{currentTrack?.artist}</p>
+          </div>
+        </div>
+
+        {/* Media Controls Box */}
+        <div className="flex items-center justify-between px-6 py-2">
+          <button onClick={handlePrev} className="text-gray-400 hover:text-black dark:text-gray-500 dark:hover:text-white transition-colors active:scale-95">
+            <SkipBack className="w-6 h-6" fill="currentColor" />
+          </button>
+          
+          <button 
+            onClick={togglePlay}
+            className="w-16 h-16 bg-black dark:bg-white text-white dark:text-black rounded-full flex items-center justify-center shadow-xl hover:scale-105 active:scale-95 transition-all"
+          >
+            {isPlaying ? (
+              <Pause className="w-7 h-7" fill="currentColor" />
+            ) : (
+              <Play className="w-7 h-7 ml-1" fill="currentColor" />
+            )}
+          </button>
+          
+          <button onClick={handleNext} className="text-gray-400 hover:text-black dark:text-gray-500 dark:hover:text-white transition-colors active:scale-95">
+            <SkipForward className="w-6 h-6" fill="currentColor" />
+          </button>
+        </div>
+      </div>
+
+      {/* Bottom Section - Up Next Playlist */}
+      <div className="relative z-10 bg-black/5 dark:bg-white/5 backdrop-blur-xl p-5 border-t border-gray-200/30 dark:border-white/5">
+        <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-3 ml-1">Up Next</h4>
+        
+        {/* overscroll-contain prevents modal from closing when scrolling hits the edge */}
+        <div className="flex flex-col gap-2 max-h-[140px] overflow-y-auto overscroll-contain pr-1 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-700 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full">
+          {displayTracks.map((track, idx) => {
+            const isThisPlaying = currentTrackIndex === idx;
+            if(isThisPlaying) return null; // Hide current track from Up Next
+
+            return (
+              <div 
+                key={track._id} 
+                onClick={() => playSpecificTrack(idx)} 
+                className="group flex items-center gap-3 p-2 rounded-xl cursor-pointer hover:bg-white/60 dark:hover:bg-white/10 transition-all duration-300"
+              >
+                <div className="relative w-10 h-10 shrink-0 rounded-lg overflow-hidden shadow-sm">
+                  <img src={track.cover} alt={track.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <Play className="w-4 h-4 text-white ml-0.5" fill="currentColor" />
+                  </div>
+                </div>
+
+                <div className="flex-1 overflow-hidden">
+                  <h5 className="text-[13px] font-bold text-gray-800 dark:text-gray-200 truncate group-hover:text-black dark:group-hover:text-white transition-colors">
+                    {track.title}
+                  </h5>
+                  <p className="text-[11px] font-medium text-gray-500 truncate mt-0.5">{track.artist}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </motion.div>
+  );
 
   return (
     <>
@@ -316,8 +439,8 @@ export default function Header({ settings, tracks }: HeaderProps) {
 
             <div className="w-px h-5 bg-gray-200 dark:bg-gray-800 hidden md:block mx-1"></div>
             
-            {/* 🎵 Dynamic Music Player UI (Centered on Mobile, Dropdown on Desktop) */}
-            <div className="relative md:static lg:relative" ref={musicRef}>
+            {/* 🎵 Dynamic Music Player UI Toggle */}
+            <div className="relative" ref={musicRef}>
               <button 
                 onClick={() => setIsMusicOpen(!isMusicOpen)}
                 className={`w-9 h-9 md:w-10 md:h-10 rounded-full transition-all flex items-center justify-center relative overflow-hidden group border
@@ -332,134 +455,12 @@ export default function Header({ settings, tracks }: HeaderProps) {
                 }
               </button>
 
-              {/* Mobile Backdrop Overlay (Only visible on small screens when open) */}
-              <AnimatePresence>
-                {isMusicOpen && (
-                  <motion.div 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    onClick={() => setIsMusicOpen(false)}
-                    className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[90] md:hidden"
-                  />
-                )}
-              </AnimatePresence>
-
-              <AnimatePresence>
-                {isMusicOpen && (
-                  <motion.div 
-                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                    // Desktop: Absolute below icon. Mobile: Fixed centered.
-                    className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-[340px] z-[100] md:absolute md:top-[calc(100%+16px)] md:-right-2 md:left-auto md:translate-x-0 md:translate-y-0 md:w-[340px] bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-2xl border border-gray-200/50 dark:border-white/10 rounded-[32px] shadow-[0_24px_60px_-15px_rgba(0,0,0,0.2)] dark:shadow-[0_24px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col"
-                  >
-                    {/* Glowing background matching cover art */}
-                    <div 
-                      className="absolute inset-0 opacity-20 dark:opacity-30 blur-3xl saturate-200 pointer-events-none transition-all duration-1000"
-                      style={{ backgroundImage: `url(${currentTrack?.cover})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-                    ></div>
-                    
-                    {/* Top Section - Now Playing Info & Controls */}
-                    <div className="relative z-10 p-6 pb-5">
-                      <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-2 bg-black/5 dark:bg-white/10 px-3 py-1 rounded-full">
-                          <Disc3 className={`w-3.5 h-3.5 text-gray-700 dark:text-gray-300 ${isPlaying ? 'animate-spin text-blue-600 dark:text-blue-400' : ''}`} style={{ animationDuration: '3s' }} />
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
-                            Now Playing
-                          </span>
-                        </div>
-                        
-                        {isPlaying ? (
-                          <div className="flex items-end gap-1 h-3.5">
-                            <motion.span animate={{ height: ["40%", "100%", "40%"] }} transition={{ repeat: Infinity, duration: 0.7 }} className="w-1 bg-blue-500 rounded-full"></motion.span>
-                            <motion.span animate={{ height: ["100%", "50%", "100%"] }} transition={{ repeat: Infinity, duration: 0.7, delay: 0.2 }} className="w-1 bg-blue-500 rounded-full"></motion.span>
-                            <motion.span animate={{ height: ["60%", "100%", "60%"] }} transition={{ repeat: Infinity, duration: 0.7, delay: 0.4 }} className="w-1 bg-blue-500 rounded-full"></motion.span>
-                          </div>
-                        ) : (
-                          <div className="flex items-end gap-1 h-3.5 opacity-30 grayscale">
-                            <span className="w-1 h-2 bg-gray-500 rounded-full"></span>
-                            <span className="w-1 h-3.5 bg-gray-500 rounded-full"></span>
-                            <span className="w-1 h-1.5 bg-gray-500 rounded-full"></span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Floating Cover Art */}
-                      <div className="flex flex-col items-center mb-6">
-                        <div className="w-[140px] h-[140px] rounded-2xl overflow-hidden shadow-2xl mb-4 relative">
-                          <img 
-                            src={currentTrack?.cover} 
-                            alt={currentTrack?.title} 
-                            className={`w-full h-full object-cover transition-transform duration-[3s] ${isPlaying ? 'scale-110' : 'scale-100'}`} 
-                          />
-                        </div>
-                        <div className="text-center w-full px-2">
-                          <h3 className="text-lg font-bold text-black dark:text-white truncate">{currentTrack?.title}</h3>
-                          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 truncate mt-1">{currentTrack?.artist}</p>
-                        </div>
-                      </div>
-
-                      {/* Media Controls Box */}
-                      <div className="flex items-center justify-between px-6 py-2">
-                        <button onClick={handlePrev} className="text-gray-400 hover:text-black dark:text-gray-500 dark:hover:text-white transition-colors active:scale-95">
-                          <SkipBack className="w-6 h-6" fill="currentColor" />
-                        </button>
-                        
-                        <button 
-                          onClick={togglePlay}
-                          className="w-16 h-16 bg-black dark:bg-white text-white dark:text-black rounded-full flex items-center justify-center shadow-xl hover:scale-105 active:scale-95 transition-all"
-                        >
-                          {isPlaying ? (
-                            <Pause className="w-7 h-7" fill="currentColor" />
-                          ) : (
-                            <Play className="w-7 h-7 ml-1" fill="currentColor" />
-                          )}
-                        </button>
-                        
-                        <button onClick={handleNext} className="text-gray-400 hover:text-black dark:text-gray-500 dark:hover:text-white transition-colors active:scale-95">
-                          <SkipForward className="w-6 h-6" fill="currentColor" />
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Bottom Section - Up Next Playlist */}
-                    <div className="relative z-10 bg-black/5 dark:bg-white/5 backdrop-blur-xl p-5 border-t border-gray-200/30 dark:border-white/5">
-                      <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-3 ml-1">Up Next</h4>
-                      
-                      <div className="flex flex-col gap-2 max-h-[140px] overflow-y-auto overscroll-contain pr-1 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-700 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full">
-                        {displayTracks.map((track, idx) => {
-                          const isThisPlaying = currentTrackIndex === idx;
-                          if(isThisPlaying) return null; // Hide current track from Up Next
-
-                          return (
-                            <div 
-                              key={track._id} 
-                              onClick={() => playSpecificTrack(idx)} 
-                              className="group flex items-center gap-3 p-2 rounded-xl cursor-pointer hover:bg-white/60 dark:hover:bg-white/10 transition-all duration-300"
-                            >
-                              <div className="relative w-10 h-10 shrink-0 rounded-lg overflow-hidden shadow-sm">
-                                <img src={track.cover} alt={track.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                  <Play className="w-4 h-4 text-white ml-0.5" fill="currentColor" />
-                                </div>
-                              </div>
-
-                              <div className="flex-1 overflow-hidden">
-                                <h5 className="text-[13px] font-bold text-gray-800 dark:text-gray-200 truncate group-hover:text-black dark:group-hover:text-white transition-colors">
-                                  {track.title}
-                                </h5>
-                                <p className="text-[11px] font-medium text-gray-500 truncate mt-0.5">{track.artist}</p>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              {/* 💻 Desktop Dropdown Menu (Hidden on Mobile) */}
+              <div className="hidden md:block">
+                <AnimatePresence>
+                  {isMusicOpen && renderMusicModal(false)}
+                </AnimatePresence>
+              </div>
             </div>
 
             {/* Dark Mode Toggle */}
@@ -501,6 +502,28 @@ export default function Header({ settings, tracks }: HeaderProps) {
         </header>
       </motion.div>
 
+      {/* ================= 📱 MOBILE MUSIC OVERLAY ================= */}
+      {/* (Rendered outside the header wrapper to avoid backdrop-blur containing block traps!) */}
+      <div className="md:hidden">
+        <AnimatePresence>
+          {isMusicOpen && (
+            <div className="fixed top-0 left-0 w-[100vw] h-[100vh] z-[120] flex items-center justify-center pointer-events-none">
+              {/* Dark Glassy Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                onClick={() => setIsMusicOpen(false)}
+                className="absolute inset-0 bg-black/50 backdrop-blur-md pointer-events-auto"
+              />
+              {/* Centered Mobile Modal */}
+              {renderMusicModal(true)}
+            </div>
+          )}
+        </AnimatePresence>
+      </div>
+
       {/* ================= MOBILE MENU OVERLAY ================= */}
       <AnimatePresence>
         {isMobileMenuOpen && (
@@ -509,7 +532,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className="fixed inset-0 z-40 bg-white/95 dark:bg-[#050505]/95 backdrop-blur-3xl md:hidden flex flex-col justify-between"
+            className="fixed inset-0 z-[110] bg-white/95 dark:bg-[#050505]/95 backdrop-blur-3xl md:hidden flex flex-col justify-between"
           >
             <div className="absolute top-0 left-0 w-full h-40 bg-gradient-to-b from-gray-100/50 dark:from-gray-900/50 to-transparent pointer-events-none"></div>
 
