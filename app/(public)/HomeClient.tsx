@@ -300,7 +300,11 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               </button>
             </motion.div>
             
-            <motion.div variants={fadeUp} className="order-1 lg:order-2 relative w-full aspect-[4/3] md:aspect-[4/3] rounded-3xl md:rounded-[2rem] bg-[#050505] border border-gray-800 p-5 md:p-8 shadow-2xl flex flex-col justify-between overflow-hidden group">
+            <motion.div 
+              variants={fadeUp} 
+              onClick={() => window.dispatchEvent(new Event("trigger-easter-egg"))}
+              className="order-1 lg:order-2 relative w-full aspect-[4/3] md:aspect-[4/3] rounded-3xl md:rounded-[2rem] bg-[#050505] border border-gray-800 p-5 md:p-8 shadow-2xl flex flex-col justify-between overflow-hidden group cursor-pointer"
+            >
                {settings?.developerPhoto ? (
                  <>
                    <img src={settings.developerPhoto} alt={fullName} className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" />

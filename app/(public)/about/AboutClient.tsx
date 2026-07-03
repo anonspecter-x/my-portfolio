@@ -70,7 +70,10 @@ export default function AboutClient() {
 
         {/* 📸 MY PHOTO CONTAINER */}
         <motion.div variants={fadeUp} className="xl:col-span-5 relative perspective-1000">
-          <div className="relative aspect-[4/5] sm:aspect-square xl:aspect-[4/5] rounded-[3rem] overflow-hidden bg-gray-100 dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 shadow-2xl group transform rotate-y-[-5deg] hover:rotate-y-0 transition-transform duration-700">
+          <div 
+            onClick={() => window.dispatchEvent(new Event("trigger-easter-egg"))}
+            className="relative aspect-[4/5] sm:aspect-square xl:aspect-[4/5] rounded-[3rem] overflow-hidden bg-gray-100 dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 shadow-2xl group transform rotate-y-[-5deg] hover:rotate-y-0 transition-transform duration-700 cursor-pointer"
+          >
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent z-10"></div>
             
             <img 

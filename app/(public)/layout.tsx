@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AIChatBot from "@/components/AIChatBot";
+import EasterEggGame from "@/components/EasterEggGame";
 
 // 📌 ডাটাবেজ থেকে ডায়নামিক SEO সেটিংস আনার ফাংশন
 export async function generateMetadata(): Promise<Metadata> {
@@ -129,6 +130,7 @@ export default async function PublicLayout({
       </div>
       <Footer />
       <AIChatBot />
+      <EasterEggGame />
     </>
   );
 }
