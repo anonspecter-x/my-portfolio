@@ -82,7 +82,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
       href: settings[`social_${social.id}`]
     }));
 
-  // Scroll Logic
+  // Scroll Logic for Header
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -126,7 +126,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
     return () => clearInterval(interval);
   }, []);
 
-  // Click Outside Logic (Fixed for both Mobile & Desktop Modals)
+  // Click Outside Logic (For both Mobile & Desktop Modals)
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
@@ -141,26 +141,29 @@ export default function Header({ settings, tracks }: HeaderProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // 🎵 Mobile Scroll to Close Music Player Logic (Optimized)
+  // 🎵 Mobile Scroll to Close Music Player Logic (Blink Fix)
   useEffect(() => {
+    // Only apply logic if the player is open and on a mobile screen
+    if (!isMusicOpen || window.innerWidth >= 768) return;
+
     const handleMobileScrollOrTouch = (e: Event) => {
       const target = e.target as Node;
-      // Do not close if the user is scrolling inside the Up Next list
+      // Do not close if the user is interacting inside the modal itself
       if (musicRef.current && musicRef.current.contains(target)) return;
       if (mobileMusicRef.current && mobileMusicRef.current.contains(target)) return;
       
-      // Close only on mobile devices
-      if (window.innerWidth < 768 && isMusicOpen) {
-        setIsMusicOpen(false);
-      }
+      setIsMusicOpen(false);
     };
 
-    if (isMusicOpen) {
+    // We add a delay of 300ms before attaching the scroll event.
+    // This prevents the initial "tap" to open the modal from misfiring as a scroll/touchmove event.
+    const timer = setTimeout(() => {
       window.addEventListener("scroll", handleMobileScrollOrTouch, { passive: true, capture: true });
       window.addEventListener("touchmove", handleMobileScrollOrTouch, { passive: true, capture: true });
-    }
+    }, 300);
 
     return () => {
+      clearTimeout(timer);
       window.removeEventListener("scroll", handleMobileScrollOrTouch, { capture: true });
       window.removeEventListener("touchmove", handleMobileScrollOrTouch, { capture: true });
     };
