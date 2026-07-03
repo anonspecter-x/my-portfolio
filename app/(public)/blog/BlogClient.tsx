@@ -15,13 +15,13 @@ interface Post {
 }
 
 export default function BlogClient({ posts }: { posts: Post[] }) {
-  // 📌 Smooth Animation Variants
-  const fadeUp = {
+  // 📌 Smooth Animation Variants (Fixed TypeScript Error)
+  const fadeUp: any = {
     hidden: { opacity: 0, y: 30 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } }
   };
 
-  const stagger = {
+  const stagger: any = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
   };
