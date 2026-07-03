@@ -82,7 +82,21 @@ export default function Header({ settings, tracks }: HeaderProps) {
 
   // Scroll Logic
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    let lastScrollY = window.scrollY;
+    
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+      
+      // 🎵 Minimize music window on mobile when scrolling
+      if (window.innerWidth < 768) {
+        // Checking for a minimum scroll distance to avoid accidental closures
+        if (Math.abs(window.scrollY - lastScrollY) > 10) {
+          setIsMusicOpen(false);
+        }
+      }
+      lastScrollY = window.scrollY;
+    };
+    
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
