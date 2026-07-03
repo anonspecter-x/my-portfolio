@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation"; 
-import { Moon, Sun, Music, Menu, X, Play, Pause, Disc3, Code2, ArrowUpRight, Volume2, Home } from "lucide-react";
+import { Moon, Sun, Music, Menu, X, Play, Pause, Disc3, Code2, ArrowUpRight, Volume2, Home, SkipBack, SkipForward } from "lucide-react";
 
 interface TrackType {
   _id: string;
@@ -36,13 +36,15 @@ export default function Header({ settings, tracks }: HeaderProps) {
   const musicRef = useRef<HTMLDivElement>(null);
 
   const fallbackTracks = [
-    { _id: "1", title: "Lofi Chill Vibes", artist: "Developer Beats", cover: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=100&auto=format&fit=crop", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-    { _id: "2", title: "Deep Focus Coding", artist: "Synthwave", cover: "https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=100&auto=format&fit=crop", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+    { _id: "1", title: "Lines Of Light", artist: "Local Playlist", cover: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=100&auto=format&fit=crop", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+    { _id: "2", title: "Syntax & Soul", artist: "Developer Beats", cover: "https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=100&auto=format&fit=crop", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+    { _id: "3", title: "Deep Focus", artist: "Synthwave", cover: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?q=80&w=100&auto=format&fit=crop", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
   ];
 
   const displayTracks = tracks && tracks.length > 0 ? tracks : fallbackTracks;
   const logoText = settings?.developerName ? settings.developerName.split(" ")[0] + "." : "Nazmus.";
   const devFullName = settings?.developerName || "Developer Logo";
+  const currentTrack = displayTracks[currentTrackIndex];
 
   // 📌 Updated Base Navigation Links
   const baseNavLinks = [
@@ -144,35 +146,44 @@ export default function Header({ settings, tracks }: HeaderProps) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // 🎵 Play/Pause Logic
-  const togglePlay = (index: number) => {
+  // 🎵 Music Controls Logic
+  const togglePlay = () => {
     if (!audioRef.current) return;
-    
-    if (currentTrackIndex === index) {
-      if (isPlaying) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-      } else {
-        audioRef.current.play();
-        setIsPlaying(true);
-      }
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
     } else {
-      setCurrentTrackIndex(index);
+      audioRef.current.play();
       setIsPlaying(true);
-      setTimeout(() => {
-        if (audioRef.current) {
-          audioRef.current.play().catch(e => console.log("Audio play blocked:", e));
-        }
-      }, 50);
     }
+  };
+
+  const playSpecificTrack = (index: number) => {
+    setCurrentTrackIndex(index);
+    setIsPlaying(true);
+    setTimeout(() => {
+      if (audioRef.current) {
+        audioRef.current.play().catch(e => console.log("Audio play blocked:", e));
+      }
+    }, 50);
+  };
+
+  const handleNext = () => {
+    const nextIndex = (currentTrackIndex + 1) % displayTracks.length;
+    playSpecificTrack(nextIndex);
+  };
+
+  const handlePrev = () => {
+    const prevIndex = (currentTrackIndex - 1 + displayTracks.length) % displayTracks.length;
+    playSpecificTrack(prevIndex);
   };
 
   return (
     <>
       <audio 
         ref={audioRef} 
-        src={displayTracks[currentTrackIndex]?.audioUrl} 
-        onEnded={() => setIsPlaying(false)}
+        src={currentTrack?.audioUrl} 
+        onEnded={handleNext}
       />
 
       {/* ================= DESKTOP & MOBILE HEADER ================= */}
@@ -188,7 +199,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
             ? "w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] lg:w-[calc(100%-6rem)] bg-white/70 dark:bg-[#050505]/80 backdrop-blur-2xl saturate-200 border-gray-200/60 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] max-w-full md:max-w-[calc(85rem-6rem)] rounded-full mt-4 md:mt-5 py-2.5 md:py-3 px-5 sm:px-6 md:px-8" 
             : "w-full max-w-[85rem] bg-transparent dark:bg-transparent border-transparent rounded-none mt-0 py-4 sm:py-5 md:py-8 px-4 sm:px-6 md:px-12"}`}
         >
-          {/* 📌 Dynamic Logo: Light & Dark Mode Supported */}
+          {/* 📌 Dynamic Logo */}
           <div className="flex items-center gap-3">
             <Link href="/" className="font-extrabold text-lg md:text-xl tracking-tighter text-black dark:text-white flex items-center gap-2.5 group">
               {settings?.siteLogoLight || settings?.siteLogoDark || settings?.siteLogo ? (
@@ -263,7 +274,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
           {/* Right Action Buttons */}
           <div className="flex items-center gap-2 md:gap-3">
             
-            {/* ⏱️ Pro Feature: Clean Local Time */}
+            {/* ⏱️ Clean Local Time */}
             {localTime && (
               <div className="hidden lg:flex items-center gap-1.5 text-gray-500 dark:text-gray-400 mr-2">
                 <span className="text-[9px] font-bold tracking-widest uppercase opacity-70">UTC +6</span>
@@ -280,7 +291,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
 
             <div className="w-px h-5 bg-gray-200 dark:bg-gray-800 hidden md:block mx-1"></div>
             
-            {/* 🎵 Dynamic Music Player */}
+            {/* 🎵 Dynamic Music Player UI (Redesigned matching image_05044b.png) */}
             <div className="relative" ref={musicRef}>
               <button 
                 onClick={() => setIsMusicOpen(!isMusicOpen)}
@@ -303,87 +314,116 @@ export default function Header({ settings, tracks }: HeaderProps) {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute right-[-40px] sm:right-0 top-[50px] md:top-[56px] w-[300px] sm:w-[340px] bg-white/90 dark:bg-[#0a0a0a]/90 backdrop-blur-3xl border border-gray-200/50 dark:border-white/10 rounded-[1.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] dark:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.7)] p-4 origin-top-right overflow-hidden"
+                    className="absolute right-[-40px] sm:right-0 top-[50px] md:top-[56px] w-[310px] bg-white dark:bg-[#0a0a0a] border border-gray-100 dark:border-gray-800 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.8)] origin-top-right overflow-hidden flex flex-col"
                   >
-                    {/* Beautiful gradient glow inside the modal */}
-                    <div className="absolute -top-10 -right-10 w-40 h-40 bg-gradient-to-br from-indigo-500/20 via-purple-500/20 to-pink-500/20 blur-3xl rounded-full pointer-events-none"></div>
-                    
-                    <div className="flex items-center justify-between mb-5 relative z-10 px-1">
-                      <h4 className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 flex items-center gap-2">
+                    {/* Top Section - Now Playing Info & Controls */}
+                    <div className="p-5 pb-6">
+                      {/* Header: NOW PLAYING */}
+                      <div className="flex items-center justify-between mb-5">
+                        <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 flex items-center gap-2">
+                          <Music className="w-3 h-3" /> NOW PLAYING
+                        </h4>
+                        
+                        {/* Blue Equalizer Animation from Image */}
                         {isPlaying ? (
-                          <span className="relative flex h-3 w-3">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
-                          </span>
+                          <div className="flex items-end gap-[3px] h-[14px]">
+                            <motion.span animate={{ height: ["40%", "100%", "40%"] }} transition={{ repeat: Infinity, duration: 0.8 }} className="w-1.5 bg-blue-500 rounded-sm"></motion.span>
+                            <motion.span animate={{ height: ["100%", "50%", "100%"] }} transition={{ repeat: Infinity, duration: 0.8, delay: 0.2 }} className="w-1.5 bg-blue-500 rounded-sm"></motion.span>
+                            <motion.span animate={{ height: ["60%", "100%", "60%"] }} transition={{ repeat: Infinity, duration: 0.8, delay: 0.4 }} className="w-1.5 bg-blue-500 rounded-sm"></motion.span>
+                          </div>
                         ) : (
-                          <Disc3 className="w-3.5 h-3.5" />
+                          <div className="flex items-end gap-[3px] h-[14px] opacity-40 grayscale">
+                            <span className="w-1.5 h-2 bg-gray-400 rounded-sm"></span>
+                            <span className="w-1.5 h-3 bg-gray-400 rounded-sm"></span>
+                            <span className="w-1.5 h-1.5 bg-gray-400 rounded-sm"></span>
+                          </div>
                         )}
-                        {isPlaying ? "Now Playing" : "Vibe Station"}
-                      </h4>
-                      
-                      {isPlaying && (
-                        <div className="flex gap-[3px] h-3.5 items-end">
-                          <span className="w-1 bg-blue-500 rounded-full animate-[bounce_1s_infinite]" style={{ height: '100%', animationDelay: '0ms' }}></span>
-                          <span className="w-1 bg-blue-500 rounded-full animate-[bounce_1s_infinite]" style={{ height: '60%', animationDelay: '150ms' }}></span>
-                          <span className="w-1 bg-blue-500 rounded-full animate-[bounce_1s_infinite]" style={{ height: '80%', animationDelay: '300ms' }}></span>
+                      </div>
+
+                      {/* Current Track Details */}
+                      <div className="flex items-center gap-4 mb-8">
+                        <div className="w-[60px] h-[60px] shrink-0 rounded-2xl overflow-hidden shadow-md">
+                          <img 
+                            src={currentTrack?.cover} 
+                            alt={currentTrack?.title} 
+                            className={`w-full h-full object-cover transition-transform duration-[3s] ${isPlaying ? 'scale-110' : 'scale-100'}`} 
+                          />
                         </div>
-                      )}
+                        <div className="overflow-hidden">
+                          <h3 className="text-lg font-bold text-black dark:text-white truncate leading-tight mb-1">{currentTrack?.title}</h3>
+                          <p className="text-[13px] font-semibold text-gray-500 dark:text-gray-400 truncate">{currentTrack?.artist}</p>
+                        </div>
+                      </div>
+
+                      {/* Media Controls */}
+                      <div className="flex items-center justify-center gap-7">
+                        <button onClick={handlePrev} className="text-gray-300 dark:text-gray-600 hover:text-black dark:hover:text-white transition-colors">
+                          <SkipBack className="w-6 h-6" fill="currentColor" />
+                        </button>
+                        
+                        <button 
+                          onClick={togglePlay}
+                          className="w-14 h-14 bg-[#111] dark:bg-white text-white dark:text-black rounded-full flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-all"
+                        >
+                          {isPlaying ? (
+                            <Pause className="w-6 h-6" fill="currentColor" />
+                          ) : (
+                            <Play className="w-6 h-6 ml-1" fill="currentColor" />
+                          )}
+                        </button>
+                        
+                        <button onClick={handleNext} className="text-gray-300 dark:text-gray-600 hover:text-black dark:hover:text-white transition-colors">
+                          <SkipForward className="w-6 h-6" fill="currentColor" />
+                        </button>
+                      </div>
                     </div>
-                    
-                    <div className="flex flex-col gap-2 relative z-10 max-h-[320px] overflow-y-auto pr-1 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-gray-200 dark:[&::-webkit-scrollbar-thumb]:bg-gray-800 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full">
-                      {displayTracks.map((track, idx) => {
-                        const isThisPlaying = currentTrackIndex === idx && isPlaying;
-                        return (
-                          <div 
-                            key={track._id} 
-                            onClick={() => togglePlay(idx)} 
-                            className={`group flex items-center gap-3.5 p-2 rounded-2xl transition-all duration-300 cursor-pointer ${
-                              isThisPlaying 
-                                ? 'bg-white dark:bg-white/10 shadow-[0_8px_20px_rgba(0,0,0,0.04)] dark:shadow-none border border-gray-200/60 dark:border-white/10' 
-                                : 'bg-transparent border border-transparent hover:bg-gray-50 dark:hover:bg-white/5'
-                            }`}
-                          >
-                            <div className="relative w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-xl overflow-hidden shadow-sm">
-                              <img 
-                                src={track.cover} 
-                                alt={track.title} 
-                                className={`w-full h-full object-cover transition-transform duration-700 ${isThisPlaying ? 'scale-105' : 'group-hover:scale-110'}`} 
-                              />
-                              
-                              {/* Glassy Overlay for Controls */}
-                              <div className={`absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center transition-opacity duration-300 ${isThisPlaying ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
-                                {isThisPlaying ? (
-                                  <Pause className="w-5 h-5 text-white" />
-                                ) : (
-                                  <Play className="w-5 h-5 text-white ml-0.5" />
+
+                    {/* Bottom Section - Up Next Playlist */}
+                    <div className="bg-gray-50/80 dark:bg-[#151515]/80 p-5 pt-4 border-t border-gray-100 dark:border-gray-800/60">
+                      <h4 className="text-[10px] font-bold uppercase tracking-[0.15em] text-black/90 dark:text-white/90 mb-3">UP NEXT</h4>
+                      
+                      <div className="flex flex-col gap-2.5 max-h-[160px] overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-[3px] [&::-webkit-scrollbar-thumb]:bg-gray-200 dark:[&::-webkit-scrollbar-thumb]:bg-gray-700 [&::-webkit-scrollbar-track]:bg-transparent">
+                        {displayTracks.map((track, idx) => {
+                          const isThisPlaying = currentTrackIndex === idx;
+                          return (
+                            <div 
+                              key={track._id} 
+                              onClick={() => playSpecificTrack(idx)} 
+                              className={`group flex items-center gap-3 p-2.5 rounded-2xl cursor-pointer transition-all duration-300 ${
+                                isThisPlaying 
+                                  ? 'bg-white dark:bg-[#222] shadow-[0_4px_15px_rgba(0,0,0,0.03)] dark:shadow-none border border-gray-100 dark:border-white/5' 
+                                  : 'hover:bg-black/5 dark:hover:bg-white/5 border border-transparent'
+                              }`}
+                            >
+                              <div className="relative w-9 h-9 shrink-0 rounded-lg overflow-hidden shadow-sm bg-black">
+                                <img 
+                                  src={track.cover} 
+                                  alt={track.title} 
+                                  className={`w-full h-full object-cover transition-opacity ${isThisPlaying ? 'opacity-70' : 'opacity-100 group-hover:opacity-80'}`} 
+                                />
+                                {isThisPlaying && (
+                                  <div className="absolute inset-0 flex items-center justify-center">
+                                    <Volume2 className="w-4 h-4 text-white" />
+                                  </div>
+                                )}
+                              </div>
+
+                              <div className="flex-1 overflow-hidden">
+                                <h5 className={`text-[13px] font-bold truncate transition-colors ${
+                                  isThisPlaying 
+                                    ? 'text-blue-600 dark:text-blue-400' 
+                                    : 'text-gray-800 dark:text-gray-200'
+                                  }`}>
+                                  {track.title}
+                                </h5>
+                                {!isThisPlaying && (
+                                  <p className="text-[11px] font-medium text-gray-500 truncate mt-0.5">{track.artist}</p>
                                 )}
                               </div>
                             </div>
-
-                            <div className="flex-1 overflow-hidden">
-                              <h5 className={`text-[13px] sm:text-[14px] font-bold leading-tight truncate transition-colors ${
-                                isThisPlaying 
-                                  ? 'text-blue-600 dark:text-blue-400' 
-                                  : 'text-gray-900 dark:text-gray-100 group-hover:text-black dark:group-hover:text-white'
-                                }`}>
-                                {track.title}
-                              </h5>
-                              <p className="text-[11px] sm:text-[12px] font-medium text-gray-500 dark:text-gray-400 truncate mt-1 transition-colors group-hover:text-gray-600 dark:group-hover:text-gray-300">
-                                {track.artist}
-                              </p>
-                            </div>
-
-                            {/* Active Indicator on the right */}
-                            <div className="w-6 h-6 flex items-center justify-center shrink-0">
-                               {isThisPlaying ? (
-                                   <Disc3 className="w-4 h-4 text-blue-500 animate-spin" style={{ animationDuration: '3s' }} />
-                               ) : (
-                                   <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                               )}
-                            </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                      </div>
                     </div>
                   </motion.div>
                 )}
