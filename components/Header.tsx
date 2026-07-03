@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation"; 
-import { Moon, Sun, Music, Menu, X, Play, Pause, Disc3, Code2, ArrowUpRight, Volume2, Home } from "lucide-react";
+import { Moon, Sun, Music, Menu, X, Play, Pause, Disc3, Code2, ArrowUpRight, Volume2, Home, SkipBack, SkipForward } from "lucide-react";
 
 interface TrackType {
   _id: string;
@@ -173,7 +173,11 @@ export default function Header({ settings, tracks }: HeaderProps) {
       <audio 
         ref={audioRef} 
         src={displayTracks[currentTrackIndex]?.audioUrl} 
-        onEnded={() => setIsPlaying(false)}
+        onEnded={() => {
+          // Auto-play next track
+          const nextIndex = currentTrackIndex === displayTracks.length - 1 ? 0 : currentTrackIndex + 1;
+          togglePlay(nextIndex);
+        }}
       />
 
       {/* ================= DESKTOP & MOBILE HEADER ================= */}
@@ -186,7 +190,6 @@ export default function Header({ settings, tracks }: HeaderProps) {
         <header 
           className={`pointer-events-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] border flex items-center justify-between
           ${isScrolled 
-            // Desktop Zoom Fix Retained
             ? "w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] lg:w-[calc(100%-6rem)] bg-white/70 dark:bg-[#050505]/80 backdrop-blur-2xl saturate-200 border-gray-200/60 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] max-w-full md:max-w-[calc(85rem-6rem)] rounded-full mt-4 md:mt-5 py-2.5 md:py-3 px-5 sm:px-6 md:px-8" 
             : "w-full max-w-[85rem] bg-transparent dark:bg-transparent border-transparent rounded-none mt-0 py-4 sm:py-5 md:py-8 px-4 sm:px-6 md:px-12"}`}
         >
@@ -307,43 +310,103 @@ export default function Header({ settings, tracks }: HeaderProps) {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute right-[-40px] sm:right-0 top-[50px] md:top-[56px] w-[280px] sm:w-[320px] bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 rounded-[1.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-4 origin-top-right overflow-hidden"
+                    className="absolute right-[-60px] sm:right-0 top-[50px] md:top-[56px] w-[320px] sm:w-[350px] bg-[#f8f9fa]/95 dark:bg-[#0a0a0a]/95 backdrop-blur-2xl border border-gray-200/60 dark:border-gray-800/60 rounded-[2rem] shadow-[0_30px_60px_rgba(0,0,0,0.12)] dark:shadow-[0_30px_60px_rgba(0,0,0,0.6)] origin-top-right overflow-hidden flex flex-col"
                   >
-                    <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-blue-500/10 to-purple-500/10 blur-[40px] rounded-full pointer-events-none"></div>
+                    {/* Soft background glow exactly like the picture */}
+                    <div className="absolute top-0 right-0 w-[200px] h-[200px] bg-gradient-to-br from-orange-500/10 to-blue-500/5 blur-[50px] rounded-full pointer-events-none"></div>
                     
-                    <div className="flex items-center justify-between mb-4 relative z-10">
-                      <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 flex items-center gap-2">
-                        <Disc3 className={`w-3.5 h-3.5 ${isPlaying ? "animate-spin text-blue-500" : ""}`} /> 
-                        {isPlaying ? "Now Playing" : "Vibe Station"}
-                      </h4>
-                      {isPlaying && <div className="flex gap-1">
-                        <span className="w-1 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                        <span className="w-1 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                        <span className="w-1 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
-                      </div>}
+                    <div className="p-6 pb-2 flex flex-col items-center relative z-10">
+                      
+                      {/* Top Bar: Now Playing & Equalizer */}
+                      <div className="w-full flex items-center justify-between mb-6">
+                        <div className="bg-gray-200/50 dark:bg-gray-800/50 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center gap-2 border border-white/40 dark:border-white/5">
+                          <Disc3 className={`w-3.5 h-3.5 text-slate-700 dark:text-slate-300 ${isPlaying ? "animate-spin" : ""}`} />
+                          <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-700 dark:text-slate-300">Now Playing</span>
+                        </div>
+                        {/* Animated Equalizer Bars */}
+                        <div className="flex gap-1 items-end h-4 mr-1">
+                          <span className={`w-[3px] bg-slate-400 dark:bg-slate-500 rounded-full ${isPlaying ? 'animate-[bounce_1s_infinite_0ms] h-full' : 'h-2'}`}></span>
+                          <span className={`w-[3px] bg-slate-400 dark:bg-slate-500 rounded-full ${isPlaying ? 'animate-[bounce_1s_infinite_200ms] h-3/4' : 'h-3'}`}></span>
+                          <span className={`w-[3px] bg-slate-400 dark:bg-slate-500 rounded-full ${isPlaying ? 'animate-[bounce_1s_infinite_400ms] h-full' : 'h-1.5'}`}></span>
+                        </div>
+                      </div>
+
+                      {/* Main Album Art */}
+                      <div className="relative w-[180px] h-[180px] sm:w-[200px] sm:h-[200px] rounded-[24px] overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.15)] mb-5">
+                        <img 
+                          src={displayTracks[currentTrackIndex]?.cover} 
+                          alt="Cover Art" 
+                          className="w-full h-full object-cover transition-transform duration-700 hover:scale-105" 
+                        />
+                      </div>
+
+                      {/* Track Details */}
+                      <div className="text-center w-full px-4 mb-4">
+                        <h3 className="text-[17px] sm:text-lg font-extrabold text-slate-900 dark:text-white truncate tracking-tight">{displayTracks[currentTrackIndex]?.title}</h3>
+                        <p className="text-[13px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">{displayTracks[currentTrackIndex]?.artist}</p>
+                      </div>
+
+                      {/* Player Controls */}
+                      <div className="flex items-center justify-center gap-8 mb-4 w-full">
+                        <button 
+                          onClick={() => {
+                            const prev = currentTrackIndex === 0 ? displayTracks.length - 1 : currentTrackIndex - 1;
+                            togglePlay(prev);
+                          }}
+                          className="text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-300 transition-colors"
+                        >
+                          <SkipBack className="w-6 h-6" fill="currentColor" />
+                        </button>
+
+                        <button 
+                          onClick={() => togglePlay(currentTrackIndex)}
+                          className="w-14 h-14 sm:w-16 sm:h-16 bg-[#0a0a0a] dark:bg-white text-white dark:text-black rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-[0_8px_20px_rgba(0,0,0,0.15)] dark:shadow-[0_8px_20px_rgba(255,255,255,0.15)]"
+                        >
+                          {isPlaying 
+                            ? <Pause className="w-6 h-6 sm:w-7 sm:h-7" fill="currentColor" /> 
+                            : <Play className="w-6 h-6 sm:w-7 sm:h-7 ml-1" fill="currentColor" />
+                          }
+                        </button>
+
+                        <button 
+                          onClick={() => {
+                            const next = currentTrackIndex === displayTracks.length - 1 ? 0 : currentTrackIndex + 1;
+                            togglePlay(next);
+                          }}
+                          className="text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-300 transition-colors"
+                        >
+                          <SkipForward className="w-6 h-6" fill="currentColor" />
+                        </button>
+                      </div>
                     </div>
-                    
-                    <div className="flex flex-col gap-2 relative z-10 max-h-[250px] overflow-y-auto pr-1">
-                      {displayTracks.map((track, idx) => {
-                        const isThisPlaying = currentTrackIndex === idx && isPlaying;
-                        return (
-                          <div key={track._id} onClick={() => togglePlay(idx)} className={`group flex items-center gap-3 p-2 rounded-xl transition-all cursor-pointer border ${isThisPlaying ? 'bg-blue-50 dark:bg-blue-900/10 border-blue-200 dark:border-blue-800/30' : 'border-transparent hover:bg-gray-50 dark:hover:bg-[#111] hover:border-gray-200/50 dark:hover:border-gray-800/50'}`}>
-                            <div className="relative">
-                              <img src={track.cover} alt={track.title} className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform" />
-                              {isThisPlaying && <div className="absolute inset-0 bg-black/40 rounded-lg flex items-center justify-center backdrop-blur-[2px]">
-                                <Pause className="w-4 h-4 text-white" />
-                              </div>}
+
+                    {/* Up Next Section */}
+                    <div className="bg-[#e9ecef]/60 dark:bg-[#111]/80 p-6 pt-5 flex-1 relative z-10 border-t border-white/50 dark:border-white/5 backdrop-blur-lg">
+                      <h4 className="text-[10px] font-extrabold uppercase tracking-[0.15em] text-slate-500 dark:text-slate-400 mb-4">Up Next</h4>
+                      
+                      {/* Styled Scrollable List */}
+                      <div className="flex flex-col gap-4 max-h-[160px] overflow-y-auto pr-3 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-300 dark:[&::-webkit-scrollbar-thumb]:bg-slate-700 [&::-webkit-scrollbar-thumb]:rounded-full">
+                        {displayTracks.map((track, idx) => {
+                          if (idx === currentTrackIndex) return null; // Don't show currently playing in 'Up Next'
+                          return (
+                            <div key={track._id} onClick={() => togglePlay(idx)} className="group flex items-center gap-4 cursor-pointer">
+                              <img 
+                                src={track.cover} 
+                                alt={track.title} 
+                                className="w-[42px] h-[42px] rounded-xl object-cover shadow-sm group-hover:opacity-80 transition-opacity" 
+                              />
+                              <div className="flex-1 overflow-hidden">
+                                <h5 className="text-[14px] font-bold text-slate-800 dark:text-slate-200 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{track.title}</h5>
+                                <p className="text-[12px] font-medium text-slate-500 dark:text-slate-500 truncate">{track.artist}</p>
+                              </div>
                             </div>
-                            <div className="flex-1 overflow-hidden">
-                              <h5 className={`text-[12px] sm:text-[13px] font-bold leading-tight truncate ${isThisPlaying ? 'text-blue-600 dark:text-blue-400' : 'text-black dark:text-white'}`}>{track.title}</h5>
-                              <p className="text-[10px] sm:text-[11px] font-medium text-gray-500 truncate mt-0.5">{track.artist}</p>
-                            </div>
-                            <button className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-colors shrink-0 shadow-sm ${isThisPlaying ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black'}`}>
-                              {isThisPlaying ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3 ml-0.5" />}
-                            </button>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                        {/* Fallback layout if only 1 track total */}
+                        {displayTracks.length === 1 && (
+                          <div className="text-[12px] text-slate-400 text-center py-2">No more tracks in queue.</div>
+                        )}
+                      </div>
                     </div>
                   </motion.div>
                 )}
