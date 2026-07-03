@@ -149,7 +149,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
     let initialScrollY = window.scrollY;
 
     const handleMobileScroll = () => {
-      // যদি ইউজার সত্যিই ৫ পিক্সেলের বেশি স্ক্রল করে, তবেই বন্ধ হবে।
+      // যদি ইউজার সত্যিই ২০ পিক্সেলের বেশি স্ক্রল করে, তবেই বন্ধ হবে।
       // এটি ব্রাউজারের অটোমেটিক ছোট স্ক্রলকে ইগনোর করবে।
       if (Math.abs(window.scrollY - initialScrollY) > 1) {
         setIsMusicOpen(false);
@@ -590,3 +590,4 @@ export default function Header({ settings, tracks }: HeaderProps) {
       </AnimatePresence>
     </>
   );
+}
