@@ -82,7 +82,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
       href: settings[`social_${social.id}`]
     }));
 
-  // Scroll Logic
+  // Scroll Logic for Header Design
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -136,6 +136,31 @@ export default function Header({ settings, tracks }: HeaderProps) {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // 🎵 Mobile Scroll to Close Music Player Logic
+  useEffect(() => {
+    const handleMobileScrollOrTouch = (e: Event) => {
+      // If the scroll happens inside the music player (e.g., Up Next list), don't close it
+      if (musicRef.current && musicRef.current.contains(e.target as Node)) {
+        return;
+      }
+      
+      // Close only on mobile devices (width < 768px) when scrolling the main page
+      if (window.innerWidth < 768 && isMusicOpen) {
+        setIsMusicOpen(false);
+      }
+    };
+
+    if (isMusicOpen) {
+      window.addEventListener("scroll", handleMobileScrollOrTouch, { passive: true });
+      window.addEventListener("touchmove", handleMobileScrollOrTouch, { passive: true });
+    }
+
+    return () => {
+      window.removeEventListener("scroll", handleMobileScrollOrTouch);
+      window.removeEventListener("touchmove", handleMobileScrollOrTouch);
+    };
+  }, [isMusicOpen]);
 
   // Mobile Menu Resize Fix
   useEffect(() => {
@@ -403,10 +428,10 @@ export default function Header({ settings, tracks }: HeaderProps) {
                     <div className="relative z-10 bg-black/5 dark:bg-white/5 backdrop-blur-xl p-5 border-t border-gray-200/30 dark:border-white/5">
                       <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-3 ml-1">Up Next</h4>
                       
-                      <div className="flex flex-col gap-2 max-h-[140px] overflow-y-auto pr-1 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-700 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full">
+                      <div className="flex flex-col gap-2 max-h-[140px] overflow-y-auto overscroll-contain pr-1 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-700 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full">
                         {displayTracks.map((track, idx) => {
                           const isThisPlaying = currentTrackIndex === idx;
-                          if(isThisPlaying) return null; // Only show up next tracks or keep all (customizable)
+                          if(isThisPlaying) return null; // Hide current track from Up Next
 
                           return (
                             <div 
