@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation"; 
-import { Moon, Sun, Music, Menu, X, Play, Pause, Disc3, Code2, ArrowUpRight, Volume2, Home, SkipBack, SkipForward } from "lucide-react";
+import { Moon, Sun, Music, Menu, X, Play, Pause, Disc3, Code2, ArrowUpRight, Volume2, Home } from "lucide-react";
 
 interface TrackType {
   _id: string;
@@ -33,21 +33,16 @@ export default function Header({ settings, tracks }: HeaderProps) {
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
   const pathname = usePathname(); 
-  
-  // Refs for tracking clicks outside
   const musicRef = useRef<HTMLDivElement>(null);
-  const mobileMusicRef = useRef<HTMLDivElement>(null);
 
   const fallbackTracks = [
-    { _id: "1", title: "Lines Of Light", artist: "Local Playlist", cover: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=100&auto=format&fit=crop", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-    { _id: "2", title: "Syntax & Soul", artist: "Developer Beats", cover: "https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=100&auto=format&fit=crop", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
-    { _id: "3", title: "Deep Focus", artist: "Synthwave", cover: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?q=80&w=100&auto=format&fit=crop", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
+    { _id: "1", title: "Lofi Chill Vibes", artist: "Developer Beats", cover: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=100&auto=format&fit=crop", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+    { _id: "2", title: "Deep Focus Coding", artist: "Synthwave", cover: "https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=100&auto=format&fit=crop", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
   ];
 
   const displayTracks = tracks && tracks.length > 0 ? tracks : fallbackTracks;
   const logoText = settings?.developerName ? settings.developerName.split(" ")[0] + "." : "Nazmus.";
   const devFullName = settings?.developerName || "Developer Logo";
-  const currentTrack = displayTracks[currentTrackIndex];
 
   // 📌 Updated Base Navigation Links
   const baseNavLinks = [
@@ -57,14 +52,17 @@ export default function Header({ settings, tracks }: HeaderProps) {
     { name: "Blog", href: "/blog" }, 
   ];
 
+  // ⚙️ Logic: Add Contact only if on /contact page
   const desktopNavLinks = pathname === "/contact" 
     ? [...baseNavLinks, { name: "Contact", href: "/contact" }] 
     : baseNavLinks;
 
+  // Mobile menu should always show Home if not on Home page
   const mobileNavLinks = pathname === "/" 
     ? desktopNavLinks 
     : [{ name: "Home", href: "/" }, ...desktopNavLinks];
 
+  // 📌 Dynamic Social Links Logic based on Settings
   const availableSocials = [
     { id: "github", name: "GitHub" },
     { id: "linkedin", name: "LinkedIn" },
@@ -82,7 +80,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
       href: settings[`social_${social.id}`]
     }));
 
-  // Scroll Logic for Header
+  // Scroll Logic
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -108,7 +106,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
     localStorage.setItem("theme", newTheme);
   };
 
-  // ⏱️ Time Update Logic
+  // ⏱️ Time Update Logic (Dynamic real-time update)
   useEffect(() => {
     const updateTime = () => {
       const options: Intl.DateTimeFormatOptions = { 
@@ -122,51 +120,21 @@ export default function Header({ settings, tracks }: HeaderProps) {
     };
     
     updateTime();
+    // 1000ms (1 second) interval ensures exact minute change
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, []);
 
-  // Click Outside Logic (For both Mobile & Desktop Modals)
+  // Click Outside Music Dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (
-        musicRef.current && !musicRef.current.contains(target) &&
-        (!mobileMusicRef.current || !mobileMusicRef.current.contains(target))
-      ) {
+      if (musicRef.current && !musicRef.current.contains(event.target as Node)) {
         setIsMusicOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  // 🎵 Mobile Scroll to Close Music Player Logic (100% Fixed Bug)
-  useEffect(() => {
-    // শুধুমাত্র মোবাইল স্ক্রিনে প্লেয়ার ওপেন থাকলে লজিক কাজ করবে
-    if (!isMusicOpen || typeof window === "undefined" || window.innerWidth >= 768) return;
-
-    let initialScrollY = window.scrollY;
-
-    const handleMobileScroll = () => {
-      // যদি ইউজার সত্যিই ২০ পিক্সেলের বেশি স্ক্রল করে, তবেই বন্ধ হবে।
-      // এটি ব্রাউজারের অটোমেটিক ছোট স্ক্রলকে ইগনোর করবে।
-      if (Math.abs(window.scrollY - initialScrollY) > 1) {
-        setIsMusicOpen(false);
-      }
-    };
-
-    // প্লেয়ার ওপেন হওয়ার অ্যানিমেশন শেষ হওয়ার জন্য ৪০০ms অপেক্ষা করে তারপর লিসেনার যুক্ত করবে
-    const timer = setTimeout(() => {
-      initialScrollY = window.scrollY; // লিসেনার এড করার ঠিক আগের পজিশন সেভ করবে
-      window.addEventListener("scroll", handleMobileScroll, { passive: true });
-    }, 400);
-
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener("scroll", handleMobileScroll);
-    };
-  }, [isMusicOpen]);
 
   // Mobile Menu Resize Fix
   useEffect(() => {
@@ -177,163 +145,35 @@ export default function Header({ settings, tracks }: HeaderProps) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // 🎵 Music Controls Logic
-  const togglePlay = () => {
+  // 🎵 Play/Pause Logic
+  const togglePlay = (index: number) => {
     if (!audioRef.current) return;
-    if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
+    
+    if (currentTrackIndex === index) {
+      if (isPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        audioRef.current.play();
+        setIsPlaying(true);
+      }
     } else {
-      audioRef.current.play();
+      setCurrentTrackIndex(index);
       setIsPlaying(true);
+      setTimeout(() => {
+        if (audioRef.current) {
+          audioRef.current.play().catch(e => console.log("Audio play blocked:", e));
+        }
+      }, 50);
     }
   };
-
-  const playSpecificTrack = (index: number) => {
-    setCurrentTrackIndex(index);
-    setIsPlaying(true);
-    setTimeout(() => {
-      if (audioRef.current) {
-        audioRef.current.play().catch(e => console.log("Audio play blocked:", e));
-      }
-    }, 50);
-  };
-
-  const handleNext = () => {
-    const nextIndex = (currentTrackIndex + 1) % displayTracks.length;
-    playSpecificTrack(nextIndex);
-  };
-
-  const handlePrev = () => {
-    const prevIndex = (currentTrackIndex - 1 + displayTracks.length) % displayTracks.length;
-    playSpecificTrack(prevIndex);
-  };
-
-  // 📌 Reusable Music Modal Component for both Desktop (Dropdown) and Mobile (Centered Overlay)
-  const renderMusicModal = (isMobile: boolean) => (
-    <motion.div
-      ref={isMobile ? mobileMusicRef : null}
-      initial={{ opacity: 0, scale: 0.95, y: isMobile ? 15 : 10 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95, y: isMobile ? 15 : 10 }}
-      transition={{ type: "spring", stiffness: 300, damping: 25 }}
-      className={isMobile
-        ? "relative w-[90vw] max-w-[340px] bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-2xl border border-gray-200/50 dark:border-white/10 rounded-[32px] shadow-[0_24px_60px_-15px_rgba(0,0,0,0.2)] dark:shadow-[0_24px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col pointer-events-auto"
-        : "absolute top-[calc(100%+16px)] -right-2 w-[340px] bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-2xl border border-gray-200/50 dark:border-white/10 rounded-[32px] shadow-[0_24px_60px_-15px_rgba(0,0,0,0.2)] dark:shadow-[0_24px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col origin-top-right z-[100]"
-      }
-    >
-      {/* Glowing background matching cover art */}
-      <div 
-        className="absolute inset-0 opacity-20 dark:opacity-30 blur-3xl saturate-200 pointer-events-none transition-all duration-1000"
-        style={{ backgroundImage: `url(${currentTrack?.cover})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-      ></div>
-      
-      {/* Top Section - Now Playing Info & Controls */}
-      <div className="relative z-10 p-6 pb-5">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2 bg-black/5 dark:bg-white/10 px-3 py-1 rounded-full">
-            <Disc3 className={`w-3.5 h-3.5 text-gray-700 dark:text-gray-300 ${isPlaying ? 'animate-spin text-blue-600 dark:text-blue-400' : ''}`} style={{ animationDuration: '3s' }} />
-            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
-              Now Playing
-            </span>
-          </div>
-          
-          {isPlaying ? (
-            <div className="flex items-end gap-1 h-3.5">
-              <motion.span animate={{ height: ["40%", "100%", "40%"] }} transition={{ repeat: Infinity, duration: 0.7 }} className="w-1 bg-blue-500 rounded-full"></motion.span>
-              <motion.span animate={{ height: ["100%", "50%", "100%"] }} transition={{ repeat: Infinity, duration: 0.7, delay: 0.2 }} className="w-1 bg-blue-500 rounded-full"></motion.span>
-              <motion.span animate={{ height: ["60%", "100%", "60%"] }} transition={{ repeat: Infinity, duration: 0.7, delay: 0.4 }} className="w-1 bg-blue-500 rounded-full"></motion.span>
-            </div>
-          ) : (
-            <div className="flex items-end gap-1 h-3.5 opacity-30 grayscale">
-              <span className="w-1 h-2 bg-gray-500 rounded-full"></span>
-              <span className="w-1 h-3.5 bg-gray-500 rounded-full"></span>
-              <span className="w-1 h-1.5 bg-gray-500 rounded-full"></span>
-            </div>
-          )}
-        </div>
-
-        {/* Floating Cover Art */}
-        <div className="flex flex-col items-center mb-6">
-          <div className="w-[140px] h-[140px] rounded-2xl overflow-hidden shadow-2xl mb-4 relative">
-            <img 
-              src={currentTrack?.cover} 
-              alt={currentTrack?.title} 
-              className={`w-full h-full object-cover transition-transform duration-[3s] ${isPlaying ? 'scale-110' : 'scale-100'}`} 
-            />
-          </div>
-          <div className="text-center w-full px-2">
-            <h3 className="text-lg font-bold text-black dark:text-white truncate">{currentTrack?.title}</h3>
-            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 truncate mt-1">{currentTrack?.artist}</p>
-          </div>
-        </div>
-
-        {/* Media Controls Box */}
-        <div className="flex items-center justify-between px-6 py-2">
-          <button onClick={handlePrev} className="text-gray-400 hover:text-black dark:text-gray-500 dark:hover:text-white transition-colors active:scale-95">
-            <SkipBack className="w-6 h-6" fill="currentColor" />
-          </button>
-          
-          <button 
-            onClick={togglePlay}
-            className="w-16 h-16 bg-black dark:bg-white text-white dark:text-black rounded-full flex items-center justify-center shadow-xl hover:scale-105 active:scale-95 transition-all"
-          >
-            {isPlaying ? (
-              <Pause className="w-7 h-7" fill="currentColor" />
-            ) : (
-              <Play className="w-7 h-7 ml-1" fill="currentColor" />
-            )}
-          </button>
-          
-          <button onClick={handleNext} className="text-gray-400 hover:text-black dark:text-gray-500 dark:hover:text-white transition-colors active:scale-95">
-            <SkipForward className="w-6 h-6" fill="currentColor" />
-          </button>
-        </div>
-      </div>
-
-      {/* Bottom Section - Up Next Playlist */}
-      <div className="relative z-10 bg-black/5 dark:bg-white/5 backdrop-blur-xl p-5 border-t border-gray-200/30 dark:border-white/5">
-        <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-3 ml-1">Up Next</h4>
-        
-        {/* overscroll-contain prevents modal from closing when scrolling hits the edge */}
-        <div className="flex flex-col gap-2 max-h-[140px] overflow-y-auto overscroll-contain pr-1 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-700 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full">
-          {displayTracks.map((track, idx) => {
-            const isThisPlaying = currentTrackIndex === idx;
-            if(isThisPlaying) return null; // Hide current track from Up Next
-
-            return (
-              <div 
-                key={track._id} 
-                onClick={() => playSpecificTrack(idx)} 
-                className="group flex items-center gap-3 p-2 rounded-xl cursor-pointer hover:bg-white/60 dark:hover:bg-white/10 transition-all duration-300"
-              >
-                <div className="relative w-10 h-10 shrink-0 rounded-lg overflow-hidden shadow-sm">
-                  <img src={track.cover} alt={track.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <Play className="w-4 h-4 text-white ml-0.5" fill="currentColor" />
-                  </div>
-                </div>
-
-                <div className="flex-1 overflow-hidden">
-                  <h5 className="text-[13px] font-bold text-gray-800 dark:text-gray-200 truncate group-hover:text-black dark:group-hover:text-white transition-colors">
-                    {track.title}
-                  </h5>
-                  <p className="text-[11px] font-medium text-gray-500 truncate mt-0.5">{track.artist}</p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </motion.div>
-  );
 
   return (
     <>
       <audio 
         ref={audioRef} 
-        src={currentTrack?.audioUrl} 
-        onEnded={handleNext}
+        src={displayTracks[currentTrackIndex]?.audioUrl} 
+        onEnded={() => setIsPlaying(false)}
       />
 
       {/* ================= DESKTOP & MOBILE HEADER ================= */}
@@ -346,14 +186,16 @@ export default function Header({ settings, tracks }: HeaderProps) {
         <header 
           className={`pointer-events-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] border flex items-center justify-between
           ${isScrolled 
+            // Desktop Zoom Fix Retained
             ? "w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] lg:w-[calc(100%-6rem)] bg-white/70 dark:bg-[#050505]/80 backdrop-blur-2xl saturate-200 border-gray-200/60 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] max-w-full md:max-w-[calc(85rem-6rem)] rounded-full mt-4 md:mt-5 py-2.5 md:py-3 px-5 sm:px-6 md:px-8" 
             : "w-full max-w-[85rem] bg-transparent dark:bg-transparent border-transparent rounded-none mt-0 py-4 sm:py-5 md:py-8 px-4 sm:px-6 md:px-12"}`}
         >
-          {/* 📌 Dynamic Logo */}
+          {/* 📌 Dynamic Logo: Light & Dark Mode Supported */}
           <div className="flex items-center gap-3">
             <Link href="/" className="font-extrabold text-lg md:text-xl tracking-tighter text-black dark:text-white flex items-center gap-2.5 group">
               {settings?.siteLogoLight || settings?.siteLogoDark || settings?.siteLogo ? (
                 <>
+                  {/* ☀️ Light Mode Logo */}
                   {(settings?.siteLogoLight || settings?.siteLogo) && (
                     <img 
                       src={settings.siteLogoLight || settings.siteLogo} 
@@ -361,6 +203,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
                       className={`h-8 md:h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-500 ${settings?.siteLogoDark ? 'block dark:hidden' : ''}`} 
                     />
                   )}
+                  {/* 🌙 Dark Mode Logo */}
                   {settings?.siteLogoDark && (
                     <img 
                       src={settings.siteLogoDark} 
@@ -424,7 +267,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
           {/* Right Action Buttons */}
           <div className="flex items-center gap-2 md:gap-3">
             
-            {/* ⏱️ Clean Local Time */}
+            {/* ⏱️ Pro Feature: Clean Local Time (Digital Style) */}
             {localTime && (
               <div className="hidden lg:flex items-center gap-1.5 text-gray-500 dark:text-gray-400 mr-2">
                 <span className="text-[9px] font-bold tracking-widest uppercase opacity-70">UTC +6</span>
@@ -441,7 +284,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
 
             <div className="w-px h-5 bg-gray-200 dark:bg-gray-800 hidden md:block mx-1"></div>
             
-            {/* 🎵 Dynamic Music Player UI Toggle */}
+            {/* 🎵 Dynamic Music Player */}
             <div className="relative" ref={musicRef}>
               <button 
                 onClick={() => setIsMusicOpen(!isMusicOpen)}
@@ -457,12 +300,54 @@ export default function Header({ settings, tracks }: HeaderProps) {
                 }
               </button>
 
-              {/* 💻 Desktop Dropdown Menu (Hidden on Mobile) */}
-              <div className="hidden md:block">
-                <AnimatePresence>
-                  {isMusicOpen && renderMusicModal(false)}
-                </AnimatePresence>
-              </div>
+              <AnimatePresence>
+                {isMusicOpen && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute right-[-40px] sm:right-0 top-[50px] md:top-[56px] w-[280px] sm:w-[320px] bg-white/95 dark:bg-[#0a0a0a]/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 rounded-[1.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-4 origin-top-right overflow-hidden"
+                  >
+                    <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-blue-500/10 to-purple-500/10 blur-[40px] rounded-full pointer-events-none"></div>
+                    
+                    <div className="flex items-center justify-between mb-4 relative z-10">
+                      <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 flex items-center gap-2">
+                        <Disc3 className={`w-3.5 h-3.5 ${isPlaying ? "animate-spin text-blue-500" : ""}`} /> 
+                        {isPlaying ? "Now Playing" : "Vibe Station"}
+                      </h4>
+                      {isPlaying && <div className="flex gap-1">
+                        <span className="w-1 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                        <span className="w-1 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                        <span className="w-1 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                      </div>}
+                    </div>
+                    
+                    <div className="flex flex-col gap-2 relative z-10 max-h-[250px] overflow-y-auto pr-1">
+                      {displayTracks.map((track, idx) => {
+                        const isThisPlaying = currentTrackIndex === idx && isPlaying;
+                        return (
+                          <div key={track._id} onClick={() => togglePlay(idx)} className={`group flex items-center gap-3 p-2 rounded-xl transition-all cursor-pointer border ${isThisPlaying ? 'bg-blue-50 dark:bg-blue-900/10 border-blue-200 dark:border-blue-800/30' : 'border-transparent hover:bg-gray-50 dark:hover:bg-[#111] hover:border-gray-200/50 dark:hover:border-gray-800/50'}`}>
+                            <div className="relative">
+                              <img src={track.cover} alt={track.title} className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform" />
+                              {isThisPlaying && <div className="absolute inset-0 bg-black/40 rounded-lg flex items-center justify-center backdrop-blur-[2px]">
+                                <Pause className="w-4 h-4 text-white" />
+                              </div>}
+                            </div>
+                            <div className="flex-1 overflow-hidden">
+                              <h5 className={`text-[12px] sm:text-[13px] font-bold leading-tight truncate ${isThisPlaying ? 'text-blue-600 dark:text-blue-400' : 'text-black dark:text-white'}`}>{track.title}</h5>
+                              <p className="text-[10px] sm:text-[11px] font-medium text-gray-500 truncate mt-0.5">{track.artist}</p>
+                            </div>
+                            <button className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-colors shrink-0 shadow-sm ${isThisPlaying ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black'}`}>
+                              {isThisPlaying ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3 ml-0.5" />}
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Dark Mode Toggle */}
@@ -504,28 +389,6 @@ export default function Header({ settings, tracks }: HeaderProps) {
         </header>
       </motion.div>
 
-      {/* ================= 📱 MOBILE MUSIC OVERLAY ================= */}
-      {/* (Rendered outside the header wrapper to avoid backdrop-blur containing block traps!) */}
-      <div className="md:hidden">
-        <AnimatePresence>
-          {isMusicOpen && (
-            <div className="fixed top-0 left-0 w-[100vw] h-[100vh] z-[120] flex items-center justify-center pointer-events-none">
-              {/* Dark Glassy Backdrop */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                onClick={() => setIsMusicOpen(false)}
-                className="absolute inset-0 bg-black/50 backdrop-blur-md pointer-events-auto"
-              />
-              {/* Centered Mobile Modal */}
-              {renderMusicModal(true)}
-            </div>
-          )}
-        </AnimatePresence>
-      </div>
-
       {/* ================= MOBILE MENU OVERLAY ================= */}
       <AnimatePresence>
         {isMobileMenuOpen && (
@@ -534,7 +397,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className="fixed inset-0 z-[110] bg-white/95 dark:bg-[#050505]/95 backdrop-blur-3xl md:hidden flex flex-col justify-between"
+            className="fixed inset-0 z-40 bg-white/95 dark:bg-[#050505]/95 backdrop-blur-3xl md:hidden flex flex-col justify-between"
           >
             <div className="absolute top-0 left-0 w-full h-40 bg-gradient-to-b from-gray-100/50 dark:from-gray-900/50 to-transparent pointer-events-none"></div>
 
