@@ -6,7 +6,7 @@ import {
   X, Trophy, Code2, Play, 
   Terminal, Database, Server, 
   Cpu, Globe, Zap, Unlock, Network,
-  Activity, Timer, ShieldCheck
+  Activity, Timer, ShieldCheck, Settings
 } from "lucide-react";
 
 type ViewState = "boot" | "menu" | "mem_play" | "mem_over" | "seq_play" | "seq_over";
