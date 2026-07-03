@@ -58,10 +58,10 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
       {posts.length > 0 ? (
         <motion.div initial="hidden" animate="visible" variants={stagger} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {posts.map((post) => (
-            <motion.div key={post._id} variants={fadeUp}>
+            <motion.div key={post._id} variants={fadeUp} className="h-full">
               <Link 
                 href={`/blog/${post.slug}`}
-                className="group flex flex-col bg-white dark:bg-[#0a0a0a] border border-gray-100 dark:border-gray-800/60 rounded-2xl overflow-hidden hover:border-gray-200 dark:hover:border-gray-700 transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1 h-full"
+                className="group flex flex-col bg-white dark:bg-[#0a0a0a] border border-gray-100 dark:border-gray-800 rounded-3xl overflow-hidden hover:border-gray-200 dark:hover:border-gray-700 transition-all duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:hover:shadow-[0_8px_30px_rgb(255,255,255,0.02)] hover:-translate-y-1 h-full"
               >
                 {/* 📌 Cover Image (16:9 Ratio) */}
                 <div className="w-full aspect-video bg-gray-50 dark:bg-[#111] relative overflow-hidden border-b border-gray-100 dark:border-gray-800/60">
@@ -76,26 +76,28 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
                   </div>
                 </div>
 
-                {/* 📌 Content Section */}
-                <div className="p-6 md:p-7 flex flex-col flex-1">
+                {/* 📌 Content Section (Highly Professional UI Update) */}
+                <div className="p-6 sm:p-7 flex flex-col flex-1 bg-white dark:bg-[#0a0a0a]">
                   
-                  {/* Category Badge moved inside text area */}
+                  {/* Category Badge - Minimal & Sleek */}
                   <div className="mb-4">
-                    <span className="inline-block px-3 py-1 text-[11px] font-bold tracking-wider uppercase text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-full transition-colors">
+                    <span className="inline-block px-3 py-1 text-[11px] font-bold tracking-widest uppercase text-blue-600 dark:text-blue-400 bg-blue-50/80 dark:bg-blue-900/10 rounded-md">
                       {post.category}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-4 text-[12px] font-medium text-gray-500 dark:text-gray-400 mb-3">
+                  {/* Meta Data (Date & Reading Time) */}
+                  <div className="flex items-center gap-4 text-[13px] font-medium text-gray-500 dark:text-gray-400 mb-3">
                     <span className="flex items-center gap-1.5">
-                      <Calendar className="w-3.5 h-3.5" /> {post.createdAt}
+                      <Calendar className="w-4 h-4 stroke-[1.5] text-gray-400" /> {post.createdAt}
                     </span>
                     <span className="flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5" /> {post.readingTime}
+                      <Clock className="w-4 h-4 stroke-[1.5] text-gray-400" /> {post.readingTime}
                     </span>
                   </div>
 
-                  <h2 className="text-xl md:text-2xl font-bold tracking-tight text-gray-900 dark:text-white leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-3">
+                  {/* Title - Bold & Eye-catching */}
+                  <h2 className="text-[22px] font-bold tracking-tight text-[#111] dark:text-gray-100 leading-[1.4] group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-3 mt-1">
                     {post.title}
                   </h2>
                 </div>
