@@ -141,31 +141,30 @@ export default function Header({ settings, tracks }: HeaderProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // 🎵 Mobile Scroll to Close Music Player Logic (Blink Fix)
+  // 🎵 Mobile Scroll to Close Music Player Logic (100% Fixed Bug)
   useEffect(() => {
-    // Only apply logic if the player is open and on a mobile screen
-    if (!isMusicOpen || window.innerWidth >= 768) return;
+    // শুধুমাত্র মোবাইল স্ক্রিনে প্লেয়ার ওপেন থাকলে লজিক কাজ করবে
+    if (!isMusicOpen || typeof window === "undefined" || window.innerWidth >= 768) return;
 
-    const handleMobileScrollOrTouch = (e: Event) => {
-      const target = e.target as Node;
-      // Do not close if the user is interacting inside the modal itself
-      if (musicRef.current && musicRef.current.contains(target)) return;
-      if (mobileMusicRef.current && mobileMusicRef.current.contains(target)) return;
-      
-      setIsMusicOpen(false);
+    let initialScrollY = window.scrollY;
+
+    const handleMobileScroll = () => {
+      // যদি ইউজার সত্যিই ২০ পিক্সেলের বেশি স্ক্রল করে, তবেই বন্ধ হবে।
+      // এটি ব্রাউজারের অটোমেটিক ছোট স্ক্রলকে ইগনোর করবে।
+      if (Math.abs(window.scrollY - initialScrollY) > 20) {
+        setIsMusicOpen(false);
+      }
     };
 
-    // We add a delay of 300ms before attaching the scroll event.
-    // This prevents the initial "tap" to open the modal from misfiring as a scroll/touchmove event.
+    // প্লেয়ার ওপেন হওয়ার অ্যানিমেশন শেষ হওয়ার জন্য ৪০০ms অপেক্ষা করে তারপর লিসেনার যুক্ত করবে
     const timer = setTimeout(() => {
-      window.addEventListener("scroll", handleMobileScrollOrTouch, { passive: true, capture: true });
-      window.addEventListener("touchmove", handleMobileScrollOrTouch, { passive: true, capture: true });
-    }, 300);
+      initialScrollY = window.scrollY; // লিসেনার এড করার ঠিক আগের পজিশন সেভ করবে
+      window.addEventListener("scroll", handleMobileScroll, { passive: true });
+    }, 400);
 
     return () => {
       clearTimeout(timer);
-      window.removeEventListener("scroll", handleMobileScrollOrTouch, { capture: true });
-      window.removeEventListener("touchmove", handleMobileScrollOrTouch, { capture: true });
+      window.removeEventListener("scroll", handleMobileScroll);
     };
   }, [isMusicOpen]);
 
