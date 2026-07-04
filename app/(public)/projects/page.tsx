@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Layers, ArrowRight, ArrowUpRight, Calendar, Sparkles } from "lucide-react";
+import { Layers, ArrowUpRight, Calendar, Sparkles } from "lucide-react";
 
 interface Project {
   _id: string;
@@ -17,8 +17,9 @@ interface Project {
   tech: string[];
 }
 
+// 📌 FIX 1: Default empty array (= []) deya hoyeche jeno data na asle page crash na kore.
 export default function ProjectsClient({ projects = [] }: { projects: Project[] }) {
-  // 📌 Animation Variants (Matched with global theme)
+  // 📌 Animation Variants
   const fadeUp: any = {
     hidden: { opacity: 0, y: 40 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
@@ -30,7 +31,7 @@ export default function ProjectsClient({ projects = [] }: { projects: Project[] 
   };
 
   return (
-    // 📌 Main Container
+    // 📌 Main Container (Theme matched)
     <main className="relative min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] pt-32 pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto overflow-hidden selection:bg-blue-500/30">
       
       {/* 🎨 Animated Background Elements */}
@@ -50,7 +51,7 @@ export default function ProjectsClient({ projects = [] }: { projects: Project[] 
         initial="hidden" animate="visible" variants={stagger}
         className="max-w-3xl mb-16 md:mb-24"
       >
-        {/* 📌 Fixed Badge: No shadow, perfectly flat and matching the theme */}
+        {/* 📌 FIX 2: Badge theke shadow remove kora hoyeche abong flat border/bg add kora hoyeche */}
         <motion.div variants={fadeUp} className="inline-flex items-center w-fit gap-2 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-xs font-semibold mb-6 text-gray-600 dark:text-gray-400">
           <Layers className="w-3.5 h-3.5" /> Selected Works
         </motion.div>
@@ -66,6 +67,7 @@ export default function ProjectsClient({ projects = [] }: { projects: Project[] 
       </motion.div>
 
       {/* ================= 🌟 PROJECTS GRID ================= */}
+      {/* 📌 FIX 3: Safely checking length with optional chaining `?.` */}
       {(projects?.length ?? 0) > 0 ? (
         <motion.div 
           initial="hidden" animate="visible" variants={stagger} 
@@ -132,6 +134,7 @@ export default function ProjectsClient({ projects = [] }: { projects: Project[] 
                     
                     {/* Tech Stack Chips */}
                     <div className="flex flex-wrap items-center gap-2">
+                      {/* 📌 FIX 4: Safe mapping over tech array */}
                       {project.tech?.map((t, i) => (
                         <span key={i} className="text-xs font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-[#111] border border-gray-200 dark:border-gray-800 px-2.5 py-1 rounded-md">
                           {t}
