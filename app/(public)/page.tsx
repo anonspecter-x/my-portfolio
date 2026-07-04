@@ -66,8 +66,8 @@ async function getPageData() {
     // 📌 ডাটাবেজ থেকে স্কিলস আনা হচ্ছে
     const rawSkills = await db.collection("skills").find({}).sort({ percentage: -1 }).toArray();
 
-    // 📌 ডাটাবেজ থেকে সার্ভিসেস/এক্সপেরিয়েন্স আনা হচ্ছে
-    const rawServices = await db.collection("services").find({}).sort({ createdAt: -1 }).toArray();
+    // 📌 ডাটাবেজ থেকে সার্ভিসেস/এক্সপেরিয়েন্স আনা হচ্ছে (আগে অ্যাড করা আইটেম আগে দেখাবে)
+    const rawServices = await db.collection("services").find({}).sort({ createdAt: 1 }).toArray();
 
     // 📌 ডাটাবেজ থেকে টেস্টিমোনিয়াল আনা হচ্ছে (প্রায়োরিটি অনুযায়ী)
     const rawTestimonials = await db.collection("testimonials").find({}).sort({ priority: -1, createdAt: -1 }).toArray();
