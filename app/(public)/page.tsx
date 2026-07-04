@@ -79,7 +79,6 @@ async function getPageData() {
     const rawBlogs = await db.collection("posts")
       .find({ status: "published" }) // শুধুমাত্র পাবলিশড পোস্ট
       .sort({ createdAt: -1 })
-      .limit(3) // লেটেস্ট ৩টি
       .toArray();
 
     // ডাটাবেজ থেকে সেটিংস আনা হচ্ছে
