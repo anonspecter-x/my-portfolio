@@ -442,11 +442,12 @@ export default function SkillsClient({
                 <p className="text-sm text-gray-500">No experience dropdowns added yet.</p>
               </div>
             ) : (
-              <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+              <div className="space-y-4 max-h-[800px] overflow-y-auto pr-2 custom-scrollbar">
                 {services.map((service) => (
-                  <div key={service._id} className={`group bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 rounded-xl flex overflow-hidden shadow-sm hover:border-purple-500/30 transition-colors ${deletingServiceId === service._id ? "opacity-40" : ""}`}>
+                  <div key={service._id} className={`group bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 rounded-xl flex items-stretch overflow-hidden shadow-sm hover:border-purple-500/30 transition-colors ${deletingServiceId === service._id ? "opacity-40" : ""}`}>
                     
-                    <div className="w-1/3 min-w-[120px] bg-gray-200 dark:bg-[#222] relative border-r border-gray-200 dark:border-gray-800">
+                    {/* ১৬:৯ রেশিও (aspect-video) এবং ফিক্সড উইডথ যোগ করা হয়েছে */}
+                    <div className="w-[160px] sm:w-[220px] aspect-video bg-gray-200 dark:bg-[#222] relative border-r border-gray-200 dark:border-gray-800 shrink-0">
                       {service.image ? (
                         <img src={service.image} alt={service.title} className="absolute inset-0 w-full h-full object-cover" />
                       ) : (

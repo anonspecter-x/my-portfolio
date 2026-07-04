@@ -342,8 +342,10 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
 
           {/* 📌 Accordion & Image */}
           {services.length > 0 && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 mb-28">
-              <motion.div variants={fadeUp} className="lg:col-span-7 flex flex-col gap-3">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 mb-28 items-start relative">
+              
+              {/* 📌 ড্রপডাউন লিস্ট: মোবাইলে নিচে (order-2), ডেক্সটপে বামে (order-1) */}
+              <motion.div variants={fadeUp} className="lg:col-span-7 flex flex-col gap-3 order-2 lg:order-1">
                 {services.map((service, idx) => (
                   <div 
                     key={service._id} 
@@ -370,7 +372,8 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                 ))}
               </motion.div>
 
-              <motion.div variants={fadeUp} className="lg:col-span-5 h-[250px] sm:h-[350px] lg:h-auto rounded-2xl overflow-hidden relative shadow-lg">
+              {/* 📌 ছবি: মোবাইলে উপরে (order-1), ডেক্সটপে ডানে (order-2), aspect-video (16:9), এবং sticky যাতে স্ক্রল করলে সাথে থাকে */}
+              <motion.div variants={fadeUp} className="lg:col-span-5 w-full aspect-video rounded-2xl overflow-hidden relative shadow-lg order-1 lg:order-2 lg:sticky lg:top-32">
                 <AnimatePresence mode="wait">
                   <motion.img 
                     key={activeAccordion}
