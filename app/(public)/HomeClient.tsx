@@ -759,7 +759,11 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                   <Link href={`/blog/${blog.slug}`} className="block h-full flex flex-col">
                     <div className="relative aspect-[16/9] overflow-hidden bg-gray-50 dark:bg-[#111]">
                       {blog.coverImage ? (
-                        <img src={blog.coverImage} alt={blog.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <img 
+                          src={blog.coverImage} 
+                          alt={blog.title} 
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out grayscale-[30%] group-hover:grayscale-0" 
+                        />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-400">
                           <FileText className="w-10 h-10 opacity-30" />
