@@ -17,7 +17,8 @@ interface Project {
   tech: string[];
 }
 
-export default function ProjectsClient({ projects }: { projects: Project[] }) {
+// 📌 FIX 1: Added a default empty array (`= []`) to ensure `projects` is never strictly undefined.
+export default function ProjectsClient({ projects = [] }: { projects: Project[] }) {
   // 📌 Animation Variants (Matched with global theme)
   const fadeUp: any = {
     hidden: { opacity: 0, y: 40 },
@@ -65,12 +66,14 @@ export default function ProjectsClient({ projects }: { projects: Project[] }) {
       </motion.div>
 
       {/* ================= 🌟 PROJECTS GRID ================= */}
-      {projects.length > 0 ? (
+      {/* 📌 FIX 2: Safely check for length using optional chaining (`?.`) and nullish coalescing (`?? 0`) */}
+      {(projects?.length ?? 0) > 0 ? (
         <motion.div 
           initial="hidden" animate="visible" variants={stagger} 
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-8 md:gap-10"
         >
-          {projects.map((project) => (
+          {/* 📌 FIX 3: Optional chaining before mapping over the array */}
+          {projects?.map((project) => (
             <motion.div key={project._id} variants={fadeUp} className="h-full">
               <Link 
                 href={`/projects/${project.slug}`}
@@ -131,7 +134,8 @@ export default function ProjectsClient({ projects }: { projects: Project[] }) {
                     
                     {/* Tech Stack Chips */}
                     <div className="flex flex-wrap items-center gap-2">
-                      {project.tech.map((t, i) => (
+                      {/* 📌 FIX 4: Optional chaining on nested arrays */}
+                      {project.tech?.map((t, i) => (
                         <span key={i} className="text-xs font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-[#111] border border-gray-200 dark:border-gray-800 px-2.5 py-1 rounded-md">
                           {t}
                         </span>
