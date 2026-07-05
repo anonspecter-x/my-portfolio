@@ -375,16 +375,32 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               {/* 📌 ছবি: মোবাইলে উপরে (order-1), ডেক্সটপে ডানে (order-2), aspect-video (16:9) */}
               <motion.div variants={fadeUp} className="lg:col-span-5 w-full aspect-video rounded-2xl overflow-hidden relative shadow-lg order-1 lg:order-2">
                 <AnimatePresence mode="wait">
-                  <motion.img 
-                    key={activeAccordion}
-                    initial={{ opacity: 0, scale: 1.05 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.5 }}
-                    src={services[activeAccordion]?.image} 
-                    alt={services[activeAccordion]?.title}
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
+                  {services[activeAccordion]?.mediaType?.startsWith('video/') || services[activeAccordion]?.image?.match(/\.(mp4|webm|ogg|mov)$/i) ? (
+                    <motion.video
+                      key={`video-${activeAccordion}`}
+                      initial={{ opacity: 0, scale: 1.05 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5 }}
+                      src={services[activeAccordion]?.image}
+                      className="absolute inset-0 w-full h-full object-cover"
+                      muted
+                      loop
+                      autoPlay
+                      playsInline
+                    />
+                  ) : (
+                    <motion.img 
+                      key={`img-${activeAccordion}`}
+                      initial={{ opacity: 0, scale: 1.05 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5 }}
+                      src={services[activeAccordion]?.image} 
+                      alt={services[activeAccordion]?.title}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  )}
                 </AnimatePresence>
               </motion.div>
             </div>

@@ -26,6 +26,7 @@ interface Service {
   title: string;
   description: string;
   image: string;
+  mediaType?: string; // 📌 নতুন প্রপার্টি ইমেজ বা ভিডিও চেনার জন্য
 }
 
 interface Brand {
@@ -414,9 +415,15 @@ export default function SkillsClient({
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold uppercase tracking-wider text-gray-400">Side Image</label>
-                {editService?.image && <img src={editService.image} alt="Cover" className="h-20 w-auto rounded-lg border border-gray-200 dark:border-gray-800 object-cover mb-2" />}
-                <input type="file" name="image" accept="image/*" required={!editService} className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-3 py-2 outline-none focus:border-purple-500 transition-colors file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-gray-200 file:text-gray-700 hover:file:bg-gray-300 dark:file:bg-[#222] dark:file:text-gray-300 cursor-pointer" />
+                <label className="text-xs font-bold uppercase tracking-wider text-gray-400">Side Image / Video</label>
+                {editService?.image && (
+                  editService.mediaType?.startsWith('video/') || editService.image.match(/\.(mp4|webm|ogg|mov)$/i) ? (
+                    <video src={editService.image} controls className="h-20 w-auto rounded-lg border border-gray-200 dark:border-gray-800 object-cover mb-2" />
+                  ) : (
+                    <img src={editService.image} alt="Cover" className="h-20 w-auto rounded-lg border border-gray-200 dark:border-gray-800 object-cover mb-2" />
+                  )
+                )}
+                <input type="file" name="image" accept="image/*,video/*" required={!editService} className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-3 py-2 outline-none focus:border-purple-500 transition-colors file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-gray-200 file:text-gray-700 hover:file:bg-gray-300 dark:file:bg-[#222] dark:file:text-gray-300 cursor-pointer" />
               </div>
 
               <div className="pt-2 flex gap-2">
@@ -449,7 +456,11 @@ export default function SkillsClient({
                     {/* ১৬:৯ রেশিও (aspect-video) এবং ফিক্সড উইডথ যোগ করা হয়েছে */}
                     <div className="w-[160px] sm:w-[220px] aspect-video bg-gray-200 dark:bg-[#222] relative border-r border-gray-200 dark:border-gray-800 shrink-0">
                       {service.image ? (
-                        <img src={service.image} alt={service.title} className="absolute inset-0 w-full h-full object-cover" />
+                        service.mediaType?.startsWith('video/') || service.image.match(/\.(mp4|webm|ogg|mov)$/i) ? (
+                          <video src={service.image} className="absolute inset-0 w-full h-full object-cover" muted loop autoPlay playsInline />
+                        ) : (
+                          <img src={service.image} alt={service.title} className="absolute inset-0 w-full h-full object-cover" />
+                        )
                       ) : (
                         <div className="absolute inset-0 flex items-center justify-center text-gray-400"><ImageIcon className="w-6 h-6" /></div>
                       )}

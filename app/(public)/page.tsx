@@ -119,7 +119,8 @@ async function getPageData() {
       _id: s._id.toString(),
       title: s.title,
       description: s.description,
-      image: s.image || ""
+      image: s.image || "",
+      mediaType: s.mediaType ? String(s.mediaType) : "" // 📌 ভিডিও বা ইমেজের টাইপ ফ্রন্টএন্ডে পাঠানো হলো
     }));
 
     // 📌 টেস্টিমোনিয়াল ফরম্যাট করা

@@ -34,7 +34,8 @@ async function getServices() {
       _id: service._id.toString(),
       title: String(service.title || ""),
       description: String(service.description || ""),
-      image: String(service.image || "")
+      image: String(service.image || ""),
+      mediaType: service.mediaType ? String(service.mediaType) : "" // 📌 ফাইলের টাইপ যুক্ত করা হলো
     }));
   } finally {
     await client.close();

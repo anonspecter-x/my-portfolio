@@ -87,9 +87,10 @@ export async function saveService(formData: FormData) {
       updatedAt: new Date(),
     };
 
-    // 📌 নতুন ইমেজ আপলোড করা হলে
+    // 📌 নতুন ইমেজ বা ভিডিও আপলোড করা হলে
     if (imageFile && imageFile.size > 0) {
       updateData.image = await uploadFileToR2(imageFile, "services");
+      updateData.mediaType = imageFile.type; // 📌 ভিডিও বা ইমেজের সঠিক টাইপ সেভ করা হলো
     }
 
     if (id && ObjectId.isValid(id)) {
