@@ -131,14 +131,34 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
                   <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Describe what you liked most about our collaboration, the project quality, and communication.</p>
                 </div>
               </div>
+
+              <div className="flex items-start gap-4 group">
+                <div className="w-12 h-12 bg-gray-50 dark:bg-[#111] border border-gray-100 dark:border-gray-800 text-black dark:text-white rounded-xl flex items-center justify-center shrink-0 group-hover:bg-green-50 dark:group-hover:bg-green-900/20 group-hover:text-green-600 transition-colors">
+                  <Briefcase className="w-5 h-5" />
+                </div>
+                <div className="flex flex-col justify-center">
+                  <h4 className="text-sm font-bold text-black dark:text-white mb-1">Specific Details</h4>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Highlight specific aspects of our work together, such as technical expertise, or problem-solving.</p>
+                </div>
+              </div>
               
               <div className="flex items-start gap-4 group">
                 <div className="w-12 h-12 bg-gray-50 dark:bg-[#111] border border-gray-100 dark:border-gray-800 text-black dark:text-white rounded-xl flex items-center justify-center shrink-0 group-hover:bg-purple-50 dark:group-hover:bg-purple-900/20 group-hover:text-purple-600 transition-colors">
-                  <Sparkles className="w-5 h-5" />
+                  <ImagePlus className="w-5 h-5" />
                 </div>
                 <div className="flex flex-col justify-center">
-                  <h4 className="text-sm font-bold text-black dark:text-white mb-1">Photo Integration</h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Uploading a profile picture is optional but highly recommended to add authenticity to your review.</p>
+                  <h4 className="text-sm font-bold text-black dark:text-white mb-1">Authentic Identity</h4>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Uploading a profile picture is required to verify your authenticity and add a personal touch to your review.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4 group">
+                <div className="w-12 h-12 bg-gray-50 dark:bg-[#111] border border-gray-100 dark:border-gray-800 text-black dark:text-white rounded-xl flex items-center justify-center shrink-0 group-hover:bg-orange-50 dark:group-hover:bg-orange-900/20 group-hover:text-orange-600 transition-colors">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <div className="flex flex-col justify-center">
+                  <h4 className="text-sm font-bold text-black dark:text-white mb-1">Security & Verification</h4>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">All reviews pass through a quick security check to maintain a genuine and spam-free portfolio.</p>
                 </div>
               </div>
             </div>
@@ -180,10 +200,10 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
 
                 <div className="space-y-2">
                   <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 flex items-center gap-1.5">
-                    <Briefcase className="w-3.5 h-3.5" /> Designation / Company
+                    <Briefcase className="w-3.5 h-3.5" /> Designation / Company *
                   </label>
                   <input 
-                    type="text" name="role" placeholder="CEO at TechCorp" maxLength={60}
+                    type="text" name="role" required placeholder="CEO at TechCorp" maxLength={60}
                     className="w-full bg-gray-50 dark:bg-[#050505] border border-gray-200 dark:border-gray-800 text-black dark:text-white text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-gray-400 shadow-sm" 
                   />
                 </div>
@@ -202,7 +222,7 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 items-start">
                 <div className="space-y-2">
                   <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 flex items-center gap-1.5 h-[18px]">
-                    <Star className="w-3.5 h-3.5" /> Rating
+                    <Star className="w-3.5 h-3.5" /> Rating *
                   </label>
                   <div className="w-full h-[46px] bg-gray-50 dark:bg-[#050505] border border-gray-200 dark:border-gray-800 rounded-xl px-4 flex items-center justify-between shadow-sm">
                     <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
@@ -233,10 +253,10 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
 
                 <div className="space-y-2">
                   <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 flex items-center gap-1.5 h-[18px]">
-                    <ImagePlus className="w-3.5 h-3.5" /> Profile Photo (Optional)
+                    <ImagePlus className="w-3.5 h-3.5" /> Profile Photo *
                   </label>
                   <input 
-                    type="file" name="photo" accept="image/*" 
+                    type="file" name="photo" accept="image/*" required
                     className="w-full h-[46px] bg-gray-50 dark:bg-[#050505] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-3 py-2 outline-none focus:border-blue-500 transition-colors file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-gray-200 file:text-gray-700 hover:file:bg-gray-300 dark:file:bg-[#222] dark:file:text-gray-300 cursor-pointer shadow-sm" 
                   />
                 </div>
@@ -245,7 +265,7 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
               {/* Cloudflare Turnstile */}
               <div className="pt-2 flex flex-col items-start gap-2">
                 <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 flex items-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5" /> Security Verification
+                  <ShieldCheck className="w-3.5 h-3.5" /> Security Verification *
                 </label>
                 <div className="w-full flex items-center justify-center bg-gray-50 dark:bg-[#050505] border border-gray-200 dark:border-gray-800 rounded-xl py-3 shadow-sm overflow-hidden">
                   <Turnstile 
