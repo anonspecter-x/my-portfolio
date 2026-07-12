@@ -196,7 +196,6 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
           50% { transform: translate(-2px, -12px); }
           75% { transform: translate(-4px, -4px); }
         }
-        /* 📌 New Blob Animation for Glassmorphism CTA */
         @keyframes blob-bounce {
           0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
           50% { transform: translateY(-20px) scale(1.1); opacity: 1; }
@@ -264,7 +263,6 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                   Specializing in the MERN stack and Next.js, I engineer high-performance, SEO-optimized, and secure web solutions for modern businesses and visionary brands.
                 </p>
                 <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-6 w-full sm:w-auto">
-                  {/* 📌 New Added: Glowing Shadow Animation on Hover */}
                   <Link href="/contact" className="group relative px-6 md:px-8 py-3.5 bg-black dark:bg-white text-white dark:text-black font-semibold rounded-full overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-95 w-full sm:w-auto flex justify-center text-[13px] md:text-sm shadow-[0_4px_14px_0_rgba(0,0,0,0.1)] dark:shadow-[0_4px_14px_0_rgba(255,255,255,0.1)] hover:shadow-[0_0_20px_rgba(0,0,0,0.2)] dark:hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]">
                     <span className="relative z-10 flex items-center gap-2">
                       Start a Project <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" />
@@ -280,7 +278,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                 <div className="flex flex-row flex-wrap justify-center lg:flex-col gap-3 md:gap-4 text-xs md:text-sm font-medium text-gray-500 dark:text-gray-400">
                   {activeSocials.map((item, idx) => (
                     <a key={idx} href={item.url} target="_blank" rel="noreferrer" className="group flex items-center gap-2.5 md:gap-3 hover:text-blue-600 dark:hover:text-blue-400 transition-colors bg-white/50 dark:bg-[#111]/50 lg:bg-transparent lg:dark:bg-transparent px-3 py-2 lg:p-0 rounded-full lg:rounded-none border border-gray-200/80 dark:border-gray-800/80 lg:border-none">
-                      <span className="w-8 h-8 md:w-8 md:h-8 rounded-full border-none lg:border lg:border-solid border-gray-200 dark:border-gray-800 flex items-center justify-center group-hover:border-blue-600 dark:group-hover:border-blue-400 transition-colors bg-gray-100 dark:bg-[#222] lg:bg-transparent lg:dark:bg-transparent">
+                      <span className="w-8 h-8 md:w-8 md:h-8 rounded-full border-none lg:border lg:border-solid border-gray-200 dark:border-white/10 flex items-center justify-center group-hover:border-blue-600 dark:group-hover:border-blue-400 transition-colors bg-gray-100 dark:bg-white/5 lg:bg-transparent lg:dark:bg-transparent">
                         {item.icon}
                       </span>
                       <span className="tracking-wide hidden sm:block lg:block">{item.name}</span>
@@ -307,10 +305,11 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               <div className="flex shrink-0 animate-brand-marquee gap-12 md:gap-20 items-center px-6">
                 {displayBrands.map((brand, idx) => (
                   <div key={`brand1-${idx}`} className="shrink-0 flex items-center justify-center w-24 md:w-36 h-12 md:h-16">
+                    {/* 📌 New Added: Dark Mode Logo Fix (dark:invert ensures perfectly visible black logos turn white in dark mode) */}
                     <img 
                       src={brand.logo} 
                       alt={brand.name} 
-                      className="max-h-full max-w-full object-contain grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300 filter dark:brightness-200 hover:dark:brightness-100" 
+                      className="max-h-full max-w-full object-contain grayscale opacity-50 hover:grayscale-0 hover:opacity-100 dark:invert dark:opacity-70 hover:dark:opacity-100 transition-all duration-500 filter" 
                     />
                   </div>
                 ))}
@@ -321,7 +320,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                     <img 
                       src={brand.logo} 
                       alt={brand.name} 
-                      className="max-h-full max-w-full object-contain grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300 filter dark:brightness-200 hover:dark:brightness-100" 
+                      className="max-h-full max-w-full object-contain grayscale opacity-50 hover:grayscale-0 hover:opacity-100 dark:invert dark:opacity-70 hover:dark:opacity-100 transition-all duration-500 filter" 
                     />
                   </div>
                 ))}
@@ -340,13 +339,11 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               <p className="text-sm md:text-lg text-gray-600 dark:text-gray-400 leading-relaxed mb-8 md:mb-10">
                 With over 4 years of professional experience, I bridge the gap between elegant user interfaces and robust backend architectures. From multi-tenant SaaS platforms to dynamic corporate systems, my focus is always on writing clean code, optimizing web performance, and delivering measurable business value.
               </p>
-              {/* 📌 New Added: Icon Bounce on Hover */}
-              <button className="group flex items-center justify-center mx-auto lg:mx-0 gap-2 px-6 py-3.5 border border-gray-300 dark:border-gray-700 rounded-full font-semibold md:font-medium text-[13px] md:text-sm hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all duration-300 w-full sm:w-auto shadow-sm hover:shadow-md">
+              <button className="group flex items-center justify-center mx-auto lg:mx-0 gap-2 px-6 py-3.5 border border-gray-300 dark:border-white/10 rounded-full font-semibold md:font-medium text-[13px] md:text-sm hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all duration-300 w-full sm:w-auto shadow-sm hover:shadow-md">
                 <FileText className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform duration-300" /> Download Resume
               </button>
             </motion.div>
             
-            {/* 📌 New Added: desktop-float class added to the image wrapper for breathing effect */}
             <motion.div 
               variants={fadeUp} 
               onClick={() => window.dispatchEvent(new Event("trigger-easter-egg"))}
@@ -396,11 +393,12 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                   <div 
                     key={service._id} 
                     onClick={() => setActiveAccordion(idx)}
-                    className={`border rounded-xl cursor-pointer transition-all duration-300 overflow-hidden ${activeAccordion === idx ? 'bg-blue-50/50 dark:bg-[#111] border-blue-200 dark:border-gray-700' : 'bg-gray-50/50 dark:bg-[#0a0a0a] border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700'}`}
+                    // 📌 New Added: Perfect theme matching for accordion active state
+                    className={`border rounded-xl cursor-pointer transition-all duration-300 overflow-hidden ${activeAccordion === idx ? 'bg-blue-50/50 dark:bg-blue-500/5 border-blue-200 dark:border-blue-500/30' : 'bg-gray-50/50 dark:bg-[#0a0a0a] border-gray-200 dark:border-white/5 hover:border-gray-300 dark:hover:border-white/10'}`}
                   >
                     <div className="flex justify-between items-center p-5 md:p-6">
-                      <h3 className="font-bold text-base md:text-lg text-black dark:text-white">{service.title}</h3>
-                      {activeAccordion === idx ? <ChevronUp className="w-5 h-5 text-blue-500" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
+                      <h3 className={`font-bold text-base md:text-lg transition-colors ${activeAccordion === idx ? 'text-blue-700 dark:text-blue-400' : 'text-black dark:text-white'}`}>{service.title}</h3>
+                      {activeAccordion === idx ? <ChevronUp className="w-5 h-5 text-blue-600 dark:text-blue-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
                     </div>
                     <AnimatePresence>
                       {activeAccordion === idx && (
@@ -418,7 +416,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                 ))}
               </motion.div>
 
-              <motion.div variants={fadeUp} className="lg:col-span-5 w-full aspect-video rounded-2xl overflow-hidden relative shadow-lg order-1 lg:order-2">
+              <motion.div variants={fadeUp} className="lg:col-span-5 w-full aspect-video rounded-2xl overflow-hidden relative shadow-lg order-1 lg:order-2 border border-gray-100 dark:border-white/5">
                 <AnimatePresence mode="wait">
                   {services[activeAccordion]?.mediaType?.startsWith('video/') || services[activeAccordion]?.image?.match(/\.(mp4|webm|ogg|mov)$/i) ? (
                     <motion.video
@@ -465,13 +463,12 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                   <motion.div 
                     key={skill._id} 
                     variants={fadeUp} 
-                    // 📌 New Added: Hover transform and shadow for cards
-                    className="sticky top-[var(--sticky-top)] md:top-auto md:relative w-full p-5 md:p-6 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-2xl transition-all duration-300 shadow-lg md:shadow-sm hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_10px_30px_rgba(255,255,255,0.03)] mt-4 mb-[8vh] md:mb-0 z-10"
+                    className="sticky top-[var(--sticky-top)] md:top-auto md:relative w-full p-5 md:p-6 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/5 rounded-2xl transition-all duration-300 shadow-lg md:shadow-sm hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_10px_30px_rgba(255,255,255,0.03)] hover:border-blue-500/20 dark:hover:border-blue-400/20 mt-4 mb-[8vh] md:mb-0 z-10 group"
                     style={{ '--sticky-top': `calc(100px + ${idx * 16}px)` } as React.CSSProperties}
                   >
                     
-                    <div className="absolute -top-6 -left-2 bg-white dark:bg-[#0a0a0a] p-1.5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm">
-                       <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-[#151515] border border-gray-200/50 dark:border-gray-800/50 flex items-center justify-center p-2">
+                    <div className="absolute -top-6 -left-2 bg-white dark:bg-[#0a0a0a] p-1.5 rounded-2xl border border-gray-200 dark:border-white/10 shadow-sm transition-colors group-hover:border-blue-200 dark:group-hover:border-blue-900/50">
+                       <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-200/50 dark:border-white/5 flex items-center justify-center p-2">
                          {isImageIcon ? (
                            <img src={skill.icon} alt={skill.name} className="w-full h-full object-cover" />
                          ) : (
@@ -500,7 +497,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                           }
 
                           return (
-                            <div key={i} className="h-1.5 w-6 sm:w-8 rounded-sm bg-gray-200 dark:bg-gray-800 overflow-hidden relative">
+                            <div key={i} className="h-1.5 w-6 sm:w-8 rounded-sm bg-gray-200 dark:bg-white/5 overflow-hidden relative">
                                <div 
                                  className="absolute top-0 left-0 h-full bg-blue-600 dark:bg-blue-500 rounded-sm transition-all duration-1000" 
                                  style={{ width: `${fillPercent}%` }}
@@ -532,7 +529,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
 
           <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
             
-            <div className="hidden lg:block absolute top-10 left-[12%] right-[12%] h-[2px] bg-gray-200 dark:bg-gray-800 z-0 overflow-hidden rounded-full">
+            <div className="hidden lg:block absolute top-10 left-[12%] right-[12%] h-[2px] bg-gray-200 dark:bg-white/10 z-0 overflow-hidden rounded-full">
               <motion.div
                 initial={{ width: "0%" }}
                 whileInView={{ width: "100%" }}
@@ -542,12 +539,11 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               />
             </div>
 
-            {/* 📌 New Added: group-hover:-translate-y-2 for process icon to pop up slightly */}
             <motion.div 
               initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={processStepVariant(0)} 
               className="relative z-10 flex flex-col items-center text-center group"
             >
-              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#111] border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(37,99,235,0.2)] group-hover:-translate-y-2">
+              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#0a0a0a] border-2 border-gray-200 dark:border-white/10 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 dark:group-hover:border-blue-400 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(37,99,235,0.2)] group-hover:-translate-y-2">
                 <Lightbulb className="w-8 h-8 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="text-lg font-bold text-black dark:text-white mb-3">1. Discovery & Planning</h3>
@@ -560,7 +556,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={processStepVariant(1)} 
               className="relative z-10 flex flex-col items-center text-center group"
             >
-              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#111] border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(37,99,235,0.2)] group-hover:-translate-y-2">
+              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#0a0a0a] border-2 border-gray-200 dark:border-white/10 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 dark:group-hover:border-blue-400 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(37,99,235,0.2)] group-hover:-translate-y-2">
                 <PenTool className="w-8 h-8 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="text-lg font-bold text-black dark:text-white mb-3">2. UI/UX & SEO Strategy</h3>
@@ -573,7 +569,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={processStepVariant(2)} 
               className="relative z-10 flex flex-col items-center text-center group"
             >
-              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#111] border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(37,99,235,0.2)] group-hover:-translate-y-2">
+              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#0a0a0a] border-2 border-gray-200 dark:border-white/10 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 dark:group-hover:border-blue-400 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(37,99,235,0.2)] group-hover:-translate-y-2">
                 <Code2 className="w-8 h-8 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="text-lg font-bold text-black dark:text-white mb-3">3. Development</h3>
@@ -586,7 +582,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={processStepVariant(3)} 
               className="relative z-10 flex flex-col items-center text-center group"
             >
-              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#111] border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(37,99,235,0.2)] group-hover:-translate-y-2">
+              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#0a0a0a] border-2 border-gray-200 dark:border-white/10 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 dark:group-hover:border-blue-400 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(37,99,235,0.2)] group-hover:-translate-y-2">
                 <Rocket className="w-8 h-8 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="text-lg font-bold text-black dark:text-white mb-3">4. Testing & Launch</h3>
@@ -616,12 +612,12 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                  >
                    <Link 
                      href={project.link || "#"} 
-                     className="block w-full bg-white dark:bg-[#0a0a0a] rounded-[1.5rem] md:rounded-[2rem] border border-gray-100 dark:border-gray-800/60 p-5 sm:p-6 md:p-8 shadow-lg dark:shadow-[0_8px_30px_-15px_rgba(0,0,0,0.5)] hover:shadow-2xl mb-[8vh] md:mb-[12vh] relative group/card hover:-translate-y-2 transition-all duration-500 cursor-pointer overflow-hidden"
+                     className="block w-full bg-white dark:bg-[#0a0a0a] rounded-[1.5rem] md:rounded-[2rem] border border-gray-100 dark:border-white/5 p-5 sm:p-6 md:p-8 shadow-lg dark:shadow-[0_8px_30px_-15px_rgba(0,0,0,0.5)] hover:shadow-2xl mb-[8vh] md:mb-[12vh] relative group/card hover:-translate-y-2 transition-all duration-500 cursor-pointer overflow-hidden"
                    >
                      <div className="flex flex-col lg:flex-row items-center gap-6 md:gap-10 lg:gap-12 w-full">
                        <div className="w-full lg:w-1/2 flex flex-col justify-center order-2 lg:order-1 text-left">
                           <div className="flex items-center gap-3 mb-3 md:mb-4">
-                             <span className="font-mono text-[10px] md:text-xs tracking-[0.1em] text-blue-600 dark:text-blue-400 uppercase font-bold bg-blue-50/50 dark:bg-blue-900/10 px-2.5 py-1 rounded">
+                             <span className="font-mono text-[10px] md:text-xs tracking-[0.1em] text-blue-600 dark:text-blue-400 uppercase font-bold bg-blue-50/50 dark:bg-blue-500/10 px-2.5 py-1 rounded">
                                Project {(idx + 1).toString().padStart(2, '0')}
                              </span>
                           </div>
@@ -636,7 +632,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                           
                           <div className="flex flex-wrap gap-1.5 md:gap-2 mb-6 md:mb-8">
                              {project.tech.map((t: string, i: number) => (
-                                <span key={i} className="text-[10px] md:text-[11px] font-medium px-2.5 py-1 bg-gray-50 dark:bg-white/5 text-gray-600 dark:text-gray-300 rounded-md border border-gray-200/60 dark:border-gray-700/50">
+                                <span key={i} className="text-[10px] md:text-[11px] font-medium px-2.5 py-1 bg-gray-100/80 dark:bg-white/5 text-gray-700 dark:text-gray-300 rounded-md border border-gray-200/60 dark:border-white/10">
                                   {t}
                                 </span>
                              ))}
@@ -647,7 +643,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                           </span>
                        </div>
 
-                       <div className="w-full lg:w-1/2 relative aspect-[16/10] rounded-xl md:rounded-2xl overflow-hidden bg-gray-50 dark:bg-[#111] border border-gray-200/50 dark:border-gray-800/50 order-1 lg:order-2 shrink-0">
+                       <div className="w-full lg:w-1/2 relative aspect-[16/10] rounded-xl md:rounded-2xl overflow-hidden bg-gray-50 dark:bg-[#111] border border-gray-200/50 dark:border-white/5 order-1 lg:order-2 shrink-0">
                          {project.image ? (
                             <img src={project.image} alt={project.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-105" />
                          ) : (
@@ -657,7 +653,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                             </div>
                          )}
                          
-                         <div className="absolute top-4 right-4 md:top-5 md:right-5 bg-white/90 dark:bg-black/90 backdrop-blur-md w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center border border-gray-200 dark:border-gray-800 opacity-0 group-hover/card:opacity-100 transition-all translate-y-2 group-hover/card:translate-y-0 duration-300 z-20 shadow-sm">
+                         <div className="absolute top-4 right-4 md:top-5 md:right-5 bg-white/90 dark:bg-black/90 backdrop-blur-md w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center border border-gray-200 dark:border-white/10 opacity-0 group-hover/card:opacity-100 transition-all translate-y-2 group-hover/card:translate-y-0 duration-300 z-20 shadow-sm">
                            <ExternalLink className="w-4 h-4 text-black dark:text-white" />
                          </div>
                        </div>
@@ -699,9 +695,8 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                 {desktopTestimonials.map((testimonial, idx) => (
                   <div 
                     key={`desktop1-${testimonial._id}-${idx}`} 
-                    className="w-[400px] shrink-0 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-3xl p-8 shadow-sm flex flex-col justify-between relative group hover:border-blue-500/30 dark:hover:border-blue-400/30 transition-colors whitespace-normal text-left"
+                    className="w-[400px] shrink-0 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/5 rounded-3xl p-8 shadow-sm flex flex-col justify-between relative group hover:border-blue-500/30 dark:hover:border-blue-400/30 transition-colors whitespace-normal text-left"
                   >
-                    {/* 📌 New Added: Quote icon rotates and scales slightly on hover */}
                     <div className="absolute top-6 right-6 text-gray-100 dark:text-[#151515] group-hover:text-blue-50 dark:group-hover:text-blue-900/10 transition-all duration-300 group-hover:scale-110 group-hover:-rotate-3">
                       <Quote className="w-16 h-16" />
                     </div>
@@ -715,7 +710,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                         "{testimonial.review}"
                       </p>
                     </div>
-                    <div className="flex items-center gap-4 mt-auto relative z-10 pt-6 border-t border-gray-100 dark:border-gray-800/80">
+                    <div className="flex items-center gap-4 mt-auto relative z-10 pt-6 border-t border-gray-100 dark:border-white/5">
                       <img 
                         src={testimonial.photoUrl || "https://via.placeholder.com/150"} 
                         alt={testimonial.name} 
@@ -734,7 +729,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                 {desktopTestimonials.map((testimonial, idx) => (
                   <div 
                     key={`desktop2-${testimonial._id}-${idx}`} 
-                    className="w-[400px] shrink-0 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-3xl p-8 shadow-sm flex flex-col justify-between relative group hover:border-blue-500/30 dark:hover:border-blue-400/30 transition-colors whitespace-normal text-left"
+                    className="w-[400px] shrink-0 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/5 rounded-3xl p-8 shadow-sm flex flex-col justify-between relative group hover:border-blue-500/30 dark:hover:border-blue-400/30 transition-colors whitespace-normal text-left"
                   >
                     <div className="absolute top-6 right-6 text-gray-100 dark:text-[#151515] group-hover:text-blue-50 dark:group-hover:text-blue-900/10 transition-all duration-300 group-hover:scale-110 group-hover:-rotate-3">
                       <Quote className="w-16 h-16" />
@@ -749,7 +744,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                         "{testimonial.review}"
                       </p>
                     </div>
-                    <div className="flex items-center gap-4 mt-auto relative z-10 pt-6 border-t border-gray-100 dark:border-gray-800/80">
+                    <div className="flex items-center gap-4 mt-auto relative z-10 pt-6 border-t border-gray-100 dark:border-white/5">
                       <img 
                         src={testimonial.photoUrl || "https://via.placeholder.com/150"} 
                         alt={testimonial.name} 
@@ -774,7 +769,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               {mobileTestimonials.map((testimonial, idx) => (
                 <div 
                   key={`mobile-${testimonial._id}-${idx}`} 
-                  className="w-[280px] shrink-0 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-3xl p-6 shadow-sm flex flex-col justify-between relative whitespace-normal text-left"
+                  className="w-[280px] shrink-0 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/5 rounded-3xl p-6 shadow-sm flex flex-col justify-between relative whitespace-normal text-left"
                 >
                   <div className="absolute top-6 right-6 text-gray-100 dark:text-[#151515] transition-colors">
                     <Quote className="w-12 h-12" />
@@ -789,7 +784,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                       "{testimonial.review}"
                     </p>
                   </div>
-                  <div className="flex items-center gap-4 mt-auto relative z-10 pt-5 border-t border-gray-100 dark:border-gray-800/80">
+                  <div className="flex items-center gap-4 mt-auto relative z-10 pt-5 border-t border-gray-100 dark:border-white/5">
                     <img 
                       src={testimonial.photoUrl || "https://via.placeholder.com/150"} 
                       alt={testimonial.name} 
@@ -805,7 +800,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
             </div>
 
             <motion.div variants={fadeUp} className="mt-8 md:mt-12 flex justify-center w-full relative z-10">
-              <Link href="/leave-review" className="group flex items-center gap-2 px-6 md:px-8 py-3 md:py-4 bg-gray-50 dark:bg-[#111] text-black dark:text-white font-semibold text-sm md:text-base rounded-full hover:bg-gray-100 dark:hover:bg-[#222] transition-all border border-gray-200 dark:border-gray-800">
+              <Link href="/leave-review" className="group flex items-center gap-2 px-6 md:px-8 py-3 md:py-4 bg-gray-50 dark:bg-[#111] text-black dark:text-white font-semibold text-sm md:text-base rounded-full hover:bg-gray-100 dark:hover:bg-[#222] transition-all border border-gray-200 dark:border-white/10">
                  <Plus className="w-4 h-4 text-blue-600 dark:text-blue-400" /> 
                  Leave a Review
               </Link>
@@ -837,7 +832,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               {infiniteBlogs.map((blog, idx) => (
                 <div 
                   key={`blog-${blog._id || idx}-${idx}`} 
-                  className="w-[280px] md:w-[360px] shrink-0 group relative bg-white dark:bg-[#0a0a0a] border border-gray-100 dark:border-gray-800/80 rounded-2xl overflow-hidden hover:shadow-xl dark:hover:shadow-[0_8px_30px_-15px_rgba(255,255,255,0.05)] transition-all duration-300 flex flex-col hover:-translate-y-2"
+                  className="w-[280px] md:w-[360px] shrink-0 group relative bg-white dark:bg-[#0a0a0a] border border-gray-100 dark:border-white/5 rounded-2xl overflow-hidden hover:shadow-xl dark:hover:shadow-[0_8px_30px_-15px_rgba(255,255,255,0.05)] transition-all duration-300 flex flex-col hover:-translate-y-2"
                 >
                   <Link href={`/blog/${blog.slug}`} className="block h-full flex flex-col">
                     <div className="relative aspect-[16/9] overflow-hidden bg-gray-50 dark:bg-[#111]">
@@ -853,7 +848,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                         </div>
                       )}
                       {blog.category && (
-                        <div className="absolute top-3 left-3 bg-white/95 dark:bg-black/95 backdrop-blur-md px-2.5 py-1 rounded-md text-[10px] font-semibold tracking-wide uppercase border border-gray-200/50 dark:border-gray-800/50 text-gray-700 dark:text-gray-300">
+                        <div className="absolute top-3 left-3 bg-white/95 dark:bg-black/95 backdrop-blur-md px-2.5 py-1 rounded-md text-[10px] font-semibold tracking-wide uppercase border border-gray-200/50 dark:border-white/10 text-gray-700 dark:text-gray-300">
                           {blog.category}
                         </div>
                       )}
@@ -873,7 +868,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                           </span>
                         )}
                       </div>
-                      <h3 className="text-[20px] font-bold tracking-tight text-[#111] dark:text-gray-100 leading-[1.35] mb-5 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 line-clamp-2">
+                      <h3 className="text-[20px] font-bold tracking-tight text-[#111] dark:text-white/95 leading-[1.35] mb-5 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 line-clamp-2">
                         {blog.title}
                       </h3>
                       <div className="mt-auto pt-5 flex items-center gap-1.5 text-[13px] font-semibold tracking-wide text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors border-t border-gray-100 dark:border-white/5">
@@ -886,7 +881,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
             </div>
 
             <motion.div variants={fadeUp} className="mt-8 md:mt-12 flex justify-center w-full">
-              <Link href="/blog" className="group flex items-center gap-2 px-6 md:px-8 py-3 md:py-4 bg-gray-50 dark:bg-[#111] text-black dark:text-white font-semibold text-sm md:text-base rounded-full hover:bg-gray-100 dark:hover:bg-[#222] transition-all border border-gray-200 dark:border-gray-800">
+              <Link href="/blog" className="group flex items-center gap-2 px-6 md:px-8 py-3 md:py-4 bg-gray-50 dark:bg-[#111] text-black dark:text-white font-semibold text-sm md:text-base rounded-full hover:bg-gray-100 dark:hover:bg-[#222] transition-all border border-gray-200 dark:border-white/10">
                 View All Articles <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
             </motion.div>
@@ -897,7 +892,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
         <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeUp} className="py-20 md:py-32" id="cta">
           <div className="w-full relative rounded-[2rem] md:rounded-[3rem] p-10 md:p-20 text-center overflow-hidden bg-black/5 dark:bg-white/5 backdrop-blur-2xl border border-black/10 dark:border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.05)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.3)]">
             
-            {/* 🌟 New Added: animate-blob for a slow breathing effect on the glassmorphism blurs */}
+            {/* 🌟 Blob Animation for a slow breathing effect on the glassmorphism blurs */}
             <div className="absolute top-[-20%] left-[-10%] w-72 h-72 bg-white/40 dark:bg-white/10 rounded-full blur-[80px] pointer-events-none animate-blob"></div>
             <div className="absolute bottom-[-20%] right-[-10%] w-72 h-72 bg-black/10 dark:bg-black/40 rounded-full blur-[80px] pointer-events-none animate-blob animation-delay-2000"></div>
             
