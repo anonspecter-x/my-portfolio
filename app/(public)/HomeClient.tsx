@@ -59,7 +59,10 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
 
   const fullName = settings?.developerName || "Md Nazmus Shakib";
   const role = settings?.developerRole || "Senior Full Stack MERN Developer";
-  const firstName = fullName.split(" ")[0];
+  
+  // 📌 First Name এর পরিবর্তে Last Name বের করার লজিক
+  const nameParts = fullName.split(" ");
+  const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : fullName;
 
   const [activeAccordion, setActiveAccordion] = useState(0);
 
@@ -176,9 +179,17 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
         .animate-marquee {
           animation: scroll-marquee 40s linear infinite;
         }
+        
+        /* 📌 Desktop and Mobile speed adjusted for Brands */
         .animate-brand-marquee {
-          animation: scroll-brand-marquee 60s linear infinite; 
+          animation: scroll-brand-marquee 50s linear infinite; 
         }
+        @media (min-width: 768px) {
+          .animate-brand-marquee {
+            animation: scroll-brand-marquee 80s linear infinite; 
+          }
+        }
+        
         .pause-on-hover:hover .animate-marquee,
         .pause-on-hover:focus-within .animate-marquee,
         .pause-on-hover:hover .animate-brand-marquee,
@@ -230,9 +241,13 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                 </div>
               </motion.div>
 
-              <motion.div variants={fadeUp} className="col-span-1 lg:col-span-5 flex justify-center lg:justify-end mt-8 lg:mt-0">
-                <div className="flex flex-row flex-wrap justify-center lg:flex-col gap-3 md:gap-4 text-xs md:text-sm font-medium text-gray-500 dark:text-gray-400">
-                  {/* 📌 SYSTEMATIC DYNAMIC SOCIALS RENDERING */}
+              {/* 📌 Social Icons Container (Shifted Up & Floating Animation Added) */}
+              <motion.div variants={fadeUp} className="col-span-1 lg:col-span-5 flex justify-center lg:justify-end mt-8 lg:-mt-6">
+                <motion.div 
+                  animate={{ y: [0, -10, 0] }} 
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  className="flex flex-row flex-wrap justify-center lg:flex-col gap-3 md:gap-4 text-xs md:text-sm font-medium text-gray-500 dark:text-gray-400"
+                >
                   {activeSocials.map((item, idx) => (
                     <a key={idx} href={item.url} target="_blank" rel="noreferrer" className="group flex items-center gap-2.5 md:gap-3 hover:text-blue-600 dark:hover:text-blue-400 transition-colors bg-white/50 dark:bg-[#111]/50 lg:bg-transparent lg:dark:bg-transparent px-3 py-2 lg:p-0 rounded-full lg:rounded-none border border-gray-200/80 dark:border-gray-800/80 lg:border-none">
                       <span className="w-8 h-8 md:w-8 md:h-8 rounded-full border-none lg:border lg:border-solid border-gray-200 dark:border-gray-800 flex items-center justify-center group-hover:border-blue-600 dark:group-hover:border-blue-400 transition-colors bg-gray-100 dark:bg-[#222] lg:bg-transparent lg:dark:bg-transparent">
@@ -241,7 +256,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                       <span className="tracking-wide hidden sm:block lg:block">{item.name}</span>
                     </a>
                   ))}
-                </div>
+                </motion.div>
               </motion.div>
             </div>
           </motion.div>
@@ -317,7 +332,8 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                      </div>
                    </div>
                    <div className="relative z-10 mt-auto">
-                     <p className="text-white/90 font-mono text-xs sm:text-sm tracking-wide">Hi, I'm {firstName} 👋</p>
+                     {/* 📌 Updated to show Last Name instead of First Name */}
+                     <p className="text-white/90 font-mono text-xs sm:text-sm tracking-wide">Hi, I'm {lastName} 👋</p>
                    </div>
                  </>
                ) : (
@@ -472,7 +488,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
           )}
         </motion.section>
 
-        {/* ================= WORKING PROCESS SECTION ================= */}
+        {/* ================= WORKING PROCESS SECTION (Animated line added) ================= */}
         <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} className="py-20 md:py-32 border-t border-gray-200/50 dark:border-gray-800/50" id="process">
           <div className="text-center mb-16 md:mb-20">
             <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 text-black dark:text-white">
@@ -485,7 +501,17 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 relative">
-            <div className="hidden lg:block absolute top-12 left-[10%] right-[10%] h-[2px] bg-gray-200 dark:bg-gray-800 z-0"></div>
+            
+            {/* 📌 Animated Connecting Line for Desktop */}
+            <div className="hidden lg:block absolute top-12 left-[10%] right-[10%] h-[2px] bg-gray-200 dark:bg-gray-800 z-0 overflow-hidden">
+              <motion.div 
+                initial={{ width: "0%" }}
+                whileInView={{ width: "100%" }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 1.5, ease: "easeInOut", delay: 0.2 }}
+                className="h-full bg-blue-500"
+              />
+            </div>
 
             <motion.div variants={fadeUp} className="relative z-10 flex flex-col items-center text-center group">
               <div className="w-20 h-20 rounded-full bg-white dark:bg-[#111] border border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 transition-colors duration-300">
@@ -738,10 +764,10 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               ))}
             </div>
 
-            {/* 🌟 REVIEW ADD BUTTON - NEWLY ADDED 🌟 */}
+            {/* 🌟 REVIEW ADD BUTTON - STYLED EXACTLY LIKE "VIEW ALL ARTICLES" */}
             <motion.div variants={fadeUp} className="mt-8 md:mt-12 flex justify-center w-full relative z-10">
-              <Link href="/leave-review" className="group flex items-center gap-2 px-6 md:px-8 py-3 md:py-4 bg-gray-50 dark:bg-[#111] text-black dark:text-white font-semibold text-sm md:text-base rounded-full hover:bg-gray-100 dark:hover:bg-[#222] transition-all border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md">
-                 <Plus className="w-4 h-4 text-blue-600 dark:text-blue-400" /> 
+              <Link href="/leave-review" className="group flex items-center gap-2 px-6 md:px-8 py-3 md:py-4 bg-gray-50 dark:bg-[#111] text-black dark:text-white font-semibold text-sm md:text-base rounded-full hover:bg-gray-100 dark:hover:bg-[#222] transition-all border border-gray-200 dark:border-gray-800">
+                 <Plus className="w-4 h-4 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform duration-300" /> 
                  Leave a Review
               </Link>
             </motion.div>
@@ -749,7 +775,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
           </motion.section>
         )}
 
-        {/* ================= 📝 LATEST BLOGS SECTION (REDESIGNED) ================= */}
+        {/* ================= 📝 LATEST BLOGS SECTION ================= */}
         {blogs && blogs.length > 0 && (
           <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} className="py-20 md:py-32 border-t border-gray-200/50 dark:border-gray-800/50" id="blog">
             <div className="mb-12 md:mb-16 text-center">
@@ -761,7 +787,6 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               </motion.p>
             </div>
 
-            {/* 📌 Unified Auto-Scrolling Slider for both Desktop and Mobile */}
             <div 
               ref={blogScrollerRef}
               onMouseEnter={handleBlogInteractionStart}
@@ -829,21 +854,23 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
           </motion.section>
         )}
 
-        {/* ================= CALL TO ACTION (CTA) SECTION ================= */}
+        {/* ================= CALL TO ACTION (CTA) SECTION - INNOVATIVE GLASSMORPHISM ================= */}
         <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeUp} className="py-20 md:py-32" id="cta">
-          <div className="w-full bg-blue-600 dark:bg-blue-600 rounded-[2rem] md:rounded-[3rem] p-10 md:p-20 text-center relative overflow-hidden shadow-2xl">
-            <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-white opacity-10 rounded-full blur-2xl"></div>
-            <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-black opacity-10 rounded-full blur-2xl"></div>
+          <div className="w-full rounded-[2rem] md:rounded-[3rem] p-10 md:p-20 text-center relative overflow-hidden border backdrop-blur-2xl bg-white/40 dark:bg-black/40 border-white/50 dark:border-white/10 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.5)]">
+            
+            {/* 🎨 Glassmorphism Glow Effects */}
+            <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-blue-500/30 rounded-full blur-[80px]"></div>
+            <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-64 h-64 bg-purple-500/30 rounded-full blur-[80px]"></div>
             
             <div className="relative z-10 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight leading-tight">
+              <h2 className="text-3xl md:text-5xl font-bold text-black dark:text-white mb-6 tracking-tight leading-tight">
                 Have an awesome project in mind? <br className="hidden md:block" /> Let's build something amazing together!
               </h2>
-              <p className="text-blue-100 md:text-lg mb-10 max-w-xl mx-auto">
+              <p className="text-gray-600 dark:text-gray-400 md:text-lg mb-10 max-w-xl mx-auto">
                 Ready to take your digital presence to the next level? Get in touch today and let's discuss how we can turn your vision into reality.
               </p>
               
-              <Link href="/contact" className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-blue-600 hover:bg-gray-50 hover:scale-105 active:scale-95 transition-all duration-300 font-bold text-sm md:text-base rounded-full shadow-lg">
+              <Link href="/contact" className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-blue-600 text-white hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all duration-300 font-bold text-sm md:text-base rounded-full shadow-lg">
                 <PhoneCall className="w-5 h-5" />
                 Book a Call
               </Link>
