@@ -5,7 +5,8 @@ import Link from "next/link";
 import { 
   Map, LayoutGrid, Briefcase, BookOpen, 
   ArrowUpRight, ShieldCheck, Mail, Star, 
-  FileText, Code2, Folder, User, Terminal
+  FileText, Code2, Folder, User, Terminal,
+  Building2 // 📌 Newly imported icon for Brands Page
 } from "lucide-react";
 
 interface SitemapItem {
@@ -30,11 +31,12 @@ export default function SitemapClient({ projects, posts }: SitemapClientProps) {
     visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
   };
 
-  // 📌 Primary Routes
+  // 📌 Primary Routes (Updated to include Brands Page)
   const corePages = [
     { title: "Homepage", href: "/", icon: LayoutGrid, desc: "The main entry point of the portfolio." },
     { title: "About the Developer", href: "/about", icon: User, desc: "My background, tech stack, and engineering manifesto." },
     { title: "Selected Works", href: "/projects", icon: Briefcase, desc: "A curated list of my web applications and projects." },
+    { title: "Trusted Brands", href: "/brands", icon: Building2, desc: "A showcase of innovative companies I have collaborated with." }, // 📌 Added Brands Page
     { title: "Journal & Insights", href: "/blog", icon: BookOpen, desc: "Technical articles, tutorials, and thoughts." },
     { title: "Contact & Collaboration", href: "/contact", icon: Mail, desc: "Get in touch for project inquiries." },
     { title: "Client Feedback", href: "/leave-review", icon: Star, desc: "Submit a review about our collaboration." },
