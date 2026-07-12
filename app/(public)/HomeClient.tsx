@@ -40,8 +40,8 @@ const socialPlatformSystem = [
 const fadeUp: any = { hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } };
 const staggerContainer: any = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.15 } } };
 
-// 📌 Working Process Flow Animation Logic
-const processStepVariant = (index: number) => ({
+// 📌 Working Process Flow Animation Logic (TypeScript Fix Applied here)
+const processStepVariant = (index: number): any => ({
   hidden: { opacity: 0, scale: 0.8, y: 20 },
   visible: { 
     opacity: 1, 
