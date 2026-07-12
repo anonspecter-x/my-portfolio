@@ -305,11 +305,11 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               <div className="flex shrink-0 animate-brand-marquee gap-12 md:gap-20 items-center px-6">
                 {displayBrands.map((brand, idx) => (
                   <div key={`brand1-${idx}`} className="shrink-0 flex items-center justify-center w-24 md:w-36 h-12 md:h-16">
-                    {/* 📌 New Added: Dark Mode Logo Fix (dark:invert ensures perfectly visible black logos turn white in dark mode) */}
+                    {/* 📌 Fixed: Added hover:dark:invert-0 to return original colors on hover in dark mode */}
                     <img 
                       src={brand.logo} 
                       alt={brand.name} 
-                      className="max-h-full max-w-full object-contain grayscale opacity-50 hover:grayscale-0 hover:opacity-100 dark:invert dark:opacity-70 hover:dark:opacity-100 transition-all duration-500 filter" 
+                      className="max-h-full max-w-full object-contain grayscale opacity-50 dark:invert dark:opacity-70 hover:grayscale-0 hover:opacity-100 hover:dark:invert-0 hover:dark:opacity-100 transition-all duration-500 filter" 
                     />
                   </div>
                 ))}
@@ -320,7 +320,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                     <img 
                       src={brand.logo} 
                       alt={brand.name} 
-                      className="max-h-full max-w-full object-contain grayscale opacity-50 hover:grayscale-0 hover:opacity-100 dark:invert dark:opacity-70 hover:dark:opacity-100 transition-all duration-500 filter" 
+                      className="max-h-full max-w-full object-contain grayscale opacity-50 dark:invert dark:opacity-70 hover:grayscale-0 hover:opacity-100 hover:dark:invert-0 hover:dark:opacity-100 transition-all duration-500 filter" 
                     />
                   </div>
                 ))}
