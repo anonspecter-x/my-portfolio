@@ -301,15 +301,15 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
             <p className="text-xs md:text-sm font-medium text-gray-400 uppercase tracking-widest mb-8 text-center">
               Trusted by Innovative Companies
             </p>
-            <div className="relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] pause-on-hover flex">
+            <div className="relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] pause-on-hover flex -my-6 py-6 md:-my-8 md:py-8">
+              {/* 📌 Added padding (py-6) so the glow doesn't get cut off at the top and bottom bounds */}
               <div className="flex shrink-0 animate-brand-marquee gap-12 md:gap-20 items-center px-6">
                 {displayBrands.map((brand, idx) => (
                   <div key={`brand1-${idx}`} className="relative shrink-0 flex items-center justify-center w-24 md:w-36 h-12 md:h-16 group cursor-pointer">
                     
-                    {/* 📌 Fading Radial Glow Background: মাঝখানে সাদা এবং আস্তে আস্তে চারদিকে মিশে যাবে (শুধুমাত্র ডার্ক মোডে হোভার করলে আসবে) */}
-                    <div className="absolute inset-[-20%] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.85)_0%,rgba(255,255,255,0)_70%)] opacity-0 group-hover:dark:opacity-100 transition-opacity duration-500 pointer-events-none z-0"></div>
+                    {/* 📌 Perfected Soft Glow: CSS Blur ব্যবহার করা হয়েছে যা কোনোভাবেই বক্স আকারে কাটবে না */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[160%] bg-white/80 rounded-[100%] blur-[20px] md:blur-2xl opacity-0 group-hover:dark:opacity-100 transition-opacity duration-500 pointer-events-none z-0"></div>
                     
-                    {/* 📌 Logo: আগের প্রফেশনাল ডিজাইন ফিরিয়ে আনা হয়েছে এবং হোভার করলে অরিজিনাল কালার আসবে */}
                     <img 
                       src={brand.logo} 
                       alt={brand.name} 
@@ -322,7 +322,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                 {displayBrands.map((brand, idx) => (
                   <div key={`brand2-${idx}`} className="relative shrink-0 flex items-center justify-center w-24 md:w-36 h-12 md:h-16 group cursor-pointer">
                     
-                    <div className="absolute inset-[-20%] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.85)_0%,rgba(255,255,255,0)_70%)] opacity-0 group-hover:dark:opacity-100 transition-opacity duration-500 pointer-events-none z-0"></div>
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[160%] bg-white/80 rounded-[100%] blur-[20px] md:blur-2xl opacity-0 group-hover:dark:opacity-100 transition-opacity duration-500 pointer-events-none z-0"></div>
                     
                     <img 
                       src={brand.logo} 
