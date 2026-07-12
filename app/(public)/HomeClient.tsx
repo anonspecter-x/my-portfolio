@@ -304,23 +304,30 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
             <div className="relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] pause-on-hover flex">
               <div className="flex shrink-0 animate-brand-marquee gap-12 md:gap-20 items-center px-6">
                 {displayBrands.map((brand, idx) => (
-                  <div key={`brand1-${idx}`} className="shrink-0 flex items-center justify-center w-28 md:w-40 h-14 md:h-16 px-4 py-2 rounded-2xl transition-all duration-300 hover:bg-black/5 dark:hover:bg-white/95 group cursor-pointer">
-                    {/* 📌 Ultimate Professional Fix: All logos pure white in dark mode, on hover they get a soft white background and original colors */}
+                  <div key={`brand1-${idx}`} className="relative shrink-0 flex items-center justify-center w-24 md:w-36 h-12 md:h-16 group cursor-pointer">
+                    
+                    {/* 📌 Fading Radial Glow Background: মাঝখানে সাদা এবং আস্তে আস্তে চারদিকে মিশে যাবে (শুধুমাত্র ডার্ক মোডে হোভার করলে আসবে) */}
+                    <div className="absolute inset-[-20%] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.85)_0%,rgba(255,255,255,0)_70%)] opacity-0 group-hover:dark:opacity-100 transition-opacity duration-500 pointer-events-none z-0"></div>
+                    
+                    {/* 📌 Logo: আগের প্রফেশনাল ডিজাইন ফিরিয়ে আনা হয়েছে এবং হোভার করলে অরিজিনাল কালার আসবে */}
                     <img 
                       src={brand.logo} 
                       alt={brand.name} 
-                      className="max-h-full max-w-full object-contain filter grayscale opacity-50 dark:brightness-0 dark:invert dark:opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:dark:brightness-100 group-hover:dark:invert-0 transition-all duration-500" 
+                      className="relative z-10 max-h-full max-w-full object-contain filter grayscale opacity-50 dark:invert dark:opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:dark:invert-0 transition-all duration-500" 
                     />
                   </div>
                 ))}
               </div>
               <div aria-hidden="true" className="flex shrink-0 animate-brand-marquee gap-12 md:gap-20 items-center px-6">
                 {displayBrands.map((brand, idx) => (
-                  <div key={`brand2-${idx}`} className="shrink-0 flex items-center justify-center w-28 md:w-40 h-14 md:h-16 px-4 py-2 rounded-2xl transition-all duration-300 hover:bg-black/5 dark:hover:bg-white/95 group cursor-pointer">
+                  <div key={`brand2-${idx}`} className="relative shrink-0 flex items-center justify-center w-24 md:w-36 h-12 md:h-16 group cursor-pointer">
+                    
+                    <div className="absolute inset-[-20%] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.85)_0%,rgba(255,255,255,0)_70%)] opacity-0 group-hover:dark:opacity-100 transition-opacity duration-500 pointer-events-none z-0"></div>
+                    
                     <img 
                       src={brand.logo} 
                       alt={brand.name} 
-                      className="max-h-full max-w-full object-contain filter grayscale opacity-50 dark:brightness-0 dark:invert dark:opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:dark:brightness-100 group-hover:dark:invert-0 transition-all duration-500" 
+                      className="relative z-10 max-h-full max-w-full object-contain filter grayscale opacity-50 dark:invert dark:opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:dark:invert-0 transition-all duration-500" 
                     />
                   </div>
                 ))}
