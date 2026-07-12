@@ -40,9 +40,20 @@ const socialPlatformSystem = [
 const fadeUp: any = { hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } };
 const staggerContainer: any = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.15 } } };
 
-// 📌 Working Process Animation Logic
-const processStagger: any = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.25 } } };
-const processCard: any = { hidden: { opacity: 0, x: -30, y: 20 }, visible: { opacity: 1, x: 0, y: 0, transition: { duration: 0.7, ease: "easeOut" } } };
+// 📌 Working Process Flow Animation Logic
+const processStepVariant = (index: number) => ({
+  hidden: { opacity: 0, scale: 0.8, y: 20 },
+  visible: { 
+    opacity: 1, 
+    scale: 1, 
+    y: 0, 
+    transition: { 
+      delay: index * 0.6, // 📌 লাইনের অ্যানিমেশনের সাথে মিল রেখে একেকটা আসবে 
+      duration: 0.5, 
+      ease: "easeOut" 
+    } 
+  }
+});
 
 interface HomeClientProps {
   realProjects: any[];
@@ -196,10 +207,10 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
         /* Desktop Speeds & Animations */
         @media (min-width: 1024px) {
           .animate-brand-marquee {
-            animation: scroll-brand-marquee 90s linear infinite; /* 📌 Desktop-এ স্লো স্পিড */
+            animation: scroll-brand-marquee 90s linear infinite;
           }
           .desktop-float {
-            animation: float-anim 5s ease-in-out infinite; /* 📌 ডেক্সটপে ফ্লোটিং এনিমেশন */
+            animation: float-anim 5s ease-in-out infinite; 
           }
         }
 
@@ -254,8 +265,8 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                 </div>
               </motion.div>
 
-              {/* 📌 ডেক্সটপ লেআউট ঠিক করতে lg:-mt-12 এবং ফ্লোটিং যোগ করা হয়েছে */}
-              <motion.div variants={fadeUp} className="col-span-1 lg:col-span-5 flex justify-center lg:justify-end mt-8 lg:-mt-12 desktop-float">
+              {/* 📌 ডেক্সটপ লেআউট ঠিক করতে lg:-mt-28 করা হয়েছে যাতে আরও উপরে ওঠে এবং অন্য কিছু চেঞ্জ না হয় */}
+              <motion.div variants={fadeUp} className="col-span-1 lg:col-span-5 flex justify-center lg:justify-end mt-8 lg:-mt-28 desktop-float relative z-20">
                 <div className="flex flex-row flex-wrap justify-center lg:flex-col gap-3 md:gap-4 text-xs md:text-sm font-medium text-gray-500 dark:text-gray-400">
                   {/* 📌 SYSTEMATIC DYNAMIC SOCIALS RENDERING */}
                   {activeSocials.map((item, idx) => (
@@ -342,7 +353,6 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                      </div>
                    </div>
                    <div className="relative z-10 mt-auto">
-                     {/* 📌 এখানে lastName ডাইনামিক করা হয়েছে */}
                      <p className="text-white/90 font-mono text-xs sm:text-sm tracking-wide">Hi, I'm {lastName} 👋</p>
                    </div>
                  </>
@@ -497,23 +507,37 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
         </motion.section>
 
         {/* ================= WORKING PROCESS SECTION ================= */}
-        {/* 📌 এখানে অ্যানিমেশন একবার (once:true) এবং সিরিয়ালি হওয়ার জন্য processStagger ব্যবহার করা হয়েছে */}
-        <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }} variants={processStagger} className="py-20 md:py-32 border-t border-gray-200/50 dark:border-gray-800/50" id="process">
-          <div className="text-center mb-16 md:mb-20">
-            <motion.h2 variants={processCard} className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 text-black dark:text-white">
+        {/* 📌 এখানে ফ্লো-অ্যানিমেশন (একটা থেকে আরেকটায় যাওয়ার ইফেক্ট) অ্যাড করা হয়েছে */}
+        <section className="py-20 md:py-32 border-t border-gray-200/50 dark:border-gray-800/50" id="process">
+          <div className="text-center mb-16 md:mb-24">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 text-black dark:text-white">
               Working Process
-            </motion.h2>
-            <motion.div variants={processCard} className="h-1 w-16 bg-blue-600 dark:bg-blue-500 mx-auto rounded-full mb-6"></motion.div>
-            <motion.p variants={processCard} className="text-sm md:text-base text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
+            </h2>
+            <div className="h-1 w-16 bg-blue-600 dark:bg-blue-500 mx-auto rounded-full mb-6"></div>
+            <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
               A transparent, step-by-step approach to ensure your project is delivered successfully from concept to deployment.
-            </motion.p>
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 relative">
-            <div className="hidden lg:block absolute top-12 left-[10%] right-[10%] h-[2px] bg-gray-200 dark:bg-gray-800 z-0"></div>
+          <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
+            
+            {/* 📌 ডেস্কটপের জন্য অ্যানিমেটেড কানেক্টিং লাইন */}
+            <div className="hidden lg:block absolute top-10 left-[12%] right-[12%] h-[2px] bg-gray-200 dark:bg-gray-800 z-0 overflow-hidden rounded-full">
+              <motion.div
+                initial={{ width: "0%" }}
+                whileInView={{ width: "100%" }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 2.4, ease: "linear" }}
+                className="h-full bg-blue-600 dark:bg-blue-500"
+              />
+            </div>
 
-            <motion.div variants={processCard} className="relative z-10 flex flex-col items-center text-center group">
-              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#111] border border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 transition-colors duration-300">
+            {/* 📌 স্টেপ ১ */}
+            <motion.div 
+              initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={processStepVariant(0)} 
+              className="relative z-10 flex flex-col items-center text-center group"
+            >
+              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#111] border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(37,99,235,0.2)]">
                 <Lightbulb className="w-8 h-8 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="text-lg font-bold text-black dark:text-white mb-3">1. Discovery & Planning</h3>
@@ -522,8 +546,12 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               </p>
             </motion.div>
 
-            <motion.div variants={processCard} className="relative z-10 flex flex-col items-center text-center group">
-              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#111] border border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 transition-colors duration-300">
+            {/* 📌 স্টেপ ২ */}
+            <motion.div 
+              initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={processStepVariant(1)} 
+              className="relative z-10 flex flex-col items-center text-center group"
+            >
+              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#111] border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(37,99,235,0.2)]">
                 <PenTool className="w-8 h-8 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="text-lg font-bold text-black dark:text-white mb-3">2. UI/UX & SEO Strategy</h3>
@@ -532,8 +560,12 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               </p>
             </motion.div>
 
-            <motion.div variants={processCard} className="relative z-10 flex flex-col items-center text-center group">
-              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#111] border border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 transition-colors duration-300">
+            {/* 📌 স্টেপ ৩ */}
+            <motion.div 
+              initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={processStepVariant(2)} 
+              className="relative z-10 flex flex-col items-center text-center group"
+            >
+              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#111] border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(37,99,235,0.2)]">
                 <Code2 className="w-8 h-8 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="text-lg font-bold text-black dark:text-white mb-3">3. Development</h3>
@@ -542,8 +574,12 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               </p>
             </motion.div>
 
-            <motion.div variants={processCard} className="relative z-10 flex flex-col items-center text-center group">
-              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#111] border border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 transition-colors duration-300">
+            {/* 📌 স্টেপ ৪ */}
+            <motion.div 
+              initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={processStepVariant(3)} 
+              className="relative z-10 flex flex-col items-center text-center group"
+            >
+              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#111] border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(37,99,235,0.2)]">
                 <Rocket className="w-8 h-8 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="text-lg font-bold text-black dark:text-white mb-3">4. Testing & Launch</h3>
@@ -552,7 +588,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               </p>
             </motion.div>
           </div>
-        </motion.section>
+        </section>
 
         {/* ================= PROJECTS SECTION ================= */}
         <motion.section className="py-20 md:py-40 border-t border-gray-200/50 dark:border-gray-800/50" id="projects">
@@ -760,7 +796,6 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               ))}
             </div>
 
-            {/* 🌟 REVIEW ADD BUTTON - 📌 হুবহু View All Articles বাটনের স্টাইল দেওয়া হলো */}
             <motion.div variants={fadeUp} className="mt-8 md:mt-12 flex justify-center w-full relative z-10">
               <Link href="/leave-review" className="group flex items-center gap-2 px-6 md:px-8 py-3 md:py-4 bg-gray-50 dark:bg-[#111] text-black dark:text-white font-semibold text-sm md:text-base rounded-full hover:bg-gray-100 dark:hover:bg-[#222] transition-all border border-gray-200 dark:border-gray-800">
                  <Plus className="w-4 h-4 text-blue-600 dark:text-blue-400" /> 
@@ -852,12 +887,12 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
 
         {/* ================= CALL TO ACTION (CTA) SECTION ================= */}
         <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeUp} className="py-20 md:py-32" id="cta">
-          {/* 📌 Glassmorphism Design: ডার্ক ও লাইট দুই মোডেই সুন্দরভাবে মানিয়ে নেওয়ার জন্য ডিজাইনটি পরিবর্তন করা হয়েছে */}
-          <div className="w-full bg-white/20 dark:bg-black/20 backdrop-blur-xl border border-white/30 dark:border-white/10 rounded-[2rem] md:rounded-[3rem] p-10 md:p-20 text-center relative overflow-hidden shadow-xl dark:shadow-[0_8px_30px_-15px_rgba(0,0,0,0.7)]">
+          {/* 📌 Real Glassmorphism Design: কোন মাল্টি-কালার ছাড়া একদম পিওর ফ্রস্টেড গ্লাস ইফেক্ট */}
+          <div className="w-full relative rounded-[2rem] md:rounded-[3rem] p-10 md:p-20 text-center overflow-hidden bg-black/5 dark:bg-white/5 backdrop-blur-2xl border border-black/10 dark:border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.05)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.3)]">
             
-            {/* 🌟 Animated Glowing Blobs for Glass Effect */}
-            <div className="absolute top-[-10%] right-[-5%] w-60 h-60 bg-blue-500/30 rounded-full blur-3xl pointer-events-none"></div>
-            <div className="absolute bottom-[-10%] left-[-5%] w-60 h-60 bg-purple-500/30 rounded-full blur-3xl pointer-events-none"></div>
+            {/* 🌟 Subtle Light Reflection for Glass (No solid colors, just soft white/black glow) */}
+            <div className="absolute top-[-20%] left-[-10%] w-72 h-72 bg-white/40 dark:bg-white/10 rounded-full blur-[80px] pointer-events-none"></div>
+            <div className="absolute bottom-[-20%] right-[-10%] w-72 h-72 bg-black/10 dark:bg-black/40 rounded-full blur-[80px] pointer-events-none"></div>
             
             <div className="relative z-10 max-w-3xl mx-auto">
               <h2 className="text-3xl md:text-5xl font-bold text-black dark:text-white mb-6 tracking-tight leading-tight">
