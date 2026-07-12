@@ -66,25 +66,27 @@ export default function TermsClient() {
   ];
 
   return (
-    <main className="relative min-h-screen pt-32 pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto">
+    // 📌 Main Container (Added missing background, text colors, and selection color)
+    <main className="relative min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] pt-32 pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto selection:bg-blue-500/30">
       
-      {/* 🎨 Animated Background Elements */}
+      {/* 🎨 Animated Background Elements (Aligned perfectly with other pages) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
         <motion.div 
           animate={{ y: [0, -20, 0], opacity: [0.5, 0.8, 0.5] }}
           transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-40 right-[-10%] w-[300px] h-[300px] bg-blue-500/5 blur-[120px] rounded-full"
+          className="absolute top-40 left-[-10%] w-[300px] h-[300px] bg-blue-500/10 blur-[120px] rounded-full"
         />
         <motion.div 
           animate={{ y: [0, 20, 0], opacity: [0.5, 0.8, 0.5] }}
           transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-40 left-[-10%] w-[300px] h-[300px] bg-emerald-500/5 blur-[120px] rounded-full"
+          className="absolute bottom-40 right-[-10%] w-[300px] h-[300px] bg-purple-500/10 blur-[120px] rounded-full"
         />
       </div>
 
       {/* 🌟 Header */}
       <motion.div initial="hidden" animate="visible" variants={stagger} className="max-w-3xl mb-16 md:mb-24 relative z-10">
-        <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-xs font-semibold mb-6 text-gray-600 dark:text-gray-400 shadow-sm">
+        {/* 📌 Added w-fit and removed extra shadow-sm to match other pages */}
+        <motion.div variants={fadeUp} className="inline-flex items-center w-fit gap-2 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-xs font-semibold mb-6 text-gray-600 dark:text-gray-400">
           <Scale className="w-3.5 h-3.5" /> Legal Document — Updated: June 2026
         </motion.div>
         <motion.h1 variants={fadeUp} className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-black dark:text-white leading-[1.1] mb-6">
