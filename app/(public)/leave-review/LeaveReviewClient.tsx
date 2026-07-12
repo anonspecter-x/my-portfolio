@@ -1,16 +1,21 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { submitPublicReview } from "./actions"; 
 import { motion } from "framer-motion";
 import { 
   Send, User, MessageSquareQuote, CheckCircle2, 
-  Briefcase, Star, ImagePlus, ShieldCheck, Quote, Sparkles
+  Briefcase, Star, ImagePlus, ShieldCheck, Quote, Sparkles, Rocket
 } from "lucide-react";
 import imageCompression from 'browser-image-compression';
 import { Turnstile } from '@marsidev/react-turnstile'; 
 
-export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteKey: string }) {
+interface LeaveReviewClientProps {
+  turnstileSiteKey: string;
+  testimonials: any[];
+}
+
+export default function LeaveReviewClient({ turnstileSiteKey, testimonials }: LeaveReviewClientProps) {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [rating, setRating] = useState(5);
@@ -18,6 +23,46 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   
   const formRef = useRef<HTMLFormElement>(null);
+
+  // 📌 Testimonials Marquee Logic (Homepage Style)
+  const baseTestimonials = testimonials || [];
+  const desktopTestimonials = [...baseTestimonials, ...baseTestimonials]; 
+  const mobileTestimonials = [...baseTestimonials, ...baseTestimonials, ...baseTestimonials, ...baseTestimonials];
+
+  const mobileScrollerRef = useRef<HTMLDivElement>(null);
+  const [isMobileInteracting, setIsMobileInteracting] = useState(false);
+  const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const scroller = mobileScrollerRef.current;
+    if (!scroller || mobileTestimonials.length === 0) return;
+
+    let animationId: number;
+    const scroll = () => {
+      if (!isMobileInteracting) {
+        scroller.scrollLeft += 1; 
+        if (scroller.scrollLeft >= scroller.scrollWidth / 2) {
+          scroller.scrollLeft -= scroller.scrollWidth / 2;
+        }
+      }
+      animationId = requestAnimationFrame(scroll);
+    };
+
+    animationId = requestAnimationFrame(scroll);
+    return () => cancelAnimationFrame(animationId);
+  }, [isMobileInteracting, mobileTestimonials.length]);
+
+  const handleTouchStart = () => {
+    setIsMobileInteracting(true);
+    if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+  };
+
+  const handleTouchEnd = () => {
+    if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+    scrollTimeout.current = setTimeout(() => {
+      setIsMobileInteracting(false);
+    }, 800);
+  };
 
   const handleAction = async (formData: FormData) => {
     if (!turnstileToken) {
@@ -75,9 +120,24 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
   };
 
   return (
-    // 📌 Main Container (Matched exactly with Contact & Blog pages spacing and classes)
+    // 📌 Main Container
     <main className="relative min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] pt-32 pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto overflow-hidden selection:bg-blue-500/30">
       
+      {/* 🎨 Testimonials Custom CSS */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes scroll-marquee {
+          from { transform: translateX(0); }
+          to { transform: translateX(calc(-100% - 1.5rem)); } 
+        }
+        .animate-marquee {
+          animation: scroll-marquee 40s linear infinite;
+        }
+        .pause-on-hover:hover .animate-marquee,
+        .pause-on-hover:focus-within .animate-marquee {
+          animation-play-state: paused;
+        }
+      `}} />
+
       {/* 🎨 Animated Background Elements */}
       <motion.div 
         animate={{ y: [0, -20, 0], opacity: [0.5, 0.8, 0.5] }}
@@ -90,7 +150,7 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
         className="absolute bottom-40 right-[-10%] w-[300px] h-[300px] bg-purple-500/10 blur-[120px] rounded-full pointer-events-none -z-10"
       />
 
-      {/* 🌟 Header Section (Exactly synchronized with other pages) */}
+      {/* 🌟 Header Section */}
       <motion.div 
         initial="hidden" animate="visible" variants={stagger}
         className="max-w-3xl mb-16 md:mb-24"
@@ -107,38 +167,26 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
         </motion.p>
       </motion.div>
 
-      {/* 🌟 Grid Layout */}
+      {/* 🌟 Grid Layout for Guidelines & Form */}
       <motion.div 
         initial="hidden" animate="visible" variants={stagger}
         className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch"
       >
         
-        {/* 🌟 Left Side: Info & Guidelines */}
-        <motion.div 
-          variants={fadeUp}
-          className="lg:col-span-5 h-full"
-        >
-          <div className="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 p-6 md:p-8 rounded-[2rem] shadow-sm h-full flex flex-col">
+        {/* 🌟 Left Side: Info & Guidelines (Updated Layout) */}
+        <motion.div variants={fadeUp} className="lg:col-span-5 h-full flex flex-col gap-6">
+          
+          {/* Box 1: Review Guidelines (Merged 3 points) */}
+          <div className="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 p-6 md:p-8 rounded-[2rem] shadow-sm flex flex-col">
             <h3 className="text-xl font-bold text-black dark:text-white mb-6">Review Guidelines</h3>
-            
             <div className="space-y-6">
               <div className="flex items-start gap-4 group">
                 <div className="w-12 h-12 bg-gray-50 dark:bg-[#111] border border-gray-100 dark:border-gray-800 text-black dark:text-white rounded-xl flex items-center justify-center shrink-0 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 group-hover:text-blue-600 transition-colors">
                   <Quote className="w-5 h-5" />
                 </div>
                 <div className="flex flex-col justify-center">
-                  <h4 className="text-sm font-bold text-black dark:text-white mb-1">Honesty is Appreciated</h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Describe what you liked most about our collaboration, the project quality, and communication.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4 group">
-                <div className="w-12 h-12 bg-gray-50 dark:bg-[#111] border border-gray-100 dark:border-gray-800 text-black dark:text-white rounded-xl flex items-center justify-center shrink-0 group-hover:bg-green-50 dark:group-hover:bg-green-900/20 group-hover:text-green-600 transition-colors">
-                  <Briefcase className="w-5 h-5" />
-                </div>
-                <div className="flex flex-col justify-center">
-                  <h4 className="text-sm font-bold text-black dark:text-white mb-1">Specific Details</h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Highlight specific aspects of our work together, such as technical expertise, or problem-solving.</p>
+                  <h4 className="text-sm font-bold text-black dark:text-white mb-1">Honesty & Specifics</h4>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Describe your authentic experience, highlighting specific aspects of our collaboration and project quality.</p>
                 </div>
               </div>
               
@@ -157,19 +205,43 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <div className="flex flex-col justify-center">
-                  <h4 className="text-sm font-bold text-black dark:text-white mb-1">Security & Verification</h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">All reviews pass through a quick security check to maintain a genuine and spam-free portfolio.</p>
+                  <h4 className="text-sm font-bold text-black dark:text-white mb-1">Security Verification</h4>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">All reviews pass through a quick security check to maintain a genuine and spam-free portfolio showcase.</p>
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Box 2: What Happens Next (New Section with 2 points) */}
+          <div className="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 p-6 md:p-8 rounded-[2rem] shadow-sm flex flex-col">
+            <h3 className="text-xl font-bold text-black dark:text-white mb-6">What Happens Next?</h3>
+            <div className="space-y-6">
+              <div className="flex items-start gap-4 group">
+                <div className="w-12 h-12 bg-gray-50 dark:bg-[#111] border border-gray-100 dark:border-gray-800 text-black dark:text-white rounded-xl flex items-center justify-center shrink-0 group-hover:bg-yellow-50 dark:group-hover:bg-yellow-900/20 group-hover:text-yellow-600 transition-colors">
+                  <Star className="w-5 h-5" />
+                </div>
+                <div className="flex flex-col justify-center">
+                  <h4 className="text-sm font-bold text-black dark:text-white mb-1">Portfolio Showcase</h4>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Verified reviews will be proudly displayed in the marquee carousel below and directly on my homepage.</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-4 group">
+                <div className="w-12 h-12 bg-gray-50 dark:bg-[#111] border border-gray-100 dark:border-gray-800 text-black dark:text-white rounded-xl flex items-center justify-center shrink-0 group-hover:bg-green-50 dark:group-hover:bg-green-900/20 group-hover:text-green-600 transition-colors">
+                  <Rocket className="w-5 h-5" />
+                </div>
+                <div className="flex flex-col justify-center">
+                  <h4 className="text-sm font-bold text-black dark:text-white mb-1">Continuous Improvement</h4>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Your valuable insights help me refine my process and deliver even better digital solutions in the future.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </motion.div>
 
         {/* 🌟 Right Side: The Form */}
-        <motion.div 
-          variants={fadeUp}
-          className="lg:col-span-7 h-full"
-        >
+        <motion.div variants={fadeUp} className="lg:col-span-7 h-full">
           <div className="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 p-6 md:p-10 rounded-[2rem] shadow-sm h-full flex flex-col relative overflow-hidden">
             <h3 className="text-xl font-bold text-black dark:text-white mb-6">Submit Feedback</h3>
 
@@ -314,6 +386,134 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
           </div>
         </motion.div>
       </motion.div>
+
+      {/* ================= 🌟 TESTIMONIALS CAROUSEL (Homepage Style) ================= */}
+      {baseTestimonials.length > 0 && (
+        <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={stagger} className="pt-20 md:pt-32 mt-16 md:mt-24 border-t border-gray-200/50 dark:border-gray-800/50 overflow-hidden">
+          
+          <div className="mb-12 md:mb-16 text-center">
+            <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 md:mb-6 text-black dark:text-white">
+              Recent Feedback
+            </motion.h2>
+            <motion.p variants={fadeUp} className="text-sm md:text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              See what others are saying about their collaboration experience.
+            </motion.p>
+          </div>
+
+          {/* Desktop Marquee */}
+          <div className="hidden md:flex relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] pause-on-hover pt-4 pb-12">
+            <div className="flex shrink-0 animate-marquee gap-6">
+              {desktopTestimonials.map((testimonial, idx) => (
+                <div 
+                  key={`desktop1-${testimonial._id}-${idx}`} 
+                  className="w-[400px] shrink-0 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/5 rounded-3xl p-8 shadow-sm flex flex-col justify-between relative group hover:border-blue-500/30 dark:hover:border-blue-400/30 transition-colors whitespace-normal text-left"
+                >
+                  <div className="absolute top-6 right-6 text-gray-100 dark:text-[#151515] group-hover:text-blue-50 dark:group-hover:text-blue-900/10 transition-all duration-300 group-hover:scale-110 group-hover:-rotate-3">
+                    <Quote className="w-16 h-16" />
+                  </div>
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-1 mb-5">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className={`w-4 h-4 ${i < testimonial.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-200 dark:text-gray-800"}`} />
+                      ))}
+                    </div>
+                    <p className="text-base text-gray-600 dark:text-gray-400 leading-relaxed font-medium mb-8 line-clamp-4">
+                      "{testimonial.review}"
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4 mt-auto relative z-10 pt-6 border-t border-gray-100 dark:border-white/5">
+                    <img 
+                      src={testimonial.photoUrl || "https://via.placeholder.com/150"} 
+                      alt={testimonial.name} 
+                      className="w-12 h-12 rounded-full object-cover border border-gray-200 dark:border-gray-700 shrink-0 pointer-events-none" 
+                    />
+                    <div>
+                      <h4 className="font-bold text-black dark:text-white text-base">{testimonial.name}</h4>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{testimonial.role}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div aria-hidden="true" className="flex shrink-0 animate-marquee gap-6 ml-6">
+              {desktopTestimonials.map((testimonial, idx) => (
+                <div 
+                  key={`desktop2-${testimonial._id}-${idx}`} 
+                  className="w-[400px] shrink-0 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/5 rounded-3xl p-8 shadow-sm flex flex-col justify-between relative group hover:border-blue-500/30 dark:hover:border-blue-400/30 transition-colors whitespace-normal text-left"
+                >
+                  <div className="absolute top-6 right-6 text-gray-100 dark:text-[#151515] group-hover:text-blue-50 dark:group-hover:text-blue-900/10 transition-all duration-300 group-hover:scale-110 group-hover:-rotate-3">
+                    <Quote className="w-16 h-16" />
+                  </div>
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-1 mb-5">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className={`w-4 h-4 ${i < testimonial.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-200 dark:text-gray-800"}`} />
+                      ))}
+                    </div>
+                    <p className="text-base text-gray-600 dark:text-gray-400 leading-relaxed font-medium mb-8 line-clamp-4">
+                      "{testimonial.review}"
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4 mt-auto relative z-10 pt-6 border-t border-gray-100 dark:border-white/5">
+                    <img 
+                      src={testimonial.photoUrl || "https://via.placeholder.com/150"} 
+                      alt={testimonial.name} 
+                      className="w-12 h-12 rounded-full object-cover border border-gray-200 dark:border-gray-700 shrink-0 pointer-events-none" 
+                    />
+                    <div>
+                      <h4 className="font-bold text-black dark:text-white text-base">{testimonial.name}</h4>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{testimonial.role}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile Auto-Scroller */}
+          <div 
+            ref={mobileScrollerRef}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            className="flex md:hidden relative w-full overflow-x-auto [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)] pt-4 pb-12 gap-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {mobileTestimonials.map((testimonial, idx) => (
+              <div 
+                key={`mobile-${testimonial._id}-${idx}`} 
+                className="w-[280px] shrink-0 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/5 rounded-3xl p-6 shadow-sm flex flex-col justify-between relative whitespace-normal text-left"
+              >
+                <div className="absolute top-6 right-6 text-gray-100 dark:text-[#151515] transition-colors">
+                  <Quote className="w-12 h-12" />
+                </div>
+                <div className="relative z-10">
+                  <div className="flex items-center gap-1 mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className={`w-3.5 h-3.5 ${i < testimonial.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-200 dark:text-gray-800"}`} />
+                    ))}
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed font-medium mb-6 line-clamp-4">
+                    "{testimonial.review}"
+                  </p>
+                </div>
+                <div className="flex items-center gap-4 mt-auto relative z-10 pt-5 border-t border-gray-100 dark:border-white/5">
+                  <img 
+                    src={testimonial.photoUrl || "https://via.placeholder.com/150"} 
+                    alt={testimonial.name} 
+                    className="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-gray-700 shrink-0 pointer-events-none" 
+                  />
+                  <div>
+                    <h4 className="font-bold text-black dark:text-white text-sm">{testimonial.name}</h4>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{testimonial.role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </motion.section>
+      )}
+
     </main>
   );
 }

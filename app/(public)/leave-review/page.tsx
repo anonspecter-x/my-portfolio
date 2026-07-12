@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { MongoClient } from "mongodb";
 import LeaveReviewClient from "./LeaveReviewClient";
 
 export function generateMetadata(): Metadata {
@@ -54,11 +55,31 @@ export function generateMetadata(): Metadata {
   };
 }
 
-export default function LeaveReviewPage() {
+export default async function LeaveReviewPage() {
   // 📌 .env.local থেকে পাবলিক কী (Site Key) রিসিভ করা
-  // লক্ষ্য রাখবেন: এটি SITE_KEY, SECRET_KEY ক্লায়েন্টে পাঠানো যাবে না।
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY as string;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.meetsakib.com";
+
+  // 📌 ডাটাবেজ থেকে হোমপেজের মতো Testimonials ফেচ করা
+  let formattedTestimonials: any[] = [];
+  try {
+    const client = await MongoClient.connect(process.env.MONGODB_URI as string);
+    const db = client.db();
+    const rawTestimonials = await db.collection("testimonials").find({}).sort({ priority: -1, createdAt: -1 }).toArray();
+    await client.close();
+
+    formattedTestimonials = rawTestimonials.map(t => ({
+      _id: t._id.toString(),
+      name: t.name,
+      role: t.role,
+      review: t.review,
+      rating: t.rating,
+      priority: t.priority,
+      photoUrl: t.photoUrl || null
+    }));
+  } catch (error) {
+    console.error("Failed to fetch testimonials for Leave Review page:", error);
+  }
 
   // 🌟 Google Rich Results / Schema Markup
   const jsonLd = {
@@ -83,8 +104,11 @@ export default function LeaveReviewPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       
-      {/* 📌 Main Client Component */}
-      <LeaveReviewClient turnstileSiteKey={turnstileSiteKey} />
+      {/* 📌 Main Client Component with testimonials passed as props */}
+      <LeaveReviewClient 
+        turnstileSiteKey={turnstileSiteKey} 
+        testimonials={formattedTestimonials} 
+      />
     </>
   );
 }
