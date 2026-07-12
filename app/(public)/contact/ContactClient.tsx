@@ -198,7 +198,12 @@ export default function ContactClient({ contactData }: ContactClientProps) {
           <div className="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 p-6 md:p-10 rounded-[2rem] shadow-sm h-full flex flex-col relative overflow-hidden">
             <h3 className="text-xl font-bold text-black dark:text-white mb-6">Send a Message</h3>
 
-            <form ref={formRef} action={handleAction} className="space-y-5 flex flex-col flex-1 relative z-10">
+            <form 
+              ref={formRef} 
+              action={handleAction} 
+              onSubmit={() => setStatus("loading")}
+              className="space-y-5 flex flex-col flex-1 relative z-10"
+            >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 
                 <div className="space-y-2">
@@ -240,7 +245,7 @@ export default function ContactClient({ contactData }: ContactClientProps) {
                   className={`w-full flex items-center justify-center gap-2 font-semibold text-sm px-6 py-3.5 rounded-xl transition-all duration-300 shadow-sm ${
                     status === "success" 
                     ? "bg-green-500 text-white" 
-                    : "bg-black dark:bg-white text-white dark:text-black hover:scale-[1.02] active:scale-95 disabled:opacity-70 disabled:hover:scale-100"
+                    : "bg-black dark:bg-white text-white dark:text-black hover:scale-[1.02] active:scale-95 disabled:opacity-70 disabled:hover:scale-100 disabled:cursor-not-allowed"
                   }`}
                 >
                   {status === "loading" && <span className="animate-spin w-4 h-4 border-2 border-white/30 border-t-white rounded-full"></span>}
