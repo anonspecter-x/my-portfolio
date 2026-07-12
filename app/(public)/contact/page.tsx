@@ -50,6 +50,7 @@ async function getContactData() {
 
 export default async function ContactPage() {
   const data = await getContactData();
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
   
-  return <ContactClient contactData={data} />;
+  return <ContactClient contactData={data} turnstileSiteKey={siteKey} />;
 }

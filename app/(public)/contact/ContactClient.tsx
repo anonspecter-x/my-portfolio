@@ -5,8 +5,9 @@ import { sendMessage } from "./actions";
 import { motion } from "framer-motion";
 import { 
   Mail, Send, User, MessageSquare, CheckCircle2, 
-  MapPin, Phone 
+  MapPin, Phone, ShieldCheck 
 } from "lucide-react";
+import { Turnstile } from '@marsidev/react-turnstile';
 
 // ==========================================
 // 🌟 SOCIAL ICONS (From React Icons FA)
@@ -23,22 +24,33 @@ import {
 
 interface ContactClientProps {
   contactData: any;
+  turnstileSiteKey: string;
 }
 
-export default function ContactClient({ contactData }: ContactClientProps) {
-  const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
+export default function ContactClient({ contactData, turnstileSiteKey }: ContactClientProps) {
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   const handleAction = async (formData: FormData) => {
-    setStatus("loading");
+    if (!turnstileToken) {
+      setErrorMessage("Please complete the security check.");
+      setStatus("error");
+      return;
+    }
+
     try {
+      formData.set("cf-turnstile-response", turnstileToken);
       await sendMessage(formData);
+      
       setStatus("success");
       formRef.current?.reset();
       setTimeout(() => setStatus("idle"), 4000);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      setStatus("idle");
+      setErrorMessage(error.message || "Something went wrong. Please try again.");
+      setStatus("error");
     }
   };
 
@@ -201,7 +213,15 @@ export default function ContactClient({ contactData }: ContactClientProps) {
             <form 
               ref={formRef} 
               action={handleAction} 
-              onSubmit={() => setStatus("loading")}
+              onSubmit={(e) => {
+                if (!turnstileToken) {
+                  e.preventDefault();
+                  setErrorMessage("Please complete the security check.");
+                  setStatus("error");
+                } else {
+                  setStatus("loading");
+                }
+              }}
               className="space-y-5 flex flex-col flex-1 relative z-10"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -237,11 +257,38 @@ export default function ContactClient({ contactData }: ContactClientProps) {
                 ></textarea>
               </div>
 
+              {/* Cloudflare Turnstile */}
+              <div className="pt-2 flex flex-col items-start gap-2">
+                <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5" /> Security Verification
+                </label>
+                <div className="rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-800 flex bg-gray-50 dark:bg-[#050505] w-fit">
+                  <Turnstile 
+                    siteKey={turnstileSiteKey} 
+                    onSuccess={(token) => {
+                      setTurnstileToken(token);
+                      setErrorMessage("");
+                    }}
+                    onError={() => {
+                      setErrorMessage("Security verification failed.");
+                      setStatus("error");
+                    }}
+                    options={{ theme: 'auto' }}
+                  />
+                </div>
+              </div>
+
+              {status === "error" && errorMessage && (
+                <p className="text-sm font-bold text-red-500 bg-red-50 dark:bg-red-950/20 px-4 py-3 rounded-xl border border-red-200 dark:border-red-900/50">
+                  {errorMessage}
+                </p>
+              )}
+
               {/* Full width button */}
               <div className="pt-2 mt-auto">
                 <button 
                   type="submit" 
-                  disabled={status === "loading" || status === "success"}
+                  disabled={status === "loading" || status === "success" || !turnstileToken}
                   className={`w-full flex items-center justify-center gap-2 font-semibold text-sm px-6 py-3.5 rounded-xl transition-all duration-300 shadow-sm ${
                     status === "success" 
                     ? "bg-green-500 text-white" 
@@ -251,6 +298,7 @@ export default function ContactClient({ contactData }: ContactClientProps) {
                   {status === "loading" && <span className="animate-spin w-4 h-4 border-2 border-white/30 border-t-white rounded-full"></span>}
                   {status === "success" && <><CheckCircle2 className="w-4 h-4" /> Transmission Successful!</>}
                   {status === "idle" && <><Send className="w-4 h-4" /> Initialize Project</>}
+                  {status === "error" && <><Send className="w-4 h-4" /> Try Again</>}
                 </button>
               </div>
             </form>
