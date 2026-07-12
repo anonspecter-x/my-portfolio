@@ -180,7 +180,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
   return (
     <main className="relative min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] transition-colors duration-1000 ease-in-out selection:bg-blue-500/30 font-sans overflow-clip">
       
-      {/* 🌟 Custom CSS for Marquee & Floating Animations */}
+      {/* 🌟 Custom CSS for Marquee, Floating & New Blob Animations */}
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes scroll-marquee {
           from { transform: translateX(0); }
@@ -196,12 +196,22 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
           50% { transform: translate(-2px, -12px); }
           75% { transform: translate(-4px, -4px); }
         }
+        /* 📌 New Blob Animation for Glassmorphism CTA */
+        @keyframes blob-bounce {
+          0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
+          50% { transform: translateY(-20px) scale(1.1); opacity: 1; }
+        }
         .animate-marquee {
           animation: scroll-marquee 40s linear infinite;
         }
-        /* Mobile Speed */
         .animate-brand-marquee {
           animation: scroll-brand-marquee 40s linear infinite; 
+        }
+        .animate-blob {
+          animation: blob-bounce 7s infinite ease-in-out;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
         }
         
         /* Desktop Speeds & Animations */
@@ -210,7 +220,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
             animation: scroll-brand-marquee 90s linear infinite;
           }
           .desktop-float {
-            animation: float-anim 5s ease-in-out infinite; 
+            animation: float-anim 6s ease-in-out infinite; 
           }
         }
 
@@ -254,7 +264,8 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                   Specializing in the MERN stack and Next.js, I engineer high-performance, SEO-optimized, and secure web solutions for modern businesses and visionary brands.
                 </p>
                 <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-6 w-full sm:w-auto">
-                  <Link href="/contact" className="group relative px-6 md:px-8 py-3.5 bg-black dark:bg-white text-white dark:text-black font-semibold rounded-full overflow-hidden transition-all hover:scale-[1.02] active:scale-95 w-full sm:w-auto flex justify-center text-[13px] md:text-sm shadow-md">
+                  {/* 📌 New Added: Glowing Shadow Animation on Hover */}
+                  <Link href="/contact" className="group relative px-6 md:px-8 py-3.5 bg-black dark:bg-white text-white dark:text-black font-semibold rounded-full overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-95 w-full sm:w-auto flex justify-center text-[13px] md:text-sm shadow-[0_4px_14px_0_rgba(0,0,0,0.1)] dark:shadow-[0_4px_14px_0_rgba(255,255,255,0.1)] hover:shadow-[0_0_20px_rgba(0,0,0,0.2)] dark:hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]">
                     <span className="relative z-10 flex items-center gap-2">
                       Start a Project <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" />
                     </span>
@@ -265,10 +276,8 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                 </div>
               </motion.div>
 
-              {/* 📌 ডেক্সটপ লেআউট ঠিক করতে lg:-mt-28 করা হয়েছে যাতে আরও উপরে ওঠে এবং অন্য কিছু চেঞ্জ না হয় */}
               <motion.div variants={fadeUp} className="col-span-1 lg:col-span-5 flex justify-center lg:justify-end mt-8 lg:-mt-28 desktop-float relative z-20">
                 <div className="flex flex-row flex-wrap justify-center lg:flex-col gap-3 md:gap-4 text-xs md:text-sm font-medium text-gray-500 dark:text-gray-400">
-                  {/* 📌 SYSTEMATIC DYNAMIC SOCIALS RENDERING */}
                   {activeSocials.map((item, idx) => (
                     <a key={idx} href={item.url} target="_blank" rel="noreferrer" className="group flex items-center gap-2.5 md:gap-3 hover:text-blue-600 dark:hover:text-blue-400 transition-colors bg-white/50 dark:bg-[#111]/50 lg:bg-transparent lg:dark:bg-transparent px-3 py-2 lg:p-0 rounded-full lg:rounded-none border border-gray-200/80 dark:border-gray-800/80 lg:border-none">
                       <span className="w-8 h-8 md:w-8 md:h-8 rounded-full border-none lg:border lg:border-solid border-gray-200 dark:border-gray-800 flex items-center justify-center group-hover:border-blue-600 dark:group-hover:border-blue-400 transition-colors bg-gray-100 dark:bg-[#222] lg:bg-transparent lg:dark:bg-transparent">
@@ -331,15 +340,17 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               <p className="text-sm md:text-lg text-gray-600 dark:text-gray-400 leading-relaxed mb-8 md:mb-10">
                 With over 4 years of professional experience, I bridge the gap between elegant user interfaces and robust backend architectures. From multi-tenant SaaS platforms to dynamic corporate systems, my focus is always on writing clean code, optimizing web performance, and delivering measurable business value.
               </p>
-              <button className="flex items-center justify-center mx-auto lg:mx-0 gap-2 px-6 py-3.5 border border-gray-300 dark:border-gray-700 rounded-full font-semibold md:font-medium text-[13px] md:text-sm hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all duration-300 w-full sm:w-auto shadow-sm">
-                <FileText className="w-4 h-4" /> Download Resume
+              {/* 📌 New Added: Icon Bounce on Hover */}
+              <button className="group flex items-center justify-center mx-auto lg:mx-0 gap-2 px-6 py-3.5 border border-gray-300 dark:border-gray-700 rounded-full font-semibold md:font-medium text-[13px] md:text-sm hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all duration-300 w-full sm:w-auto shadow-sm hover:shadow-md">
+                <FileText className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform duration-300" /> Download Resume
               </button>
             </motion.div>
             
+            {/* 📌 New Added: desktop-float class added to the image wrapper for breathing effect */}
             <motion.div 
               variants={fadeUp} 
               onClick={() => window.dispatchEvent(new Event("trigger-easter-egg"))}
-              className="order-1 lg:order-2 relative w-full aspect-[4/3] md:aspect-[4/3] rounded-3xl md:rounded-[2rem] bg-[#050505] border border-gray-800 p-5 md:p-8 shadow-2xl flex flex-col justify-between overflow-hidden group cursor-pointer"
+              className="order-1 lg:order-2 relative w-full aspect-[4/3] md:aspect-[4/3] rounded-3xl md:rounded-[2rem] bg-[#050505] border border-gray-800 p-5 md:p-8 shadow-2xl flex flex-col justify-between overflow-hidden group cursor-pointer desktop-float"
             >
                {settings?.developerPhoto ? (
                  <>
@@ -454,7 +465,8 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                   <motion.div 
                     key={skill._id} 
                     variants={fadeUp} 
-                    className="sticky top-[var(--sticky-top)] md:top-auto md:relative w-full p-5 md:p-6 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-2xl transition-colors shadow-lg md:shadow-sm mt-4 mb-[8vh] md:mb-0 z-10"
+                    // 📌 New Added: Hover transform and shadow for cards
+                    className="sticky top-[var(--sticky-top)] md:top-auto md:relative w-full p-5 md:p-6 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-2xl transition-all duration-300 shadow-lg md:shadow-sm hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_10px_30px_rgba(255,255,255,0.03)] mt-4 mb-[8vh] md:mb-0 z-10"
                     style={{ '--sticky-top': `calc(100px + ${idx * 16}px)` } as React.CSSProperties}
                   >
                     
@@ -507,7 +519,6 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
         </motion.section>
 
         {/* ================= WORKING PROCESS SECTION ================= */}
-        {/* 📌 এখানে ফ্লো-অ্যানিমেশন (একটা থেকে আরেকটায় যাওয়ার ইফেক্ট) অ্যাড করা হয়েছে */}
         <section className="py-20 md:py-32 border-t border-gray-200/50 dark:border-gray-800/50" id="process">
           <div className="text-center mb-16 md:mb-24">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 text-black dark:text-white">
@@ -521,7 +532,6 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
 
           <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
             
-            {/* 📌 ডেস্কটপের জন্য অ্যানিমেটেড কানেক্টিং লাইন */}
             <div className="hidden lg:block absolute top-10 left-[12%] right-[12%] h-[2px] bg-gray-200 dark:bg-gray-800 z-0 overflow-hidden rounded-full">
               <motion.div
                 initial={{ width: "0%" }}
@@ -532,12 +542,12 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               />
             </div>
 
-            {/* 📌 স্টেপ ১ */}
+            {/* 📌 New Added: group-hover:-translate-y-2 for process icon to pop up slightly */}
             <motion.div 
               initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={processStepVariant(0)} 
               className="relative z-10 flex flex-col items-center text-center group"
             >
-              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#111] border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(37,99,235,0.2)]">
+              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#111] border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(37,99,235,0.2)] group-hover:-translate-y-2">
                 <Lightbulb className="w-8 h-8 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="text-lg font-bold text-black dark:text-white mb-3">1. Discovery & Planning</h3>
@@ -546,12 +556,11 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               </p>
             </motion.div>
 
-            {/* 📌 স্টেপ ২ */}
             <motion.div 
               initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={processStepVariant(1)} 
               className="relative z-10 flex flex-col items-center text-center group"
             >
-              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#111] border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(37,99,235,0.2)]">
+              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#111] border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(37,99,235,0.2)] group-hover:-translate-y-2">
                 <PenTool className="w-8 h-8 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="text-lg font-bold text-black dark:text-white mb-3">2. UI/UX & SEO Strategy</h3>
@@ -560,12 +569,11 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               </p>
             </motion.div>
 
-            {/* 📌 স্টেপ ৩ */}
             <motion.div 
               initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={processStepVariant(2)} 
               className="relative z-10 flex flex-col items-center text-center group"
             >
-              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#111] border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(37,99,235,0.2)]">
+              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#111] border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(37,99,235,0.2)] group-hover:-translate-y-2">
                 <Code2 className="w-8 h-8 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="text-lg font-bold text-black dark:text-white mb-3">3. Development</h3>
@@ -574,12 +582,11 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               </p>
             </motion.div>
 
-            {/* 📌 স্টেপ ৪ */}
             <motion.div 
               initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={processStepVariant(3)} 
               className="relative z-10 flex flex-col items-center text-center group"
             >
-              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#111] border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(37,99,235,0.2)]">
+              <div className="w-20 h-20 rounded-full bg-white dark:bg-[#111] border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-sm mb-6 group-hover:border-blue-500 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(37,99,235,0.2)] group-hover:-translate-y-2">
                 <Rocket className="w-8 h-8 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="text-lg font-bold text-black dark:text-white mb-3">4. Testing & Launch</h3>
@@ -609,7 +616,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                  >
                    <Link 
                      href={project.link || "#"} 
-                     className="block w-full bg-white dark:bg-[#0a0a0a] rounded-[1.5rem] md:rounded-[2rem] border border-gray-100 dark:border-gray-800/60 p-5 sm:p-6 md:p-8 shadow-lg dark:shadow-[0_8px_30px_-15px_rgba(0,0,0,0.5)] hover:shadow-2xl mb-[8vh] md:mb-[12vh] relative group/card hover:-translate-y-1 transition-all duration-500 cursor-pointer overflow-hidden"
+                     className="block w-full bg-white dark:bg-[#0a0a0a] rounded-[1.5rem] md:rounded-[2rem] border border-gray-100 dark:border-gray-800/60 p-5 sm:p-6 md:p-8 shadow-lg dark:shadow-[0_8px_30px_-15px_rgba(0,0,0,0.5)] hover:shadow-2xl mb-[8vh] md:mb-[12vh] relative group/card hover:-translate-y-2 transition-all duration-500 cursor-pointer overflow-hidden"
                    >
                      <div className="flex flex-col lg:flex-row items-center gap-6 md:gap-10 lg:gap-12 w-full">
                        <div className="w-full lg:w-1/2 flex flex-col justify-center order-2 lg:order-1 text-left">
@@ -694,7 +701,8 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                     key={`desktop1-${testimonial._id}-${idx}`} 
                     className="w-[400px] shrink-0 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-3xl p-8 shadow-sm flex flex-col justify-between relative group hover:border-blue-500/30 dark:hover:border-blue-400/30 transition-colors whitespace-normal text-left"
                   >
-                    <div className="absolute top-6 right-6 text-gray-100 dark:text-[#151515] group-hover:text-blue-50 dark:group-hover:text-blue-900/10 transition-colors">
+                    {/* 📌 New Added: Quote icon rotates and scales slightly on hover */}
+                    <div className="absolute top-6 right-6 text-gray-100 dark:text-[#151515] group-hover:text-blue-50 dark:group-hover:text-blue-900/10 transition-all duration-300 group-hover:scale-110 group-hover:-rotate-3">
                       <Quote className="w-16 h-16" />
                     </div>
                     <div className="relative z-10">
@@ -728,7 +736,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                     key={`desktop2-${testimonial._id}-${idx}`} 
                     className="w-[400px] shrink-0 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-3xl p-8 shadow-sm flex flex-col justify-between relative group hover:border-blue-500/30 dark:hover:border-blue-400/30 transition-colors whitespace-normal text-left"
                   >
-                    <div className="absolute top-6 right-6 text-gray-100 dark:text-[#151515] group-hover:text-blue-50 dark:group-hover:text-blue-900/10 transition-colors">
+                    <div className="absolute top-6 right-6 text-gray-100 dark:text-[#151515] group-hover:text-blue-50 dark:group-hover:text-blue-900/10 transition-all duration-300 group-hover:scale-110 group-hover:-rotate-3">
                       <Quote className="w-16 h-16" />
                     </div>
                     <div className="relative z-10">
@@ -829,7 +837,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               {infiniteBlogs.map((blog, idx) => (
                 <div 
                   key={`blog-${blog._id || idx}-${idx}`} 
-                  className="w-[280px] md:w-[360px] shrink-0 group relative bg-white dark:bg-[#0a0a0a] border border-gray-100 dark:border-gray-800/80 rounded-2xl overflow-hidden hover:shadow-xl dark:hover:shadow-[0_8px_30px_-15px_rgba(255,255,255,0.05)] transition-all duration-300 flex flex-col"
+                  className="w-[280px] md:w-[360px] shrink-0 group relative bg-white dark:bg-[#0a0a0a] border border-gray-100 dark:border-gray-800/80 rounded-2xl overflow-hidden hover:shadow-xl dark:hover:shadow-[0_8px_30px_-15px_rgba(255,255,255,0.05)] transition-all duration-300 flex flex-col hover:-translate-y-2"
                 >
                   <Link href={`/blog/${blog.slug}`} className="block h-full flex flex-col">
                     <div className="relative aspect-[16/9] overflow-hidden bg-gray-50 dark:bg-[#111]">
@@ -887,12 +895,11 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
 
         {/* ================= CALL TO ACTION (CTA) SECTION ================= */}
         <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeUp} className="py-20 md:py-32" id="cta">
-          {/* 📌 Real Glassmorphism Design: কোন মাল্টি-কালার ছাড়া একদম পিওর ফ্রস্টেড গ্লাস ইফেক্ট */}
           <div className="w-full relative rounded-[2rem] md:rounded-[3rem] p-10 md:p-20 text-center overflow-hidden bg-black/5 dark:bg-white/5 backdrop-blur-2xl border border-black/10 dark:border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.05)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.3)]">
             
-            {/* 🌟 Subtle Light Reflection for Glass (No solid colors, just soft white/black glow) */}
-            <div className="absolute top-[-20%] left-[-10%] w-72 h-72 bg-white/40 dark:bg-white/10 rounded-full blur-[80px] pointer-events-none"></div>
-            <div className="absolute bottom-[-20%] right-[-10%] w-72 h-72 bg-black/10 dark:bg-black/40 rounded-full blur-[80px] pointer-events-none"></div>
+            {/* 🌟 New Added: animate-blob for a slow breathing effect on the glassmorphism blurs */}
+            <div className="absolute top-[-20%] left-[-10%] w-72 h-72 bg-white/40 dark:bg-white/10 rounded-full blur-[80px] pointer-events-none animate-blob"></div>
+            <div className="absolute bottom-[-20%] right-[-10%] w-72 h-72 bg-black/10 dark:bg-black/40 rounded-full blur-[80px] pointer-events-none animate-blob animation-delay-2000"></div>
             
             <div className="relative z-10 max-w-3xl mx-auto">
               <h2 className="text-3xl md:text-5xl font-bold text-black dark:text-white mb-6 tracking-tight leading-tight">
