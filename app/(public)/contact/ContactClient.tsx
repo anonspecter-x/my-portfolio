@@ -257,12 +257,12 @@ export default function ContactClient({ contactData, turnstileSiteKey }: Contact
                 ></textarea>
               </div>
 
-              {/* Cloudflare Turnstile */}
+              {/* Cloudflare Turnstile - 📌 Fixed Empty Space UI */}
               <div className="pt-2 flex flex-col items-start gap-2">
                 <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 flex items-center gap-1.5">
                   <ShieldCheck className="w-3.5 h-3.5" /> Security Verification
                 </label>
-                <div className="rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-800 flex bg-gray-50 dark:bg-[#050505] w-fit">
+                <div className="w-full flex items-center justify-center bg-gray-50 dark:bg-[#050505] border border-gray-200 dark:border-gray-800 rounded-xl py-3 shadow-sm overflow-hidden">
                   <Turnstile 
                     siteKey={turnstileSiteKey} 
                     onSuccess={(token) => {
