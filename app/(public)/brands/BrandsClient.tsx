@@ -13,7 +13,7 @@ import {
   Layers,
   Code2,
   Rocket,
-  Info // 📌 Added Info icon for the disclaimer
+  Info
 } from "lucide-react";
 import Link from "next/link";
 
@@ -48,24 +48,31 @@ export default function BrandsClient({ brands }: BrandsClientProps) {
     { id: 4, title: "Deployment & Scaling", desc: "Launching the product securely with zero downtime.", icon: Rocket }
   ];
 
+  // 📌 Duplicate Brands for seamless infinite marquee effect like Homepage
+  const displayBrands = [...brands, ...brands, ...brands];
+
   return (
     <main className="relative min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] pt-32 pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto overflow-hidden selection:bg-blue-500/30">
       
-      {/* 🎨 Custom Marquee CSS */}
-      <style jsx>{`
-        @keyframes marquee {
-          0% { transform: translateX(0%); }
-          100% { transform: translateX(-50%); }
+      {/* 🎨 Homepage Style Custom Marquee CSS */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes scroll-brand-marquee {
+          from { transform: translateX(0); }
+          to { transform: translateX(calc(-100% - 3rem)); } 
         }
-        .animate-marquee {
-          display: flex;
-          width: 200%;
-          animation: marquee 20s linear infinite;
+        .animate-brand-marquee {
+          animation: scroll-brand-marquee 40s linear infinite; 
         }
-        .animate-marquee:hover {
+        @media (min-width: 1024px) {
+          .animate-brand-marquee {
+            animation: scroll-brand-marquee 90s linear infinite;
+          }
+        }
+        .pause-on-hover:hover .animate-brand-marquee,
+        .pause-on-hover:focus-within .animate-brand-marquee {
           animation-play-state: paused;
         }
-      `}</style>
+      `}} />
 
       {/* 🎨 Background Elements */}
       <div className="absolute top-40 left-[-10%] w-[300px] h-[300px] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none -z-10"></div>
@@ -115,23 +122,43 @@ export default function BrandsClient({ brands }: BrandsClientProps) {
         ))}
       </motion.div>
 
-      {/* ================= 🌟 INFINITE MARQUEE ================= */}
-      {brands.length > 3 && (
-        <div className="mb-24 overflow-hidden relative w-full border-y border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-[#0a0a0a]/50 py-8">
-          <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#fafafa] dark:from-[#030303] to-transparent z-10"></div>
-          <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#fafafa] dark:from-[#030303] to-transparent z-10"></div>
-          
-          <div className="animate-marquee items-center gap-16">
-            {[...brands, ...brands].map((brand, idx) => (
-              <div key={idx} className="w-32 h-12 flex-shrink-0 flex items-center justify-center grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300 cursor-default">
-                <img src={brand.logo} alt={brand.name} className="max-w-full max-h-full object-contain dark:invert" />
-              </div>
-            ))}
+      {/* ================= 🌟 INFINITE MARQUEE (HOMEPAGE STYLE) ================= */}
+      {brands.length > 0 && (
+        <div className="mb-24 overflow-hidden relative w-full border-y border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-[#0a0a0a]/50">
+          <div className="relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] pause-on-hover flex py-8 md:py-12">
+            
+            <div className="flex shrink-0 animate-brand-marquee gap-12 md:gap-20 items-center px-6">
+              {displayBrands.map((brand, idx) => (
+                <div key={`brand1-${idx}`} className="relative shrink-0 flex items-center justify-center w-24 md:w-36 h-12 md:h-16 group cursor-pointer">
+                  {/* 📌 Homepage Radial Glow */}
+                  <div className="absolute inset-[-50%] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.85)_0%,rgba(255,255,255,0)_65%)] opacity-0 group-hover:dark:opacity-100 transition-opacity duration-500 pointer-events-none z-0"></div>
+                  <img 
+                    src={brand.logo} 
+                    alt={brand.name} 
+                    className="relative z-10 max-h-full max-w-full object-contain filter grayscale opacity-50 dark:invert dark:opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:dark:invert-0 transition-all duration-500" 
+                  />
+                </div>
+              ))}
+            </div>
+            
+            <div aria-hidden="true" className="flex shrink-0 animate-brand-marquee gap-12 md:gap-20 items-center px-6">
+              {displayBrands.map((brand, idx) => (
+                <div key={`brand2-${idx}`} className="relative shrink-0 flex items-center justify-center w-24 md:w-36 h-12 md:h-16 group cursor-pointer">
+                  <div className="absolute inset-[-50%] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.85)_0%,rgba(255,255,255,0)_65%)] opacity-0 group-hover:dark:opacity-100 transition-opacity duration-500 pointer-events-none z-0"></div>
+                  <img 
+                    src={brand.logo} 
+                    alt={brand.name} 
+                    className="relative z-10 max-h-full max-w-full object-contain filter grayscale opacity-50 dark:invert dark:opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:dark:invert-0 transition-all duration-500" 
+                  />
+                </div>
+              ))}
+            </div>
+            
           </div>
         </div>
       )}
 
-      {/* ================= 🌟 BRANDS GRID ================= */}
+      {/* ================= 🌟 BRANDS GRID (HOMEPAGE STYLE) ================= */}
       {brands.length > 0 ? (
         <motion.div 
           initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }} variants={stagger}
@@ -152,10 +179,14 @@ export default function BrandsClient({ brands }: BrandsClientProps) {
                 )}
 
                 <div className="relative z-10 w-full h-full flex items-center justify-center">
+                  {/* 📌 Homepage Radial Glow for Grid items */}
+                  <div className="absolute inset-[-50%] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.85)_0%,rgba(255,255,255,0)_65%)] opacity-0 group-hover:dark:opacity-100 transition-opacity duration-500 pointer-events-none z-0 rounded-full"></div>
+                  
+                  {/* 📌 Homepage Logo Filter Styles */}
                   <img 
                     src={brand.logo} 
                     alt={brand.name} 
-                    className="max-w-[85%] max-h-[85%] w-full object-contain dark:brightness-0 dark:invert group-hover:scale-105 transition-all duration-700 ease-out"
+                    className="relative z-10 max-w-[85%] max-h-[85%] w-full object-contain filter grayscale opacity-50 dark:invert dark:opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:dark:invert-0 group-hover:scale-105 transition-all duration-500 ease-out"
                   />
                 </div>
 
@@ -175,7 +206,7 @@ export default function BrandsClient({ brands }: BrandsClientProps) {
         </div>
       )}
 
-      {/* ================= 🌟 LEGAL DISCLAIMER (NEWLY ADDED) ================= */}
+      {/* ================= 🌟 LEGAL DISCLAIMER ================= */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         whileInView={{ opacity: 1, y: 0 }}
