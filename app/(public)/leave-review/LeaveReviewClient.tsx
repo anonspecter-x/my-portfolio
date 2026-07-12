@@ -64,7 +64,7 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
     }
   };
 
-  // 📌 Animation Variants (Matched with ContactClient)
+  // 📌 Animation Variants
   const fadeUp: any = {
     hidden: { opacity: 0, y: 40 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
@@ -75,8 +75,8 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
   };
 
   return (
-    // 📌 pt-32 pb-20 (Matched exactly with Contact page spacing)
-    <main className="relative min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] pt-32 pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto overflow-hidden">
+    // 📌 Main Container (Matched exactly with Contact & Blog pages spacing and classes)
+    <main className="relative min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] pt-32 pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto overflow-hidden selection:bg-blue-500/30">
       
       {/* 🎨 Animated Background Elements */}
       <motion.div 
@@ -90,7 +90,7 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
         className="absolute bottom-40 right-[-10%] w-[300px] h-[300px] bg-purple-500/10 blur-[120px] rounded-full pointer-events-none -z-10"
       />
 
-      {/* 🌟 Header (Separated from grid, matching ContactClient exactly) */}
+      {/* 🌟 Header Section (Exactly synchronized with other pages) */}
       <motion.div 
         initial="hidden" animate="visible" variants={stagger}
         className="max-w-3xl mb-16 md:mb-24"
@@ -107,13 +107,13 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
         </motion.p>
       </motion.div>
 
-      {/* 🌟 Grid Layout (items-stretch ensures left and right card match height) */}
+      {/* 🌟 Grid Layout */}
       <motion.div 
         initial="hidden" animate="visible" variants={stagger}
         className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch"
       >
         
-        {/* 🌟 Left Side: Info & Guidelines (Now inside a styled Card like Contact page) */}
+        {/* 🌟 Left Side: Info & Guidelines */}
         <motion.div 
           variants={fadeUp}
           className="lg:col-span-5 h-full"
