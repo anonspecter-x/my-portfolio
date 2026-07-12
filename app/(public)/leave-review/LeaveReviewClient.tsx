@@ -27,7 +27,7 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
     }
 
     try {
-      // 📌 Image Compression Logic
+      // 📌 Image Compression Logic (FIXED)
       const photoFile = formData.get("photo") as File;
       if (photoFile && photoFile.size > 0) {
         const options = {
@@ -192,31 +192,25 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
                   <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 flex items-center gap-1.5 h-[18px]">
                     <Star className="w-3.5 h-3.5" /> Rating
                   </label>
-                  {/* 📌 Redesigned Professional Star Rating Container */}
-                  <div className="w-full h-[42px] bg-gray-50 dark:bg-[#050505] border border-gray-200 dark:border-gray-800 rounded-xl px-4 flex items-center justify-between shadow-sm">
-                    <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
-                      {rating} / 5
-                    </span>
-                    <div className="flex items-center gap-1.5">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <button
-                          key={star}
-                          type="button"
-                          onClick={() => setRating(star)}
-                          onMouseEnter={() => setHoverRating(star)}
-                          onMouseLeave={() => setHoverRating(0)}
-                          className="focus:outline-none transition-transform hover:scale-110 flex items-center justify-center"
-                        >
-                          <Star 
-                            className={`w-5 h-5 ${
-                              star <= (hoverRating || rating) 
-                              ? "text-yellow-400 fill-yellow-400" 
-                              : "text-gray-300 dark:text-gray-700"
-                            } transition-colors`} 
-                          />
-                        </button>
-                      ))}
-                    </div>
+                  <div className="flex items-center gap-1 h-[42px]">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setRating(star)}
+                        onMouseEnter={() => setHoverRating(star)}
+                        onMouseLeave={() => setHoverRating(0)}
+                        className="focus:outline-none transition-transform hover:scale-110 flex items-center justify-center"
+                      >
+                        <Star 
+                          className={`w-7 h-7 ${
+                            star <= (hoverRating || rating) 
+                            ? "text-yellow-400 fill-yellow-400" 
+                            : "text-gray-200 dark:text-gray-800"
+                          } transition-colors`} 
+                        />
+                      </button>
+                    ))}
                   </div>
                 </div>
 
@@ -231,25 +225,23 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
                 </div>
               </div>
 
-              {/* 📌 Full-width Cloudflare Turnstile */}
+              {/* Cloudflare Turnstile */}
               <div className="pt-2 flex flex-col items-start gap-2">
                 <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 flex items-center gap-1.5">
                   <ShieldCheck className="w-3.5 h-3.5" /> Security Verification
                 </label>
-                <div className="w-full flex items-center justify-center bg-gray-50 dark:bg-[#050505] border border-gray-200 dark:border-gray-800 rounded-xl py-3 shadow-sm overflow-hidden">
-                  <Turnstile 
-                    siteKey={turnstileSiteKey} 
-                    onSuccess={(token) => {
-                      setTurnstileToken(token);
-                      setErrorMessage("");
-                    }}
-                    onError={() => {
-                      setErrorMessage("Security verification failed.");
-                      setStatus("error");
-                    }}
-                    options={{ theme: 'auto' }}
-                  />
-                </div>
+                <Turnstile 
+                  siteKey={turnstileSiteKey} 
+                  onSuccess={(token) => {
+                    setTurnstileToken(token);
+                    setErrorMessage("");
+                  }}
+                  onError={() => {
+                    setErrorMessage("Security verification failed.");
+                    setStatus("error");
+                  }}
+                  options={{ theme: 'auto' }}
+                />
               </div>
 
               {status === "error" && (
