@@ -5,8 +5,7 @@ import { submitPublicReview } from "./actions";
 import { motion } from "framer-motion";
 import { 
   Send, User, MessageSquareQuote, CheckCircle2, 
-  Briefcase, Star, ImagePlus, ShieldCheck, Quote, 
-  Sparkles, Target, Award
+  Briefcase, Star, ImagePlus, ShieldCheck, Quote, Sparkles
 } from "lucide-react";
 import imageCompression from 'browser-image-compression';
 import { Turnstile } from '@marsidev/react-turnstile'; 
@@ -45,9 +44,6 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
         });
 
         formData.set("photo", compressedFile);
-      } else {
-        // ফন্টএন্ড ভ্যালিডেশন যদি ফেইল করে (যদিও required দেওয়া আছে)
-        throw new Error("Profile photo is mandatory for verification.");
       }
 
       // Append Rating and Turnstile Token securely
@@ -68,7 +64,7 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
     }
   };
 
-  // 📌 Animation Variants
+  // 📌 Animation Variants (Matched with ContactClient)
   const fadeUp: any = {
     hidden: { opacity: 0, y: 40 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
@@ -79,8 +75,8 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
   };
 
   return (
-    // 📌 Responsive Padding: pt-24 on mobile, md:pt-32 on desktop for perfect spacing
-    <main className="relative min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] pt-24 md:pt-32 pb-16 md:pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto overflow-hidden">
+    // 📌 pt-32 pb-20 (Matched exactly with Contact page spacing)
+    <main className="relative min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] pt-32 pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto overflow-hidden">
       
       {/* 🎨 Animated Background Elements */}
       <motion.div 
@@ -94,10 +90,10 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
         className="absolute bottom-40 right-[-10%] w-[300px] h-[300px] bg-purple-500/10 blur-[120px] rounded-full pointer-events-none -z-10"
       />
 
-      {/* 🌟 Header Section (Responsive bottom margin: mb-10 on mobile, md:mb-16 on desktop) */}
+      {/* 🌟 Header (Separated from grid, matching ContactClient exactly) */}
       <motion.div 
         initial="hidden" animate="visible" variants={stagger}
-        className="max-w-3xl mb-10 md:mb-16"
+        className="max-w-3xl mb-16 md:mb-24"
       >
         <motion.div variants={fadeUp} className="inline-flex items-center w-fit gap-2 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-xs font-semibold mb-6 text-gray-600 dark:text-gray-400">
           <MessageSquareQuote className="w-3.5 h-3.5" /> Client Feedback
@@ -107,61 +103,42 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
           <span className="text-gray-400">experience.</span>
         </motion.h1>
         <motion.p variants={fadeUp} className="text-gray-600 dark:text-gray-400 text-lg">
-          Your feedback is highly valued. It helps me continuously refine my process and deliver exceptional digital solutions.
+          Your feedback helps me improve and continue delivering high-performance, scalable digital ecosystems.
         </motion.p>
       </motion.div>
 
-      {/* 🌟 Grid Layout */}
+      {/* 🌟 Grid Layout (items-stretch ensures left and right card match height) */}
       <motion.div 
         initial="hidden" animate="visible" variants={stagger}
         className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch"
       >
         
-        {/* 🌟 Left Side: Professional Guidelines Panel */}
+        {/* 🌟 Left Side: Info & Guidelines (Now inside a styled Card like Contact page) */}
         <motion.div 
           variants={fadeUp}
           className="lg:col-span-5 h-full"
         >
           <div className="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 p-6 md:p-8 rounded-[2rem] shadow-sm h-full flex flex-col">
-            <h3 className="text-xl font-bold text-black dark:text-white mb-8">Review Guidelines</h3>
+            <h3 className="text-xl font-bold text-black dark:text-white mb-6">Review Guidelines</h3>
             
-            <div className="space-y-7">
-              {/* Point 1 */}
+            <div className="space-y-6">
               <div className="flex items-start gap-4 group">
                 <div className="w-12 h-12 bg-gray-50 dark:bg-[#111] border border-gray-100 dark:border-gray-800 text-black dark:text-white rounded-xl flex items-center justify-center shrink-0 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 group-hover:text-blue-600 transition-colors">
-                  <Award className="w-5 h-5" />
+                  <Quote className="w-5 h-5" />
                 </div>
                 <div className="flex flex-col justify-center">
-                  <h4 className="text-sm font-bold text-black dark:text-white mb-1.5">Authentic Experience</h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                    Detail your experience regarding the project workflow, code quality, and overall technical management.
-                  </p>
-                </div>
-              </div>
-
-              {/* Point 2 */}
-              <div className="flex items-start gap-4 group">
-                <div className="w-12 h-12 bg-gray-50 dark:bg-[#111] border border-gray-100 dark:border-gray-800 text-black dark:text-white rounded-xl flex items-center justify-center shrink-0 group-hover:bg-purple-50 dark:group-hover:bg-purple-900/20 group-hover:text-purple-600 transition-colors">
-                  <Target className="w-5 h-5" />
-                </div>
-                <div className="flex flex-col justify-center">
-                  <h4 className="text-sm font-bold text-black dark:text-white mb-1.5">Specific Outcomes</h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                    Highlight specific project deliverables, performance improvements, or business goals achieved through our collaboration.
-                  </p>
+                  <h4 className="text-sm font-bold text-black dark:text-white mb-1">Honesty is Appreciated</h4>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Describe what you liked most about our collaboration, the project quality, and communication.</p>
                 </div>
               </div>
               
-              {/* Point 3 */}
               <div className="flex items-start gap-4 group">
-                <div className="w-12 h-12 bg-gray-50 dark:bg-[#111] border border-gray-100 dark:border-gray-800 text-black dark:text-white rounded-xl flex items-center justify-center shrink-0 group-hover:bg-green-50 dark:group-hover:bg-green-900/20 group-hover:text-green-600 transition-colors">
+                <div className="w-12 h-12 bg-gray-50 dark:bg-[#111] border border-gray-100 dark:border-gray-800 text-black dark:text-white rounded-xl flex items-center justify-center shrink-0 group-hover:bg-purple-50 dark:group-hover:bg-purple-900/20 group-hover:text-purple-600 transition-colors">
                   <Sparkles className="w-5 h-5" />
                 </div>
                 <div className="flex flex-col justify-center">
-                  <h4 className="text-sm font-bold text-black dark:text-white mb-1.5">Visual Verification</h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                    A professional headshot is <span className="font-semibold text-black dark:text-white">required</span> to ensure authenticity and establish trust within the community.
-                  </p>
+                  <h4 className="text-sm font-bold text-black dark:text-white mb-1">Photo Integration</h4>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Uploading a profile picture is optional but highly recommended to add authenticity to your review.</p>
                 </div>
               </div>
             </div>
@@ -203,10 +180,10 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
 
                 <div className="space-y-2">
                   <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 flex items-center gap-1.5">
-                    <Briefcase className="w-3.5 h-3.5" /> Designation / Company *
+                    <Briefcase className="w-3.5 h-3.5" /> Designation / Company
                   </label>
                   <input 
-                    type="text" name="role" required placeholder="CEO at TechCorp" maxLength={60}
+                    type="text" name="role" placeholder="CEO at TechCorp" maxLength={60}
                     className="w-full bg-gray-50 dark:bg-[#050505] border border-gray-200 dark:border-gray-800 text-black dark:text-white text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-gray-400 shadow-sm" 
                   />
                 </div>
@@ -217,7 +194,7 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
                   <MessageSquareQuote className="w-3.5 h-3.5" /> Your Review *
                 </label>
                 <textarea 
-                  name="review" required placeholder="Detail your experience working with me..." maxLength={500}
+                  name="review" required placeholder="How was your experience working with me?" maxLength={500}
                   className="w-full flex-1 min-h-[120px] bg-gray-50 dark:bg-[#050505] border border-gray-200 dark:border-gray-800 text-black dark:text-white text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all resize-none placeholder:text-gray-400 shadow-sm"
                 ></textarea>
               </div>
@@ -225,7 +202,7 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 items-start">
                 <div className="space-y-2">
                   <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 flex items-center gap-1.5 h-[18px]">
-                    <Star className="w-3.5 h-3.5" /> Rating *
+                    <Star className="w-3.5 h-3.5" /> Rating
                   </label>
                   <div className="w-full h-[46px] bg-gray-50 dark:bg-[#050505] border border-gray-200 dark:border-gray-800 rounded-xl px-4 flex items-center justify-between shadow-sm">
                     <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">
@@ -255,12 +232,11 @@ export default function LeaveReviewClient({ turnstileSiteKey }: { turnstileSiteK
                 </div>
 
                 <div className="space-y-2">
-                  {/* 📌 Label updated to make it required clearly */}
                   <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 flex items-center gap-1.5 h-[18px]">
-                    <ImagePlus className="w-3.5 h-3.5" /> Profile Photo *
+                    <ImagePlus className="w-3.5 h-3.5" /> Profile Photo (Optional)
                   </label>
                   <input 
-                    type="file" name="photo" accept="image/*" required
+                    type="file" name="photo" accept="image/*" 
                     className="w-full h-[46px] bg-gray-50 dark:bg-[#050505] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-3 py-2 outline-none focus:border-blue-500 transition-colors file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-gray-200 file:text-gray-700 hover:file:bg-gray-300 dark:file:bg-[#222] dark:file:text-gray-300 cursor-pointer shadow-sm" 
                   />
                 </div>
