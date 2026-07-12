@@ -182,11 +182,11 @@ export default function BrandsClient({ brands }: BrandsClientProps) {
                   {/* 📌 Homepage Radial Glow for Grid items */}
                   <div className="absolute inset-[-50%] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.85)_0%,rgba(255,255,255,0)_65%)] opacity-0 group-hover:dark:opacity-100 transition-opacity duration-500 pointer-events-none z-0 rounded-full"></div>
                   
-                  {/* 📌 Homepage Logo Filter Styles */}
+                  {/* 📌 Updated Logo Styles: Light mode = Full color, Dark mode = Invert (white) and shows color on hover */}
                   <img 
                     src={brand.logo} 
                     alt={brand.name} 
-                    className="relative z-10 max-w-[85%] max-h-[85%] w-full object-contain filter grayscale opacity-50 dark:invert dark:opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:dark:invert-0 group-hover:scale-105 transition-all duration-500 ease-out"
+                    className="relative z-10 max-w-[85%] max-h-[85%] w-full object-contain filter dark:grayscale dark:invert dark:opacity-70 group-hover:dark:grayscale-0 group-hover:dark:invert-0 group-hover:dark:opacity-100 group-hover:scale-105 transition-all duration-500 ease-out"
                   />
                 </div>
 
