@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   X, Trophy, Code2, Play, 
   Terminal, Database, Server, 
   Cpu, Globe, Zap, Unlock, Network,
-  Activity, Timer, ShieldCheck, Settings
+  Activity, Timer, ShieldCheck, Settings, AlertTriangle
 } from "lucide-react";
 
 type ViewState = "boot" | "menu" | "mem_play" | "mem_over" | "seq_play" | "seq_over";
@@ -15,10 +15,10 @@ interface MemoryCard { id: number; iconIndex: number; isFlipped: boolean; isMatc
 
 const MemoryIcons = [Terminal, Database, Server, Cpu, Globe, Zap];
 const SeqColors = [
-  { id: 0, bg: "bg-red-500", glow: "shadow-[0_0_50px_rgba(239,68,68,0.6)]", border: "border-red-500/50" },
-  { id: 1, bg: "bg-blue-500", glow: "shadow-[0_0_50px_rgba(59,130,246,0.6)]", border: "border-blue-500/50" },
-  { id: 2, bg: "bg-green-500", glow: "shadow-[0_0_50px_rgba(34,197,94,0.6)]", border: "border-green-500/50" },
-  { id: 3, bg: "bg-purple-500", glow: "shadow-[0_0_50px_rgba(168,85,247,0.6)]", border: "border-purple-500/50" }
+  { id: 0, off: "bg-rose-950/30 border-rose-500/20 text-rose-900", on: "bg-rose-500 shadow-[0_0_50px_rgba(244,63,94,0.8)] border-rose-400 scale-[0.98] brightness-125" },
+  { id: 1, off: "bg-cyan-950/30 border-cyan-500/20 text-cyan-900", on: "bg-cyan-500 shadow-[0_0_50px_rgba(6,182,212,0.8)] border-cyan-400 scale-[0.98] brightness-125" },
+  { id: 2, off: "bg-emerald-950/30 border-emerald-500/20 text-emerald-900", on: "bg-emerald-500 shadow-[0_0_50px_rgba(16,185,129,0.8)] border-emerald-400 scale-[0.98] brightness-125" },
+  { id: 3, off: "bg-violet-950/30 border-violet-500/20 text-violet-900", on: "bg-violet-500 shadow-[0_0_50px_rgba(139,92,246,0.8)] border-violet-400 scale-[0.98] brightness-125" }
 ];
 
 export default function EasterEggGame() {
@@ -63,9 +63,9 @@ export default function EasterEggGame() {
       step++;
       if (step === logs.length) {
         clearInterval(interval);
-        setTimeout(() => setView("menu"), 800);
+        setTimeout(() => setView("menu"), 1000);
       }
-    }, 500);
+    }, 400);
   };
 
   // 📌 NEURAL MATRIX LOGIC
@@ -148,23 +148,29 @@ export default function EasterEggGame() {
 
   // ================= RENDER HELPERS =================
   const ResultScreen = ({ title, scoreLabel, score, onRetry, icon: Icon, success = false }: any) => (
-    <motion.div initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} className="bg-[#0a0a0a]/95 border border-white/10 p-8 md:p-12 rounded-[2rem] shadow-2xl text-center backdrop-blur-3xl w-full max-w-sm mx-4 relative overflow-hidden">
-      <div className={`absolute top-0 left-0 w-full h-1.5 ${success ? "bg-blue-500" : "bg-red-500"}`}></div>
-      <div className={`absolute -top-20 -left-20 w-40 h-40 rounded-full blur-[80px] ${success ? "bg-blue-500/20" : "bg-red-500/20"}`}></div>
+    <motion.div 
+      initial={{ scale: 0.9, opacity: 0, filter: "blur(10px)" }} 
+      animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }} 
+      exit={{ scale: 0.9, opacity: 0 }}
+      transition={{ type: "spring", damping: 20, stiffness: 100 }}
+      className="bg-[#050505]/80 backdrop-blur-3xl border border-white/10 p-10 md:p-14 rounded-[2.5rem] shadow-[0_20px_60px_rgba(0,0,0,0.5)] text-center w-full max-w-sm mx-4 relative overflow-hidden"
+    >
+      <div className={`absolute top-0 left-0 w-full h-1.5 ${success ? "bg-cyan-500" : "bg-rose-500"}`}></div>
+      <div className={`absolute -top-32 -left-32 w-64 h-64 rounded-full blur-[100px] pointer-events-none ${success ? "bg-cyan-500/20" : "bg-rose-500/20"}`}></div>
       
-      <div className={`w-20 h-20 mx-auto rounded-2xl flex items-center justify-center mb-6 relative z-10 border ${success ? "bg-blue-500/10 border-blue-500/30 text-blue-400" : "bg-red-500/10 border-red-500/30 text-red-400"}`}>
-        <Icon className="w-10 h-10" />
+      <div className={`w-24 h-24 mx-auto rounded-3xl flex items-center justify-center mb-6 relative z-10 border shadow-inner ${success ? "bg-cyan-500/10 border-cyan-500/30 text-cyan-400" : "bg-rose-500/10 border-rose-500/30 text-rose-400"}`}>
+        <Icon className="w-12 h-12 drop-shadow-lg" />
       </div>
       <h2 className="text-3xl font-black text-white mb-2 tracking-tight relative z-10">{title}</h2>
       
-      <div className="bg-white/5 rounded-2xl p-6 my-8 border border-white/5 relative z-10">
+      <div className="bg-white/5 rounded-2xl p-6 my-8 border border-white/5 relative z-10 shadow-inner">
         <span className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.2em] block mb-2">{scoreLabel}</span>
-        <div className="text-5xl font-black text-white">{score}</div>
+        <div className="text-5xl font-black text-white tracking-tighter">{score}</div>
       </div>
       
-      <div className="flex gap-3 relative z-10">
-        <button onClick={onRetry} className="flex-1 bg-white text-black py-4 rounded-xl font-bold hover:scale-105 active:scale-95 transition-all text-sm uppercase tracking-wider shadow-lg">Retry</button>
-        <button onClick={() => setView("menu")} className="flex-1 bg-transparent border border-white/20 text-white hover:bg-white/10 py-4 rounded-xl font-bold transition-all text-sm uppercase tracking-wider">Menu</button>
+      <div className="flex gap-4 relative z-10">
+        <button onClick={onRetry} className="flex-1 bg-white text-black py-4 rounded-xl font-bold hover:scale-105 active:scale-95 transition-all text-sm uppercase tracking-widest shadow-[0_0_20px_rgba(255,255,255,0.2)]">Retry</button>
+        <button onClick={() => setView("menu")} className="flex-1 bg-transparent border border-white/20 text-white hover:bg-white/10 hover:border-white/40 py-4 rounded-xl font-bold transition-all text-sm uppercase tracking-widest">Menu</button>
       </div>
     </motion.div>
   );
@@ -172,164 +178,197 @@ export default function EasterEggGame() {
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden font-sans bg-[#030303]/95 backdrop-blur-3xl select-none">
+        <motion.div 
+          initial={{ opacity: 0 }} 
+          animate={{ opacity: 1 }} 
+          exit={{ opacity: 0 }} 
+          className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden font-sans bg-[#020202]/90 backdrop-blur-2xl select-none"
+        >
+          {/* 🌟 PREMIUM CYBERPUNK BACKGROUND EFFECTS */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,#000_40%,transparent_100%)] pointer-events-none"></div>
           
-          {/* 🌟 PREMIUM BACKGROUND EFFECTS */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,#000_40%,transparent_100%)]"></div>
-          <div className="absolute top-[10%] left-[20%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"></div>
-          <div className="absolute bottom-[10%] right-[20%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+          {/* Animated Orbs */}
+          <motion.div 
+            animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }} 
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} 
+            className="absolute top-0 left-0 w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] bg-cyan-600/10 rounded-full blur-[120px] pointer-events-none"
+          />
+          <motion.div 
+            animate={{ scale: [1, 1.3, 1], opacity: [0.1, 0.3, 0.1] }} 
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }} 
+            className="absolute bottom-0 right-0 w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] bg-violet-600/10 rounded-full blur-[120px] pointer-events-none"
+          />
 
           {view !== "boot" && (
-            <button onClick={() => setIsOpen(false)} className="absolute top-6 right-6 md:top-10 md:right-10 w-12 h-12 bg-white/5 text-gray-400 rounded-full flex items-center justify-center border border-white/10 hover:bg-white/10 hover:text-white transition-all z-50 hover:scale-105 active:scale-95 shadow-lg">
+            <motion.button 
+              initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }}
+              onClick={() => setIsOpen(false)} 
+              className="absolute top-6 right-6 md:top-10 md:right-10 w-12 h-12 bg-[#0a0a0a] text-gray-400 rounded-full flex items-center justify-center border border-white/10 hover:bg-white/10 hover:text-white transition-all z-50 hover:scale-110 active:scale-95 shadow-2xl"
+            >
               <X className="w-5 h-5" />
-            </button>
+            </motion.button>
           )}
 
           {/* ================= BOOT SCREEN ================= */}
-          {view === "boot" && (
-            <div className="flex flex-col justify-center h-full w-full max-w-2xl px-6 font-mono relative z-10">
-              <Unlock className="w-10 h-10 mb-8 text-blue-500 animate-pulse" />
-              <div className="space-y-4 border-l-2 border-blue-500/30 pl-6 py-2">
-                {bootLog.map((log, i) => (
-                  <motion.p key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="text-gray-300 text-sm md:text-base tracking-widest font-medium">
-                    <span className="text-blue-500 mr-3">❯</span>{log}
-                  </motion.p>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* ================= MENU SCREEN ================= */}
-          {view === "menu" && (
-            <motion.div initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} className="w-full max-w-4xl px-4 md:px-8 relative z-10">
-              <div className="text-center mb-12 md:mb-16">
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-6">
-                  <Settings className="w-3.5 h-3.5" /> Admin Access Granted
+          <AnimatePresence mode="wait">
+            {view === "boot" && (
+              <motion.div key="boot" exit={{ opacity: 0, scale: 1.05 }} className="flex flex-col justify-center h-full w-full max-w-2xl px-6 font-mono relative z-10">
+                <Unlock className="w-10 h-10 mb-8 text-cyan-500 drop-shadow-[0_0_15px_rgba(6,182,212,0.5)] animate-pulse" />
+                <div className="space-y-4 border-l-2 border-cyan-500/30 pl-6 py-2">
+                  {bootLog.map((log, i) => (
+                    <motion.p key={i} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ type: "spring" }} className="text-gray-300 text-sm md:text-base tracking-widest font-medium uppercase drop-shadow-md">
+                      <span className="text-cyan-500 mr-4">❯</span>{log}
+                    </motion.p>
+                  ))}
                 </div>
-                <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight mb-4">Diagnostic Tools</h2>
-                <p className="text-gray-400 text-sm md:text-base max-w-md mx-auto">Select a restricted module to test your cognitive processing speed.</p>
-              </div>
+              </motion.div>
+            )}
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                {/* Protocol 1: Neural Matrix */}
-                <div onClick={startMemoryGame} className="group cursor-pointer bg-[#0a0a0a] border border-white/10 hover:border-blue-500/50 rounded-[2rem] p-6 md:p-8 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-blue-500/10 relative overflow-hidden">
-                  <div className="absolute -top-20 -right-20 w-40 h-40 bg-blue-500/10 blur-[50px] rounded-full transition-transform group-hover:scale-150"></div>
-                  <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-blue-500/10 group-hover:border-blue-500/30 transition-colors">
-                    <Cpu className="w-7 h-7 text-gray-300 group-hover:text-blue-400 transition-colors" />
+            {/* ================= MENU SCREEN ================= */}
+            {view === "menu" && (
+              <motion.div key="menu" initial={{ scale: 0.95, opacity: 0, filter: "blur(10px)" }} animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }} exit={{ scale: 0.95, opacity: 0 }} transition={{ duration: 0.4 }} className="w-full max-w-4xl px-4 md:px-8 relative z-10">
+                <div className="text-center mb-12 md:mb-16">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-[10px] font-bold text-cyan-400 uppercase tracking-[0.25em] mb-6 shadow-[0_0_20px_rgba(6,182,212,0.1)]">
+                    <Settings className="w-3.5 h-3.5" /> Admin Access Granted
                   </div>
-                  <h3 className="text-xl md:text-2xl font-bold text-white mb-3">Neural Matrix</h3>
-                  <p className="text-gray-500 text-sm mb-8 leading-relaxed">Establish neural connections by matching encrypted architectural nodes before time runs out.</p>
-                  <div className="flex items-center gap-3 text-xs font-bold text-white uppercase tracking-widest opacity-60 group-hover:opacity-100 transition-opacity">
-                    <span className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white"><Play className="w-3 h-3 ml-0.5" /></span>
-                    Initialize
-                  </div>
+                  <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter mb-4 drop-shadow-xl">Diagnostic Tools</h2>
+                  <p className="text-gray-400 text-sm md:text-base max-w-md mx-auto leading-relaxed">Select a restricted module below to test your cognitive processing and system response time.</p>
                 </div>
 
-                {/* Protocol 2: Core Sequence */}
-                <div onClick={startSeqGame} className="group cursor-pointer bg-[#0a0a0a] border border-white/10 hover:border-purple-500/50 rounded-[2rem] p-6 md:p-8 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-purple-500/10 relative overflow-hidden">
-                  <div className="absolute -top-20 -right-20 w-40 h-40 bg-purple-500/10 blur-[50px] rounded-full transition-transform group-hover:scale-150"></div>
-                  <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-purple-500/10 group-hover:border-purple-500/30 transition-colors">
-                    <Network className="w-7 h-7 text-gray-300 group-hover:text-purple-400 transition-colors" />
-                  </div>
-                  <h3 className="text-xl md:text-2xl font-bold text-white mb-3">Core Sequence</h3>
-                  <p className="text-gray-500 text-sm mb-8 leading-relaxed">Replicate the secure server ping sequence. One single error will terminate the connection instantly.</p>
-                  <div className="flex items-center gap-3 text-xs font-bold text-white uppercase tracking-widest opacity-60 group-hover:opacity-100 transition-opacity">
-                    <span className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-white"><Play className="w-3 h-3 ml-0.5" /></span>
-                    Initialize
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {/* ================= 1. NEURAL MATRIX GAME ================= */}
-          {view === "mem_play" && (
-            <div className="relative z-10 w-full max-w-2xl px-4 flex flex-col items-center">
-              <div className="flex w-full items-center justify-between bg-[#0a0a0a]/90 border border-white/10 px-6 py-4 rounded-[1.5rem] md:rounded-full backdrop-blur-xl mb-8 shadow-xl">
-                <div className="flex items-center gap-3 md:gap-4">
-                  <div className="w-10 h-10 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center hidden md:flex">
-                    <Activity className="w-4 h-4 text-blue-400" />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[10px] text-gray-500 uppercase font-bold tracking-[0.2em]">Moves</span>
-                    <span className="text-xl font-bold text-white leading-none mt-1">{memMoves}</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 md:gap-4">
-                  <div className="flex flex-col text-right md:text-left">
-                    <span className="text-[10px] text-gray-500 uppercase font-bold tracking-[0.2em]">Time Left</span>
-                    <span className={`text-xl font-bold tabular-nums leading-none mt-1 ${memTimeLeft <= 10 ? "text-red-500 animate-pulse" : "text-white"}`}>00:{memTimeLeft.toString().padStart(2, "0")}</span>
-                  </div>
-                  <div className={`w-10 h-10 rounded-full border flex items-center justify-center hidden md:flex ${memTimeLeft <= 10 ? "bg-red-500/10 border-red-500/20" : "bg-white/5 border-white/10"}`}>
-                    <Timer className={`w-4 h-4 ${memTimeLeft <= 10 ? "text-red-500" : "text-gray-400"}`} />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-3 md:grid-cols-4 gap-3 md:gap-4 w-full">
-                {cards.map((card, index) => {
-                  const Icon = MemoryIcons[card.iconIndex];
-                  return (
-                    <div key={card.id} onClick={() => handleCardFlip(index)} className="relative aspect-square cursor-pointer group touch-manipulation" style={{ perspective: "1000px" }}>
-                      <motion.div animate={{ rotateY: card.isFlipped || card.isMatched ? 180 : 0 }} transition={{ duration: 0.6, type: "spring", stiffness: 260, damping: 25 }} className="w-full h-full relative" style={{ transformStyle: "preserve-3d" }}>
-                        
-                        {/* FRONT (HIDDEN CARD) */}
-                        <div className="absolute inset-0 bg-[#0a0a0a] border border-white/10 rounded-2xl md:rounded-[1.5rem] flex items-center justify-center hover:bg-white/5 transition-colors shadow-lg" style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden" }}>
-                          <Code2 className="w-6 h-6 md:w-8 md:h-8 text-white/10 group-hover:text-white/20 transition-colors" />
-                        </div>
-
-                        {/* BACK (REVEALED CARD) */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#111] to-[#0a0a0a] border rounded-2xl md:rounded-[1.5rem] flex items-center justify-center shadow-2xl overflow-hidden" 
-                          style={{ 
-                            backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)",
-                            borderColor: card.isMatched ? "rgba(34,197,94,0.3)" : "rgba(59,130,246,0.3)"
-                          }}>
-                          {card.isMatched && <div className="absolute inset-0 bg-green-500/10"></div>}
-                          <Icon className={`w-8 h-8 md:w-10 md:h-10 relative z-10 ${card.isMatched ? "text-green-400 drop-shadow-[0_0_15px_rgba(34,197,94,0.6)]" : "text-blue-400"}`} />
-                        </div>
-                      </motion.div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8">
+                  {/* Protocol 1: Neural Matrix */}
+                  <div onClick={startMemoryGame} className="group cursor-pointer bg-[#050505]/80 backdrop-blur-xl border border-white/10 hover:border-cyan-500/50 rounded-[2.5rem] p-8 md:p-10 transition-all duration-500 hover:-translate-y-2 shadow-xl hover:shadow-[0_20px_50px_rgba(6,182,212,0.15)] relative overflow-hidden">
+                    <div className="absolute -top-24 -right-24 w-56 h-56 bg-cyan-500/20 blur-[60px] rounded-full transition-transform duration-700 group-hover:scale-150"></div>
+                    <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-cyan-500/20 group-hover:border-cyan-500/40 transition-all duration-300 shadow-inner">
+                      <Cpu className="w-8 h-8 text-gray-400 group-hover:text-cyan-400 transition-colors" />
                     </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-          {view === "mem_over" && <ResultScreen title={matchedCount === MemoryIcons.length ? "Matrix Solved" : "Sync Failed"} scoreLabel="Matches Found" score={`${matchedCount}/${MemoryIcons.length}`} icon={matchedCount === MemoryIcons.length ? ShieldCheck : X} onRetry={startMemoryGame} success={matchedCount === MemoryIcons.length} />}
+                    <h3 className="text-2xl md:text-3xl font-black text-white mb-3 tracking-tight">Neural Matrix</h3>
+                    <p className="text-gray-500 text-sm mb-10 leading-relaxed font-medium">Establish neural connections by matching encrypted architectural nodes before the server timeout.</p>
+                    <div className="flex items-center gap-3 text-xs font-bold text-white uppercase tracking-[0.2em] opacity-50 group-hover:opacity-100 transition-opacity">
+                      <span className="w-10 h-10 rounded-full bg-cyan-500 flex items-center justify-center text-black shadow-[0_0_15px_rgba(6,182,212,0.5)]"><Play className="w-4 h-4 ml-0.5" /></span>
+                      Initialize
+                    </div>
+                  </div>
 
-          {/* ================= 2. CORE SEQUENCE GAME ================= */}
-          {view === "seq_play" && (
-            <div className="relative z-10 flex flex-col items-center w-full px-4">
-              <div className="bg-[#0a0a0a]/90 border border-white/10 px-10 py-4 rounded-[1.5rem] md:rounded-full backdrop-blur-xl mb-12 flex flex-col items-center shadow-xl">
-                <span className="text-[10px] text-gray-500 uppercase font-bold tracking-[0.2em] mb-1">Sequence Level</span>
-                <span className="text-3xl font-black text-white">{seqScore}</span>
-              </div>
-               
-              <div className="grid grid-cols-2 gap-4 md:gap-6 p-6 md:p-8 bg-white/5 border border-white/10 rounded-[2.5rem] md:rounded-[3rem] backdrop-blur-2xl shadow-2xl relative">
-                <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent rounded-[2.5rem] md:rounded-[3rem] pointer-events-none"></div>
-                {SeqColors.map((color, idx) => (
-                  <button 
-                    key={idx} disabled={isShowingSeq} onPointerDown={(e) => { e.preventDefault(); handleSeqClick(idx); }} 
-                    className={`w-28 h-28 md:w-40 md:h-40 rounded-2xl md:rounded-3xl border transition-all duration-200 touch-manipulation relative z-10
-                    ${activeColor === idx ? `brightness-150 scale-95 ${color.bg} ${color.border} ${color.glow}` : `bg-[#0a0a0a] ${color.border} opacity-50 hover:opacity-80`}
-                    ${isShowingSeq ? "cursor-not-allowed" : "cursor-pointer"}`} 
-                  />
-                ))}
-              </div>
-              <div className="h-10 mt-10 flex items-center justify-center">
-                {isShowingSeq ? (
-                  <p className="text-blue-400 animate-pulse font-mono tracking-[0.2em] text-xs font-bold uppercase flex items-center gap-2">
-                    <Activity className="w-4 h-4" /> Observing Pattern...
-                  </p>
-                ) : (
-                  <p className="text-gray-400 font-mono tracking-[0.2em] text-xs font-bold uppercase">
-                    Your Turn
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
-          {view === "seq_over" && <ResultScreen title="Sequence Broken" scoreLabel="Nodes Cleared" score={seqScore} icon={Network} onRetry={startSeqGame} success={false} />}
+                  {/* Protocol 2: Core Sequence */}
+                  <div onClick={startSeqGame} className="group cursor-pointer bg-[#050505]/80 backdrop-blur-xl border border-white/10 hover:border-violet-500/50 rounded-[2.5rem] p-8 md:p-10 transition-all duration-500 hover:-translate-y-2 shadow-xl hover:shadow-[0_20px_50px_rgba(139,92,246,0.15)] relative overflow-hidden">
+                    <div className="absolute -top-24 -right-24 w-56 h-56 bg-violet-500/20 blur-[60px] rounded-full transition-transform duration-700 group-hover:scale-150"></div>
+                    <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-violet-500/20 group-hover:border-violet-500/40 transition-all duration-300 shadow-inner">
+                      <Network className="w-8 h-8 text-gray-400 group-hover:text-violet-400 transition-colors" />
+                    </div>
+                    <h3 className="text-2xl md:text-3xl font-black text-white mb-3 tracking-tight">Core Sequence</h3>
+                    <p className="text-gray-500 text-sm mb-10 leading-relaxed font-medium">Replicate the secure server ping sequence. A single error will terminate the connection instantly.</p>
+                    <div className="flex items-center gap-3 text-xs font-bold text-white uppercase tracking-[0.2em] opacity-50 group-hover:opacity-100 transition-opacity">
+                      <span className="w-10 h-10 rounded-full bg-violet-500 flex items-center justify-center text-black shadow-[0_0_15px_rgba(139,92,246,0.5)]"><Play className="w-4 h-4 ml-0.5" /></span>
+                      Initialize
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
 
+            {/* ================= 1. NEURAL MATRIX GAME ================= */}
+            {view === "mem_play" && (
+              <motion.div key="mem_play" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} className="relative z-10 w-full max-w-3xl px-4 flex flex-col items-center">
+                
+                {/* Sleek HUD */}
+                <div className="w-full flex items-center justify-between bg-black/40 border border-white/10 px-8 py-5 rounded-[2rem] backdrop-blur-2xl mb-10 shadow-2xl relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-transparent to-transparent pointer-events-none"></div>
+                  <div className="flex items-center gap-5 relative z-10">
+                    <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 hidden md:flex items-center justify-center shadow-inner">
+                      <Activity className="w-5 h-5 text-cyan-400" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] text-gray-400 uppercase font-black tracking-[0.25em]">Moves Taken</span>
+                      <span className="text-2xl font-black text-white leading-none mt-1.5">{memMoves}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-5 relative z-10">
+                    <div className="flex flex-col text-right">
+                      <span className="text-[10px] text-gray-400 uppercase font-black tracking-[0.25em]">Time Remaining</span>
+                      <span className={`text-2xl font-black tabular-nums leading-none mt-1.5 transition-colors ${memTimeLeft <= 10 ? "text-rose-500 animate-pulse" : "text-white"}`}>
+                        00:{memTimeLeft.toString().padStart(2, "0")}
+                      </span>
+                    </div>
+                    <div className={`w-12 h-12 rounded-2xl border hidden md:flex items-center justify-center shadow-inner transition-colors ${memTimeLeft <= 10 ? "bg-rose-500/10 border-rose-500/30 text-rose-500" : "bg-white/5 border-white/10 text-gray-400"}`}>
+                      {memTimeLeft <= 10 ? <AlertTriangle className="w-5 h-5" /> : <Timer className="w-5 h-5" />}
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-3 md:grid-cols-4 gap-4 md:gap-5 w-full">
+                  {cards.map((card, index) => {
+                    const Icon = MemoryIcons[card.iconIndex];
+                    return (
+                      <div key={card.id} onClick={() => handleCardFlip(index)} className="relative aspect-square cursor-pointer group touch-manipulation" style={{ perspective: "1000px" }}>
+                        <motion.div animate={{ rotateY: card.isFlipped || card.isMatched ? 180 : 0 }} transition={{ duration: 0.5, type: "spring", stiffness: 260, damping: 25 }} className="w-full h-full relative" style={{ transformStyle: "preserve-3d" }}>
+                          
+                          {/* FRONT (HIDDEN CARD) */}
+                          <div className="absolute inset-0 bg-[#080808] border border-white/10 rounded-2xl md:rounded-[1.5rem] flex items-center justify-center group-hover:bg-white/5 group-hover:border-white/20 transition-all duration-300 shadow-xl overflow-hidden" style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden" }}>
+                             {/* Cool subtle pattern on back of cards */}
+                            <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_white_1px,_transparent_1px)] bg-[length:10px_10px]"></div>
+                            <Code2 className="w-8 h-8 md:w-10 md:h-10 text-white/10 group-hover:text-white/30 transition-colors relative z-10" />
+                          </div>
+
+                          {/* BACK (REVEALED CARD) */}
+                          <div className={`absolute inset-0 border rounded-2xl md:rounded-[1.5rem] flex items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden transition-colors duration-300 ${card.isMatched ? "bg-emerald-950/40 border-emerald-500/40" : "bg-cyan-950/40 border-cyan-500/40"}`} 
+                            style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)" }}>
+                            <div className={`absolute inset-0 blur-xl opacity-30 ${card.isMatched ? "bg-emerald-500" : "bg-cyan-500"}`}></div>
+                            <Icon className={`w-10 h-10 md:w-12 md:h-12 relative z-10 ${card.isMatched ? "text-emerald-400 drop-shadow-[0_0_15px_rgba(16,185,129,0.8)]" : "text-cyan-400 drop-shadow-[0_0_15px_rgba(6,182,212,0.8)]"}`} />
+                          </div>
+                        </motion.div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
+
+            {/* ================= 2. CORE SEQUENCE GAME ================= */}
+            {view === "seq_play" && (
+              <motion.div key="seq_play" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.05 }} className="relative z-10 flex flex-col items-center w-full px-4">
+                
+                <div className="bg-black/40 border border-white/10 px-12 py-5 rounded-[2rem] backdrop-blur-2xl mb-12 flex flex-col items-center shadow-2xl relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-violet-500 to-transparent"></div>
+                  <span className="text-[10px] text-gray-400 uppercase font-black tracking-[0.3em] mb-1.5">Current Level</span>
+                  <span className="text-4xl font-black text-white leading-none">{seqScore}</span>
+                </div>
+                 
+                <div className="grid grid-cols-2 gap-5 md:gap-6 p-6 md:p-8 bg-[#050505]/60 border border-white/10 rounded-[2.5rem] md:rounded-[3rem] backdrop-blur-3xl shadow-[0_20px_60px_rgba(0,0,0,0.5)] relative">
+                  <div className="absolute inset-0 border border-white/5 rounded-[2.5rem] md:rounded-[3rem] pointer-events-none"></div>
+                  {SeqColors.map((color, idx) => (
+                    <button 
+                      key={idx} disabled={isShowingSeq} onPointerDown={(e) => { e.preventDefault(); handleSeqClick(idx); }} 
+                      className={`w-32 h-32 md:w-44 md:h-44 rounded-[1.5rem] md:rounded-[2rem] border-2 transition-all duration-150 touch-manipulation relative z-10 flex items-center justify-center overflow-hidden outline-none
+                      ${activeColor === idx ? color.on : color.off}
+                      ${isShowingSeq ? "cursor-not-allowed" : "cursor-pointer hover:border-white/40"}`} 
+                    >
+                      {/* Inner Glow Effect for Pads */}
+                      <div className={`absolute inset-0 opacity-20 bg-current transition-opacity ${activeColor === idx ? "opacity-50" : ""}`}></div>
+                    </button>
+                  ))}
+                </div>
+                
+                <div className="h-10 mt-12 flex items-center justify-center">
+                  {isShowingSeq ? (
+                    <p className="text-violet-400 animate-pulse font-mono tracking-[0.25em] text-[11px] font-bold uppercase flex items-center gap-2">
+                      <Activity className="w-4 h-4" /> Observing Node Pattern...
+                    </p>
+                  ) : (
+                    <p className="text-gray-400 font-mono tracking-[0.25em] text-[11px] font-bold uppercase drop-shadow-md">
+                      Awaiting Input...
+                    </p>
+                  )}
+                </div>
+              </motion.div>
+            )}
+
+            {/* RESULTS SCREEN */}
+            {view === "mem_over" && <ResultScreen key="mem_over" title={matchedCount === MemoryIcons.length ? "Matrix Solved" : "Sync Failed"} scoreLabel="Nodes Decrypted" score={`${matchedCount}/${MemoryIcons.length}`} icon={matchedCount === MemoryIcons.length ? ShieldCheck : AlertTriangle} onRetry={startMemoryGame} success={matchedCount === MemoryIcons.length} />}
+            {view === "seq_over" && <ResultScreen key="seq_over" title="Sequence Broken" scoreLabel="Nodes Cleared" score={seqScore} icon={Network} onRetry={startSeqGame} success={false} />}
+          
+          </AnimatePresence>
         </motion.div>
       )}
     </AnimatePresence>
