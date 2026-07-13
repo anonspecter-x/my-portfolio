@@ -77,7 +77,7 @@ export default function AboutClient() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent z-10"></div>
             
             <img 
-              src="https://static.meetsakib.com/settings/1783168997699-330391580.png" 
+              src="https://cdn.meetsakib.com/settings/1783168997699-330391580.png" 
               alt="Md Nazmus Shakib" 
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 grayscale group-hover:grayscale-0"
             />
