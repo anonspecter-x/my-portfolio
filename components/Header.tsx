@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation"; 
-import { Moon, Sun, Music, Menu, X, Play, Pause, Disc3, Code2, ArrowUpRight, Volume2, Home, SkipBack, SkipForward } from "lucide-react";
+import { Moon, Sun, Music, Menu, X, Play, Pause, Disc3, Code2, ArrowUpRight, Volume2, Home, SkipBack, SkipForward, Volume1, VolumeX } from "lucide-react";
 
 interface TrackType {
   _id: string;
@@ -31,9 +31,12 @@ export default function Header({ settings, tracks }: HeaderProps) {
   // 🎵 Audio Player States
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+  const [volume, setVolume] = useState<number>(0.8); // 🔊 Default Volume 80%
+  
   const audioRef = useRef<HTMLAudioElement>(null);
-  const pathname = usePathname(); 
   const musicRef = useRef<HTMLDivElement>(null);
+  const volumeRef = useRef<HTMLDivElement>(null); // 🎚️ Ref for volume scroll event
+  const pathname = usePathname(); 
 
   const fallbackTracks = [
     { _id: "1", title: "Lofi Chill Vibes", artist: "Developer Beats", cover: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=100&auto=format&fit=crop", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
@@ -158,6 +161,40 @@ export default function Header({ settings, tracks }: HeaderProps) {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // 🔊 Apply Volume to Audio Element
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+    }
+  }, [volume]);
+
+  // 🎚️ Handle Volume Scroll (Prevent default page scroll)
+  useEffect(() => {
+    const volElem = volumeRef.current;
+    
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault(); // Stop screen from scrolling
+      const delta = Math.sign(e.deltaY);
+      
+      setVolume((prev) => {
+        // Adjust volume by 5% per scroll tick
+        const newVol = prev - delta * 0.05; 
+        return Math.max(0, Math.min(newVol, 1));
+      });
+    };
+
+    if (volElem) {
+      // passive: false is critical to make preventDefault work
+      volElem.addEventListener("wheel", handleWheel, { passive: false });
+    }
+    
+    return () => {
+      if (volElem) {
+        volElem.removeEventListener("wheel", handleWheel);
+      }
+    };
+  }, [isMusicOpen]); // Re-attach when dropdown opens
 
   // 🎵 Play/Pause Logic
   const togglePlay = (index: number) => {
@@ -331,17 +368,58 @@ export default function Header({ settings, tracks }: HeaderProps) {
                     
                     <div className="p-6 pb-2 flex flex-col items-center relative z-10">
                       
-                      {/* Top Bar: Now Playing & Equalizer */}
+                      {/* Top Bar: Now Playing, Volume Dial & Equalizer */}
                       <div className="w-full flex items-center justify-between mb-6">
                         <div className="bg-gray-200/50 dark:bg-gray-800/50 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center gap-2 border border-white/40 dark:border-white/5">
                           <Disc3 className={`w-3.5 h-3.5 text-slate-700 dark:text-slate-300 ${isPlaying ? "animate-spin" : ""}`} />
                           <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-700 dark:text-slate-300">Now Playing</span>
                         </div>
-                        {/* Animated Equalizer Bars */}
-                        <div className="flex gap-1 items-end h-4 mr-1">
-                          <span className={`w-[3px] bg-slate-400 dark:bg-slate-500 rounded-full ${isPlaying ? 'animate-[bounce_1s_infinite_0ms] h-full' : 'h-2'}`}></span>
-                          <span className={`w-[3px] bg-slate-400 dark:bg-slate-500 rounded-full ${isPlaying ? 'animate-[bounce_1s_infinite_200ms] h-3/4' : 'h-3'}`}></span>
-                          <span className={`w-[3px] bg-slate-400 dark:bg-slate-500 rounded-full ${isPlaying ? 'animate-[bounce_1s_infinite_400ms] h-full' : 'h-1.5'}`}></span>
+                        
+                        <div className="flex items-center gap-3">
+                          {/* 🎚️ Unique Circular Volume Controller */}
+                          <div 
+                            ref={volumeRef}
+                            className="relative flex items-center justify-center w-8 h-8 rounded-full cursor-ns-resize group bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors border border-black/5 dark:border-white/10 shadow-sm"
+                            title="Scroll to adjust volume"
+                          >
+                            <svg className="absolute inset-0 w-full h-full transform -rotate-90 p-0.5" viewBox="0 0 36 36">
+                              <path
+                                className="text-gray-300/60 dark:text-gray-600/60"
+                                strokeWidth="2.5"
+                                stroke="currentColor"
+                                fill="none"
+                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                              />
+                              <path
+                                className="text-blue-500 dark:text-blue-400 transition-all duration-150 ease-out"
+                                strokeDasharray={`${volume * 100}, 100`}
+                                strokeWidth="2.5"
+                                strokeLinecap="round"
+                                stroke="currentColor"
+                                fill="none"
+                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                              />
+                            </svg>
+                            {volume === 0 ? (
+                              <VolumeX className="w-3.5 h-3.5 text-slate-700 dark:text-slate-300 group-hover:scale-110 transition-transform" />
+                            ) : volume < 0.5 ? (
+                              <Volume1 className="w-3.5 h-3.5 text-slate-700 dark:text-slate-300 group-hover:scale-110 transition-transform" />
+                            ) : (
+                              <Volume2 className="w-3.5 h-3.5 text-slate-700 dark:text-slate-300 group-hover:scale-110 transition-transform" />
+                            )}
+                            
+                            {/* Volume Percentage Tooltip */}
+                            <div className="absolute -bottom-8 bg-slate-900 dark:bg-white text-white dark:text-black text-[9px] font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg">
+                              {Math.round(volume * 100)}%
+                            </div>
+                          </div>
+
+                          {/* Animated Equalizer Bars */}
+                          <div className="flex gap-1 items-end h-4 mr-1">
+                            <span className={`w-[3px] bg-slate-400 dark:bg-slate-500 rounded-full ${isPlaying ? 'animate-[bounce_1s_infinite_0ms] h-full' : 'h-2'}`}></span>
+                            <span className={`w-[3px] bg-slate-400 dark:bg-slate-500 rounded-full ${isPlaying ? 'animate-[bounce_1s_infinite_200ms] h-3/4' : 'h-3'}`}></span>
+                            <span className={`w-[3px] bg-slate-400 dark:bg-slate-500 rounded-full ${isPlaying ? 'animate-[bounce_1s_infinite_400ms] h-full' : 'h-1.5'}`}></span>
+                          </div>
                         </div>
                       </div>
 
