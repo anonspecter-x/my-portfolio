@@ -174,18 +174,19 @@ export default function Header({ settings, tracks }: HeaderProps) {
     const volElem = volumeRef.current;
     
     const handleWheel = (e: WheelEvent) => {
-      e.preventDefault(); // Stop screen from scrolling
+      if (!isMusicOpen) return;
+      e.preventDefault(); // Stop main screen/page from scrolling
       const delta = Math.sign(e.deltaY);
       
       setVolume((prev) => {
-        // Adjust volume by 5% per scroll tick
+        // Smoothly adjust volume by 5% per scroll tick
         const newVol = prev - delta * 0.05; 
         return Math.max(0, Math.min(newVol, 1));
       });
     };
 
     if (volElem) {
-      // passive: false is critical to make preventDefault work
+      // passive: false is mandatory to allow preventDefault()
       volElem.addEventListener("wheel", handleWheel, { passive: false });
     }
     
@@ -194,7 +195,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
         volElem.removeEventListener("wheel", handleWheel);
       }
     };
-  }, [isMusicOpen]); // Re-attach when dropdown opens
+  }, [isMusicOpen]); 
 
   // 🎵 Play/Pause Logic
   const togglePlay = (index: number) => {
@@ -363,8 +364,14 @@ export default function Header({ settings, tracks }: HeaderProps) {
                     transition={{ duration: 0.2 }}
                     className="absolute right-[-60px] sm:right-0 top-[50px] md:top-[56px] w-[320px] sm:w-[350px] bg-[#f8f9fa]/95 dark:bg-[#0a0a0a]/95 backdrop-blur-2xl border border-gray-200/60 dark:border-gray-800/60 rounded-[2rem] shadow-[0_30px_60px_rgba(0,0,0,0.12)] dark:shadow-[0_30px_60px_rgba(0,0,0,0.6)] origin-top-right overflow-hidden flex flex-col"
                   >
-                    {/* Soft background glow exactly like the picture */}
-                    <div className="absolute top-0 right-0 w-[200px] h-[200px] bg-gradient-to-br from-orange-500/10 to-blue-500/5 blur-[50px] rounded-full pointer-events-none"></div>
+                    {/* Soft background glow - Innovatively responsive to Volume level! */}
+                    <div 
+                      className="absolute top-0 right-0 w-[200px] h-[200px] bg-gradient-to-br from-orange-500/15 to-blue-500/10 blur-[50px] rounded-full pointer-events-none transition-all duration-500 ease-out"
+                      style={{ 
+                        transform: `scale(${0.85 + volume * 0.3})`, 
+                        opacity: 0.3 + volume * 0.7 
+                      }}
+                    ></div>
                     
                     <div className="p-6 pb-2 flex flex-col items-center relative z-10">
                       
@@ -376,41 +383,62 @@ export default function Header({ settings, tracks }: HeaderProps) {
                         </div>
                         
                         <div className="flex items-center gap-3">
-                          {/* 🎚️ Unique Circular Volume Controller */}
+                          {/* 🎚️ Unique Circular Volume Controller with Gradient, Neon Shadow, and Micro-interactions */}
                           <div 
                             ref={volumeRef}
-                            className="relative flex items-center justify-center w-8 h-8 rounded-full cursor-ns-resize group bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors border border-black/5 dark:border-white/10 shadow-sm"
-                            title="Scroll to adjust volume"
+                            className="relative flex items-center justify-center w-8.5 h-8.5 rounded-full cursor-ns-resize group bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-all duration-300 border border-black/5 dark:border-white/10 shadow-inner"
                           >
-                            <svg className="absolute inset-0 w-full h-full transform -rotate-90 p-0.5" viewBox="0 0 36 36">
+                            {/* Hover Neon Aura reflection */}
+                            <div 
+                              className="absolute inset-0 rounded-full bg-blue-500/20 blur-[4px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                              style={{ opacity: volume * 0.4 }}
+                            />
+                            
+                            <svg className="absolute inset-0 w-full h-full transform -rotate-90 p-1" viewBox="0 0 36 36">
+                              <defs>
+                                <linearGradient id="premiumVolumeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                  <stop offset="0%" stopColor="#3b82f6" />
+                                  <stop offset="100%" stopColor="#8b5cf6" />
+                                </linearGradient>
+                              </defs>
                               <path
-                                className="text-gray-300/60 dark:text-gray-600/60"
-                                strokeWidth="2.5"
+                                className="text-gray-200/60 dark:text-gray-800/60"
+                                strokeWidth="3"
                                 stroke="currentColor"
                                 fill="none"
                                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                               />
                               <path
-                                className="text-blue-500 dark:text-blue-400 transition-all duration-150 ease-out"
+                                className="transition-all duration-150 ease-out"
                                 strokeDasharray={`${volume * 100}, 100`}
-                                strokeWidth="2.5"
+                                strokeWidth="3"
                                 strokeLinecap="round"
-                                stroke="currentColor"
+                                stroke="url(#premiumVolumeGradient)"
                                 fill="none"
                                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                               />
                             </svg>
-                            {volume === 0 ? (
-                              <VolumeX className="w-3.5 h-3.5 text-slate-700 dark:text-slate-300 group-hover:scale-110 transition-transform" />
-                            ) : volume < 0.5 ? (
-                              <Volume1 className="w-3.5 h-3.5 text-slate-700 dark:text-slate-300 group-hover:scale-110 transition-transform" />
-                            ) : (
-                              <Volume2 className="w-3.5 h-3.5 text-slate-700 dark:text-slate-300 group-hover:scale-110 transition-transform" />
-                            )}
                             
-                            {/* Volume Percentage Tooltip */}
-                            <div className="absolute -bottom-8 bg-slate-900 dark:bg-white text-white dark:text-black text-[9px] font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg">
-                              {Math.round(volume * 100)}%
+                            {/* Animated Micro-Icon inside Dial */}
+                            <motion.div
+                              animate={{ scale: [1, 1.08, 1] }}
+                              key={volume}
+                              transition={{ duration: 0.15 }}
+                              className="relative z-10 text-slate-700 dark:text-slate-300 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors"
+                            >
+                              {volume === 0 ? (
+                                <VolumeX className="w-3.5 h-3.5" />
+                              ) : volume < 0.5 ? (
+                                <Volume1 className="w-3.5 h-3.5" />
+                              ) : (
+                                <Volume2 className="w-3.5 h-3.5" />
+                              )}
+                            </motion.div>
+                            
+                            {/* Glassmorphism Floating Precise Volume Tooltip */}
+                            <div className="absolute -bottom-9 bg-black/80 dark:bg-white/90 backdrop-blur-md text-white dark:text-black text-[9px] font-extrabold px-2 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none shadow-[0_4px_12px_rgba(0,0,0,0.15)] translate-y-1 group-hover:translate-y-0 tracking-wider flex items-center gap-1 border border-white/15 dark:border-black/5">
+                              <span>VOL</span>
+                              <span className="text-blue-500 dark:text-blue-600 font-mono">{Math.round(volume * 100)}%</span>
                             </div>
                           </div>
 
