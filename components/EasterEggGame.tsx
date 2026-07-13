@@ -6,20 +6,33 @@ import {
   X, Trophy, Code2, Play, 
   Terminal, Database, Server, 
   Cpu, Globe, Zap, Unlock, Network,
-  Activity, Timer, ShieldCheck, Settings, AlertTriangle
+  Activity, Timer, ShieldCheck, Settings, AlertTriangle,
+  Wifi, HardDrive, Monitor, Shield, Key, Fingerprint
 } from "lucide-react";
 
 type ViewState = "boot" | "menu" | "mem_play" | "mem_over" | "seq_play" | "seq_over";
 
 interface MemoryCard { id: number; iconIndex: number; isFlipped: boolean; isMatched: boolean; }
 
-const MemoryIcons = [Terminal, Database, Server, Cpu, Globe, Zap];
-const SeqColors = [
+// 📌 Expanded Icon Pool for True Randomness
+const AllMemoryIcons = [Terminal, Database, Server, Cpu, Globe, Zap, Wifi, HardDrive, Monitor, Shield, Key, Fingerprint];
+
+const SeqColorsBase = [
   { id: 0, off: "bg-rose-950/30 border-rose-500/20 text-rose-900", on: "bg-rose-500 shadow-[0_0_50px_rgba(244,63,94,0.8)] border-rose-400 scale-[0.98] brightness-125" },
   { id: 1, off: "bg-cyan-950/30 border-cyan-500/20 text-cyan-900", on: "bg-cyan-500 shadow-[0_0_50px_rgba(6,182,212,0.8)] border-cyan-400 scale-[0.98] brightness-125" },
   { id: 2, off: "bg-emerald-950/30 border-emerald-500/20 text-emerald-900", on: "bg-emerald-500 shadow-[0_0_50px_rgba(16,185,129,0.8)] border-emerald-400 scale-[0.98] brightness-125" },
   { id: 3, off: "bg-violet-950/30 border-violet-500/20 text-violet-900", on: "bg-violet-500 shadow-[0_0_50px_rgba(139,92,246,0.8)] border-violet-400 scale-[0.98] brightness-125" }
 ];
+
+// 📌 Robust Shuffle Algorithm (Fisher-Yates)
+const shuffleArray = (array: any[]) => {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+};
 
 export default function EasterEggGame() {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,6 +40,7 @@ export default function EasterEggGame() {
   const [bootLog, setBootLog] = useState<string[]>([]);
 
   // ================= STATE: NEURAL MATRIX (MEMORY) =================
+  const [currentMemIcons, setCurrentMemIcons] = useState<any[]>([]);
   const [cards, setCards] = useState<MemoryCard[]>([]);
   const [memMoves, setMemMoves] = useState(0);
   const [memTimeLeft, setMemTimeLeft] = useState(40);
@@ -35,6 +49,7 @@ export default function EasterEggGame() {
   const [isChecking, setIsChecking] = useState(false);
 
   // ================= STATE: CORE SEQUENCE (SIMON SAYS) =================
+  const [gridColors, setGridColors] = useState<any[]>(SeqColorsBase);
   const [seqScore, setSeqScore] = useState(0);
   const [sequence, setSequence] = useState<number[]>([]);
   const [playerStep, setPlayerStep] = useState(0);
@@ -86,7 +101,7 @@ export default function EasterEggGame() {
           setCards(prev => prev.map((c, i) => (i === first || i === second ? { ...c, isMatched: true } : c)));
           setMatchedCount(prev => prev + 1);
           setFlippedIndices([]); setIsChecking(false);
-          if (matchedCount + 1 === MemoryIcons.length) setTimeout(() => setView("mem_over"), 500);
+          if (matchedCount + 1 === 6) setTimeout(() => setView("mem_over"), 500); // 6 pairs to win
         }, 400);
       } else {
         setTimeout(() => {
@@ -139,12 +154,37 @@ export default function EasterEggGame() {
     }
   };
 
-  // 📌 STARTERS
+  // 📌 DYNAMIC STARTERS (Script changes every time!)
   const startMemoryGame = () => {
-    const deck = [...Array(MemoryIcons.length * 2)].map((_, i) => ({ id: i, iconIndex: i % MemoryIcons.length, isFlipped: false, isMatched: false })).sort(() => Math.random() - 0.5);
-    setCards(deck); setMemMoves(0); setMemTimeLeft(40); setMatchedCount(0); setFlippedIndices([]); setIsChecking(false); setView("mem_play");
+    // Pick 6 random icons for this session
+    const selectedIcons = shuffleArray(AllMemoryIcons).slice(0, 6);
+    setCurrentMemIcons(selectedIcons);
+
+    // Generate and shuffle the deck
+    const deck = [...Array(12)].map((_, i) => ({ 
+      id: i, 
+      iconIndex: i % 6, 
+      isFlipped: false, 
+      isMatched: false 
+    }));
+    
+    setCards(shuffleArray(deck)); 
+    setMemMoves(0); 
+    setMemTimeLeft(40); 
+    setMatchedCount(0); 
+    setFlippedIndices([]); 
+    setIsChecking(false); 
+    setView("mem_play");
   };
-  const startSeqGame = () => { setSeqScore(0); setPlayerStep(0); setSequence([Math.floor(Math.random() * 4)]); setView("seq_play"); };
+
+  const startSeqGame = () => {
+    // Randomize the layout of the 4 color pads every new game
+    setGridColors(shuffleArray(SeqColorsBase));
+    setSeqScore(0); 
+    setPlayerStep(0); 
+    setSequence([Math.floor(Math.random() * 4)]); 
+    setView("seq_play"); 
+  };
 
   // ================= RENDER HELPERS =================
   const ResultScreen = ({ title, scoreLabel, score, onRetry, icon: Icon, success = false }: any) => (
@@ -299,14 +339,13 @@ export default function EasterEggGame() {
                 
                 <div className="grid grid-cols-3 md:grid-cols-4 gap-4 md:gap-5 w-full">
                   {cards.map((card, index) => {
-                    const Icon = MemoryIcons[card.iconIndex];
+                    const Icon = currentMemIcons[card.iconIndex];
                     return (
                       <div key={card.id} onClick={() => handleCardFlip(index)} className="relative aspect-square cursor-pointer group touch-manipulation" style={{ perspective: "1000px" }}>
                         <motion.div animate={{ rotateY: card.isFlipped || card.isMatched ? 180 : 0 }} transition={{ duration: 0.5, type: "spring", stiffness: 260, damping: 25 }} className="w-full h-full relative" style={{ transformStyle: "preserve-3d" }}>
                           
                           {/* FRONT (HIDDEN CARD) */}
                           <div className="absolute inset-0 bg-[#080808] border border-white/10 rounded-2xl md:rounded-[1.5rem] flex items-center justify-center group-hover:bg-white/5 group-hover:border-white/20 transition-all duration-300 shadow-xl overflow-hidden" style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden" }}>
-                             {/* Cool subtle pattern on back of cards */}
                             <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_white_1px,_transparent_1px)] bg-[length:10px_10px]"></div>
                             <Code2 className="w-8 h-8 md:w-10 md:h-10 text-white/10 group-hover:text-white/30 transition-colors relative z-10" />
                           </div>
@@ -315,7 +354,7 @@ export default function EasterEggGame() {
                           <div className={`absolute inset-0 border rounded-2xl md:rounded-[1.5rem] flex items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden transition-colors duration-300 ${card.isMatched ? "bg-emerald-950/40 border-emerald-500/40" : "bg-cyan-950/40 border-cyan-500/40"}`} 
                             style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", transform: "rotateY(180deg)" }}>
                             <div className={`absolute inset-0 blur-xl opacity-30 ${card.isMatched ? "bg-emerald-500" : "bg-cyan-500"}`}></div>
-                            <Icon className={`w-10 h-10 md:w-12 md:h-12 relative z-10 ${card.isMatched ? "text-emerald-400 drop-shadow-[0_0_15px_rgba(16,185,129,0.8)]" : "text-cyan-400 drop-shadow-[0_0_15px_rgba(6,182,212,0.8)]"}`} />
+                            {Icon && <Icon className={`w-10 h-10 md:w-12 h-12 relative z-10 ${card.isMatched ? "text-emerald-400 drop-shadow-[0_0_15px_rgba(16,185,129,0.8)]" : "text-cyan-400 drop-shadow-[0_0_15px_rgba(6,182,212,0.8)]"}`} />}
                           </div>
                         </motion.div>
                       </div>
@@ -337,15 +376,14 @@ export default function EasterEggGame() {
                  
                 <div className="grid grid-cols-2 gap-5 md:gap-6 p-6 md:p-8 bg-[#050505]/60 border border-white/10 rounded-[2.5rem] md:rounded-[3rem] backdrop-blur-3xl shadow-[0_20px_60px_rgba(0,0,0,0.5)] relative">
                   <div className="absolute inset-0 border border-white/5 rounded-[2.5rem] md:rounded-[3rem] pointer-events-none"></div>
-                  {SeqColors.map((color, idx) => (
+                  {gridColors.map((color) => (
                     <button 
-                      key={idx} disabled={isShowingSeq} onPointerDown={(e) => { e.preventDefault(); handleSeqClick(idx); }} 
+                      key={color.id} disabled={isShowingSeq} onPointerDown={(e) => { e.preventDefault(); handleSeqClick(color.id); }} 
                       className={`w-32 h-32 md:w-44 md:h-44 rounded-[1.5rem] md:rounded-[2rem] border-2 transition-all duration-150 touch-manipulation relative z-10 flex items-center justify-center overflow-hidden outline-none
-                      ${activeColor === idx ? color.on : color.off}
+                      ${activeColor === color.id ? color.on : color.off}
                       ${isShowingSeq ? "cursor-not-allowed" : "cursor-pointer hover:border-white/40"}`} 
                     >
-                      {/* Inner Glow Effect for Pads */}
-                      <div className={`absolute inset-0 opacity-20 bg-current transition-opacity ${activeColor === idx ? "opacity-50" : ""}`}></div>
+                      <div className={`absolute inset-0 opacity-20 bg-current transition-opacity ${activeColor === color.id ? "opacity-50" : ""}`}></div>
                     </button>
                   ))}
                 </div>
@@ -365,7 +403,7 @@ export default function EasterEggGame() {
             )}
 
             {/* RESULTS SCREEN */}
-            {view === "mem_over" && <ResultScreen key="mem_over" title={matchedCount === MemoryIcons.length ? "Matrix Solved" : "Sync Failed"} scoreLabel="Nodes Decrypted" score={`${matchedCount}/${MemoryIcons.length}`} icon={matchedCount === MemoryIcons.length ? ShieldCheck : AlertTriangle} onRetry={startMemoryGame} success={matchedCount === MemoryIcons.length} />}
+            {view === "mem_over" && <ResultScreen key="mem_over" title={matchedCount === 6 ? "Matrix Solved" : "Sync Failed"} scoreLabel="Nodes Decrypted" score={`${matchedCount}/6`} icon={matchedCount === 6 ? ShieldCheck : AlertTriangle} onRetry={startMemoryGame} success={matchedCount === 6} />}
             {view === "seq_over" && <ResultScreen key="seq_over" title="Sequence Broken" scoreLabel="Nodes Cleared" score={seqScore} icon={Network} onRetry={startSeqGame} success={false} />}
           
           </AnimatePresence>
