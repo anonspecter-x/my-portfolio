@@ -32,12 +32,10 @@ export default function Header({ settings, tracks }: HeaderProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [volume, setVolume] = useState<number>(0.8); // 🔊 Default Volume 80%
-  const [isVolumeChanging, setIsVolumeChanging] = useState(false); // For smart mobile/desktop tooltip indicator
   
   const audioRef = useRef<HTMLAudioElement>(null);
   const musicRef = useRef<HTMLDivElement>(null);
-  const volumeRef = useRef<HTMLDivElement>(null); 
-  const volumeTimeout = useRef<NodeJS.Timeout | null>(null);
+  const volumeRef = useRef<HTMLDivElement>(null); // 🎚️ Ref for volume scroll event
   const pathname = usePathname(); 
 
   const fallbackTracks = [
@@ -91,7 +89,10 @@ export default function Header({ settings, tracks }: HeaderProps) {
     
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
+      
+      // 🎵 Minimize music window on mobile when scrolling
       if (window.innerWidth < 768) {
+        // Checking for a minimum scroll distance to avoid accidental closures
         if (Math.abs(window.scrollY - lastScrollY) > 10) {
           setIsMusicOpen(false);
         }
@@ -122,7 +123,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
     localStorage.setItem("theme", newTheme);
   };
 
-  // ⏱️ Time Update Logic
+  // ⏱️ Time Update Logic (Dynamic real-time update)
   useEffect(() => {
     const updateTime = () => {
       const options: Intl.DateTimeFormatOptions = { 
@@ -136,6 +137,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
     };
     
     updateTime();
+    // 1000ms (1 second) interval ensures exact minute change
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, []);
@@ -151,6 +153,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Mobile Menu Resize Fix
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) setIsMobileMenuOpen(false);
@@ -166,66 +169,30 @@ export default function Header({ settings, tracks }: HeaderProps) {
     }
   }, [volume]);
 
-  // Visual Volume Feedback trigger
-  const showVolumeFeedback = () => {
-    setIsVolumeChanging(true);
-    if (volumeTimeout.current) clearTimeout(volumeTimeout.current);
-    volumeTimeout.current = setTimeout(() => {
-      setIsVolumeChanging(false);
-    }, 1500); // Hide after 1.5s of inactivity
-  };
-
-  // 🎚️ Handle Volume Control (Desktop Scroll + Mobile Touch Swipe)
+  // 🎚️ Handle Volume Scroll (Prevent default page scroll)
   useEffect(() => {
     const volElem = volumeRef.current;
-    let lastY = 0;
-
-    // --- Desktop: Mouse Wheel (Scroll) ---
+    
     const handleWheel = (e: WheelEvent) => {
       if (!isMusicOpen) return;
-      e.preventDefault(); 
+      e.preventDefault(); // Stop main screen/page from scrolling
       const delta = Math.sign(e.deltaY);
       
       setVolume((prev) => {
+        // Smoothly adjust volume by 5% per scroll tick
         const newVol = prev - delta * 0.05; 
         return Math.max(0, Math.min(newVol, 1));
       });
-      showVolumeFeedback();
-    };
-
-    // --- Mobile: Touch & Swipe Support (Android/iOS) ---
-    const handleTouchStart = (e: TouchEvent) => {
-      lastY = e.touches[0].clientY;
-      showVolumeFeedback(); // Show tooltip immediately on touch
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      if (!isMusicOpen) return;
-      e.preventDefault(); // Stop main screen/page from scrolling
-      const currentY = e.touches[0].clientY;
-      const diffY = lastY - currentY; // Positive if swiping UP, Negative if DOWN
-      lastY = currentY; 
-      
-      setVolume((prev) => {
-        // Adjust touch sensitivity (0.015 per pixel moved)
-        const newVol = prev + (diffY * 0.015); 
-        return Math.max(0, Math.min(newVol, 1));
-      });
-      showVolumeFeedback();
     };
 
     if (volElem) {
       // passive: false is mandatory to allow preventDefault()
       volElem.addEventListener("wheel", handleWheel, { passive: false });
-      volElem.addEventListener("touchstart", handleTouchStart, { passive: false });
-      volElem.addEventListener("touchmove", handleTouchMove, { passive: false });
     }
     
     return () => {
       if (volElem) {
         volElem.removeEventListener("wheel", handleWheel);
-        volElem.removeEventListener("touchstart", handleTouchStart);
-        volElem.removeEventListener("touchmove", handleTouchMove);
       }
     };
   }, [isMusicOpen]); 
@@ -283,6 +250,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
             <Link href="/" className="font-extrabold text-lg md:text-xl tracking-tighter text-black dark:text-white flex items-center gap-2.5 group">
               {settings?.siteLogoLight || settings?.siteLogoDark || settings?.siteLogo ? (
                 <>
+                  {/* ☀️ Light Mode Logo */}
                   {(settings?.siteLogoLight || settings?.siteLogo) && (
                     <img 
                       src={settings.siteLogoLight || settings.siteLogo} 
@@ -290,6 +258,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
                       className={`h-8 md:h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-500 ${settings?.siteLogoDark ? 'block dark:hidden' : ''}`} 
                     />
                   )}
+                  {/* 🌙 Dark Mode Logo */}
                   {settings?.siteLogoDark && (
                     <img 
                       src={settings.siteLogoDark} 
@@ -353,6 +322,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
           {/* Right Action Buttons */}
           <div className="flex items-center gap-2 md:gap-3">
             
+            {/* ⏱️ Pro Feature: Clean Local Time (Digital Style) */}
             {localTime && (
               <div className="hidden lg:flex items-center gap-1.5 text-gray-500 dark:text-gray-400 mr-2">
                 <span className="text-[9px] font-bold tracking-widest uppercase opacity-70">UTC +6</span>
@@ -360,6 +330,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
               </div>
             )}
 
+            {/* 📌 Contact Logic */}
             {pathname !== "/contact" && (
               <Link href="/contact" className="hidden md:flex items-center gap-1.5 bg-black dark:bg-white text-white dark:text-black px-4 py-2 rounded-full text-xs font-bold hover:scale-[1.04] active:scale-95 transition-all shadow-sm border border-black/10 dark:border-white/10">
                 Let's Talk <ArrowUpRight className="w-3.5 h-3.5 opacity-80" />
@@ -393,31 +364,31 @@ export default function Header({ settings, tracks }: HeaderProps) {
                     transition={{ duration: 0.2 }}
                     className="absolute right-[-60px] sm:right-0 top-[50px] md:top-[56px] w-[320px] sm:w-[350px] bg-[#f8f9fa]/95 dark:bg-[#0a0a0a]/95 backdrop-blur-2xl border border-gray-200/60 dark:border-gray-800/60 rounded-[2rem] shadow-[0_30px_60px_rgba(0,0,0,0.12)] dark:shadow-[0_30px_60px_rgba(0,0,0,0.6)] origin-top-right overflow-hidden flex flex-col"
                   >
-                    {/* Soft background glow - Responsive to Volume level */}
+                    {/* Soft background glow - Innovatively responsive to Volume level! */}
                     <div 
-                      className="absolute top-0 right-0 w-[200px] h-[200px] bg-gradient-to-br from-orange-500/15 to-blue-500/10 blur-[50px] rounded-full pointer-events-none transition-all duration-500 ease-out z-0"
+                      className="absolute top-0 right-0 w-[200px] h-[200px] bg-gradient-to-br from-orange-500/15 to-blue-500/10 blur-[50px] rounded-full pointer-events-none transition-all duration-500 ease-out"
                       style={{ 
                         transform: `scale(${0.85 + volume * 0.3})`, 
                         opacity: 0.3 + volume * 0.7 
                       }}
                     ></div>
                     
-                    <div className="p-6 pb-2 flex flex-col items-center relative z-20">
+                    <div className="p-6 pb-2 flex flex-col items-center relative z-10">
                       
                       {/* Top Bar: Now Playing, Volume Dial & Equalizer */}
-                      <div className="w-full flex items-center justify-between mb-6 relative z-50">
-                        <div className="bg-gray-200/50 dark:bg-gray-800/50 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center gap-2 border border-white/40 dark:border-white/5 shadow-sm">
+                      <div className="w-full flex items-center justify-between mb-6">
+                        <div className="bg-gray-200/50 dark:bg-gray-800/50 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center gap-2 border border-white/40 dark:border-white/5">
                           <Disc3 className={`w-3.5 h-3.5 text-slate-700 dark:text-slate-300 ${isPlaying ? "animate-spin" : ""}`} />
                           <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-700 dark:text-slate-300">Now Playing</span>
                         </div>
                         
-                        <div className="flex items-center gap-3 relative">
-                          {/* 🎚️ Mobile Swipe & Desktop Scroll Volume Controller */}
+                        <div className="flex items-center gap-3">
+                          {/* 🎚️ Unique Circular Volume Controller with Gradient, Neon Shadow, and Micro-interactions */}
                           <div 
                             ref={volumeRef}
-                            className="relative flex items-center justify-center w-8.5 h-8.5 rounded-full cursor-ns-resize touch-none group bg-white/40 dark:bg-white/5 hover:bg-white/70 dark:hover:bg-white/10 transition-all duration-300 border border-black/5 dark:border-white/10 shadow-sm"
-                            title="Scroll or Swipe Up/Down to adjust volume"
+                            className="relative flex items-center justify-center w-8.5 h-8.5 rounded-full cursor-ns-resize group bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-all duration-300 border border-black/5 dark:border-white/10 shadow-inner"
                           >
+                            {/* Hover Neon Aura reflection */}
                             <div 
                               className="absolute inset-0 rounded-full bg-blue-500/20 blur-[4px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                               style={{ opacity: volume * 0.4 }}
@@ -431,7 +402,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
                                 </linearGradient>
                               </defs>
                               <path
-                                className="text-gray-300/80 dark:text-gray-700/80"
+                                className="text-gray-200/60 dark:text-gray-800/60"
                                 strokeWidth="3"
                                 stroke="currentColor"
                                 fill="none"
@@ -448,10 +419,12 @@ export default function Header({ settings, tracks }: HeaderProps) {
                               />
                             </svg>
                             
+                            {/* Animated Micro-Icon inside Dial */}
                             <motion.div
-                              animate={{ scale: isVolumeChanging ? [1, 1.15, 1] : 1 }}
-                              transition={{ duration: 0.2 }}
-                              className="relative z-10 text-slate-700 dark:text-slate-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
+                              animate={{ scale: [1, 1.08, 1] }}
+                              key={volume}
+                              transition={{ duration: 0.15 }}
+                              className="relative z-10 text-slate-700 dark:text-slate-300 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors"
                             >
                               {volume === 0 ? (
                                 <VolumeX className="w-3.5 h-3.5" />
@@ -462,10 +435,10 @@ export default function Header({ settings, tracks }: HeaderProps) {
                               )}
                             </motion.div>
                             
-                            {/* Z-INDEX FIXED: Smart Glassmorphism Floating Tooltip */}
-                            <div className={`absolute -bottom-11 right-[-10px] bg-black/90 dark:bg-white/95 backdrop-blur-xl text-white dark:text-black text-[10px] font-extrabold px-2.5 py-1.5 rounded-full pointer-events-none shadow-[0_8px_16px_rgba(0,0,0,0.2)] tracking-widest flex items-center gap-1.5 border border-white/20 dark:border-black/10 z-[100] transition-all duration-300 ${isVolumeChanging ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 scale-95'}`}>
+                            {/* Glassmorphism Floating Precise Volume Tooltip */}
+                            <div className="absolute -bottom-9 bg-black/80 dark:bg-white/90 backdrop-blur-md text-white dark:text-black text-[9px] font-extrabold px-2 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none shadow-[0_4px_12px_rgba(0,0,0,0.15)] translate-y-1 group-hover:translate-y-0 tracking-wider flex items-center gap-1 border border-white/15 dark:border-black/5">
                               <span>VOL</span>
-                              <span className="text-blue-400 dark:text-blue-600 font-mono bg-white/10 dark:bg-black/5 px-1.5 py-0.5 rounded-md">{Math.round(volume * 100)}%</span>
+                              <span className="text-blue-500 dark:text-blue-600 font-mono">{Math.round(volume * 100)}%</span>
                             </div>
                           </div>
 
@@ -478,8 +451,8 @@ export default function Header({ settings, tracks }: HeaderProps) {
                         </div>
                       </div>
 
-                      {/* Main Album Art (z-index adjusted to stay below tooltip) */}
-                      <div className="relative w-[180px] h-[180px] sm:w-[200px] sm:h-[200px] rounded-[24px] overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.15)] mb-5 z-10">
+                      {/* Main Album Art */}
+                      <div className="relative w-[180px] h-[180px] sm:w-[200px] sm:h-[200px] rounded-[24px] overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.15)] mb-5">
                         <img 
                           src={displayTracks[currentTrackIndex]?.cover} 
                           alt="Cover Art" 
@@ -488,13 +461,13 @@ export default function Header({ settings, tracks }: HeaderProps) {
                       </div>
 
                       {/* Track Details */}
-                      <div className="text-center w-full px-4 mb-4 z-20 relative">
+                      <div className="text-center w-full px-4 mb-4">
                         <h3 className="text-[17px] sm:text-lg font-extrabold text-slate-900 dark:text-white truncate tracking-tight">{displayTracks[currentTrackIndex]?.title}</h3>
                         <p className="text-[13px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">{displayTracks[currentTrackIndex]?.artist}</p>
                       </div>
 
                       {/* Player Controls */}
-                      <div className="flex items-center justify-center gap-8 mb-4 w-full z-20 relative">
+                      <div className="flex items-center justify-center gap-8 mb-4 w-full">
                         <button 
                           onClick={() => {
                             const prev = currentTrackIndex === 0 ? displayTracks.length - 1 : currentTrackIndex - 1;
@@ -534,7 +507,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
                       {/* Styled Scrollable List */}
                       <div className="flex flex-col gap-4 max-h-[160px] overflow-y-auto pr-3 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-300 dark:[&::-webkit-scrollbar-thumb]:bg-slate-700 [&::-webkit-scrollbar-thumb]:rounded-full">
                         {displayTracks.map((track, idx) => {
-                          if (idx === currentTrackIndex) return null; 
+                          if (idx === currentTrackIndex) return null; // Don't show currently playing in 'Up Next'
                           return (
                             <div key={track._id} onClick={() => togglePlay(idx)} className="group flex items-center gap-4 cursor-pointer">
                               <img 
@@ -549,6 +522,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
                             </div>
                           );
                         })}
+                        {/* Fallback layout if only 1 track total */}
                         {displayTracks.length === 1 && (
                           <div className="text-[12px] text-slate-400 text-center py-2">No more tracks in queue.</div>
                         )}
@@ -639,6 +613,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
             >
               <p className="text-[10px] font-mono tracking-[0.3em] text-gray-400 uppercase mb-5">Connect</p>
               
+              {/* 📌 Dynamic Social Media Links Container */}
               {socialLinks.length > 0 && (
                 <div className="flex flex-wrap items-center gap-4 mb-6">
                   {socialLinks.map((social, idx) => (
@@ -649,6 +624,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
                 </div>
               )}
               
+              {/* 📌 Contact Logic for Mobile Footer */}
               {pathname !== "/contact" && (
                 <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="w-full bg-black dark:bg-white text-white dark:text-black py-4 rounded-xl flex items-center justify-center gap-2 font-bold text-sm shadow-xl active:scale-95 transition-transform">
                   Let's Talk <ArrowUpRight className="w-4 h-4" />
