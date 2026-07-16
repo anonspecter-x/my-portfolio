@@ -91,39 +91,43 @@ export default function CertificatesClient({ certificates }: CertificatesClientP
               <motion.div 
                 key={cert._id} 
                 variants={fadeUp} 
-                className="group relative bg-white dark:bg-[#050505] border border-gray-200 dark:border-white/5 rounded-3xl p-2.5 shadow-sm hover:shadow-2xl dark:hover:shadow-[0_8px_30px_-15px_rgba(255,255,255,0.08)] transition-all duration-500 flex flex-col"
+                className="group relative bg-white dark:bg-[#050505] border border-gray-200 dark:border-white/5 rounded-3xl p-3 shadow-sm hover:shadow-2xl dark:hover:shadow-[0_8px_30px_-15px_rgba(255,255,255,0.08)] transition-all duration-500 flex flex-col"
               >
                 
-                {/* 🖼️ Top Image Container */}
-                <div 
-                  onClick={() => cert.certificateImage && setSelectedImage(cert.certificateImage)}
-                  className={`relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-gray-100 dark:bg-[#0a0a0a] border border-gray-200/50 dark:border-white/5 z-10 ${cert.certificateImage ? 'cursor-zoom-in' : 'flex items-center justify-center'}`}
-                >
-                  {cert.certificateImage ? (
-                    <>
-                      <img 
-                        src={cert.certificateImage} 
-                        alt={cert.title} 
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-                      />
-                      {/* Dark overlay with view button on hover */}
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 dark:group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 backdrop-blur-[2px]">
-                        <div className="bg-white/90 dark:bg-black/90 px-4 py-2 rounded-full flex items-center gap-2 text-sm font-bold text-black dark:text-white shadow-xl scale-90 group-hover:scale-100 transition-transform duration-300">
-                          <Maximize2 className="w-4 h-4" /> View Full
+                {/* 🖼️ Image & Logo Wrapper (Fixed overflow issue here) */}
+                <div className="relative z-10">
+                  
+                  {/* Top Image Container (overflow-hidden only applies to the main image) */}
+                  <div 
+                    onClick={() => cert.certificateImage && setSelectedImage(cert.certificateImage)}
+                    className={`relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-gray-100 dark:bg-[#0a0a0a] border border-gray-200/50 dark:border-white/5 ${cert.certificateImage ? 'cursor-zoom-in' : 'flex items-center justify-center'}`}
+                  >
+                    {cert.certificateImage ? (
+                      <>
+                        <img 
+                          src={cert.certificateImage} 
+                          alt={cert.title} 
+                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                        />
+                        {/* Dark overlay with view button on hover */}
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 dark:group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 backdrop-blur-[2px]">
+                          <div className="bg-white/90 dark:bg-black/90 px-4 py-2 rounded-full flex items-center gap-2 text-sm font-bold text-black dark:text-white shadow-xl scale-90 group-hover:scale-100 transition-transform duration-300">
+                            <Maximize2 className="w-4 h-4" /> View Full
+                          </div>
                         </div>
-                      </div>
-                    </>
-                  ) : (
-                    <Award className="w-12 h-12 text-gray-300 dark:text-gray-800" />
-                  )}
+                      </>
+                    ) : (
+                      <Award className="w-12 h-12 text-gray-300 dark:text-gray-800" />
+                    )}
+                  </div>
 
-                  {/* 🏅 Issuer Logo - Positioned Absolute Overlapping Image (Rounded squircle, not circle) */}
-                  <div className="absolute -bottom-5 left-4 w-12 h-12 rounded-xl bg-white border border-gray-200 dark:border-gray-800 shadow-md flex items-center justify-center overflow-hidden z-20 group-hover:-translate-y-1 transition-transform duration-300 p-0.5">
+                  {/* 🏅 Issuer Logo - Positioned Absolute Overlapping Image (Outside overflow-hidden) */}
+                  <div className="absolute -bottom-5 left-4 w-12 h-12 rounded-[12px] bg-white border-2 border-white dark:border-[#050505] shadow-md flex items-center justify-center z-20 group-hover:-translate-y-1 transition-transform duration-300">
                     {cert.issuerLogo ? (
                       <img 
                         src={cert.issuerLogo} 
                         alt={cert.issuerName} 
-                        className="w-full h-full rounded-[10px] object-cover" 
+                        className="w-full h-full rounded-[8px] object-contain bg-white p-0.5" 
                       />
                     ) : (
                       <Award className="w-6 h-6 text-gray-400" />
@@ -132,7 +136,7 @@ export default function CertificatesClient({ certificates }: CertificatesClientP
                 </div>
 
                 {/* 📝 Content Area */}
-                <div className="flex flex-col flex-1 pt-9 px-3 pb-3">
+                <div className="flex flex-col flex-1 pt-9 px-2 pb-2">
                   <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-1.5">
                     {cert.issuerName}
                   </span>
