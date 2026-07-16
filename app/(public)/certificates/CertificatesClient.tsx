@@ -77,7 +77,7 @@ export default function CertificatesClient({ certificates }: CertificatesClientP
         </motion.p>
       </motion.div>
 
-      {/* 🌟 Certificates Grid Layout (Upgraded Structure) */}
+      {/* 🌟 Premium Grid Layout (Floating Logo Design) */}
       <motion.div 
         initial="hidden" animate="visible" variants={stagger}
         className="relative z-10"
@@ -88,78 +88,79 @@ export default function CertificatesClient({ certificates }: CertificatesClientP
             <p className="text-sm md:text-base text-gray-500 dark:text-gray-400">Certifications are currently being updated.</p>
           </motion.div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {certificates.map((cert) => (
               <motion.div 
                 key={cert._id} 
                 variants={fadeUp} 
-                className="group bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-4 shadow-sm hover:shadow-2xl dark:hover:shadow-[0_8px_30px_-15px_rgba(255,255,255,0.05)] transition-all duration-500 flex flex-col hover:-translate-y-2 relative overflow-hidden"
+                className="group bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-3 shadow-sm hover:shadow-xl dark:hover:shadow-[0_8px_30px_-15px_rgba(255,255,255,0.05)] transition-all duration-500 flex flex-col hover:-translate-y-2 relative"
               >
                 
-                {/* Top Section: Certificate Showcase Image */}
-                {cert.certificateImage ? (
-                  <div 
-                    onClick={() => setSelectedImage(cert.certificateImage!)}
-                    className="relative w-full aspect-[16/11] rounded-[1.5rem] overflow-hidden bg-gray-50 dark:bg-[#050505] border border-gray-100 dark:border-gray-800 cursor-zoom-in group/img mb-5"
-                  >
+                {/* 🖼️ Certificate Image (Top Cover) */}
+                <div 
+                  onClick={() => setSelectedImage(cert.certificateImage!)}
+                  className="relative w-full aspect-[16/10] rounded-[1.5rem] overflow-hidden bg-gray-50 dark:bg-[#050505] border border-gray-100 dark:border-gray-800 cursor-zoom-in group/img"
+                >
+                  {cert.certificateImage ? (
                     <img 
                       src={cert.certificateImage} 
                       alt={cert.title} 
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-105" 
                     />
-                    <div className="absolute inset-0 bg-black/0 group-hover/img:bg-black/20 dark:group-hover/img:bg-black/40 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover/img:opacity-100 z-10">
-                       <div className="bg-white/90 dark:bg-black/90 backdrop-blur-md px-4 py-2 rounded-full flex items-center gap-2 text-sm font-bold text-black dark:text-white shadow-lg translate-y-4 group-hover/img:translate-y-0 transition-transform duration-300">
-                         <Maximize2 className="w-4 h-4" /> View Full
-                       </div>
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Award className="w-12 h-12 text-gray-300 dark:text-gray-800" />
                     </div>
+                  )}
+                  {/* Hover Overlay for Zoom */}
+                  <div className="absolute inset-0 bg-black/0 group-hover/img:bg-black/20 dark:group-hover/img:bg-black/40 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover/img:opacity-100 z-10">
+                     <div className="bg-white/90 dark:bg-black/90 backdrop-blur-md px-4 py-2 rounded-full flex items-center gap-2 text-sm font-bold text-black dark:text-white shadow-lg translate-y-4 group-hover/img:translate-y-0 transition-transform duration-300">
+                       <Maximize2 className="w-4 h-4" /> View Certificate
+                     </div>
                   </div>
-                ) : (
-                  <div className="relative w-full aspect-[16/11] rounded-[1.5rem] bg-gray-50 dark:bg-[#111] border border-gray-100 dark:border-gray-800 mb-5 flex items-center justify-center">
-                    <Award className="w-12 h-12 text-gray-300 dark:text-gray-700" />
-                  </div>
-                )}
+                </div>
 
-                {/* Info Section */}
-                <div className="flex flex-col flex-1 px-2">
-                  
-                  {/* Issuer Logo (Perfectly Circular) & Name */}
-                  <div className="flex items-center gap-3 mb-4">
+                {/* 🏅 Floating Issuer Logo (No extra padding, Perfectly Rounded) */}
+                <div className="relative px-4">
+                  <div className="absolute -top-7 left-4 w-14 h-14 rounded-xl bg-white border-4 border-white dark:border-[#0a0a0a] shadow-md flex items-center justify-center overflow-hidden z-20 group-hover:scale-105 transition-transform duration-300">
                     {cert.issuerLogo ? (
-                      <div className="w-11 h-11 rounded-full bg-white shadow-sm border border-gray-200 flex items-center justify-center overflow-hidden shrink-0 group-hover:scale-110 transition-transform duration-500">
-                        <img 
-                          src={cert.issuerLogo} 
-                          alt={cert.issuerName} 
-                          className="w-full h-full object-cover scale-[1.02]" 
-                        />
-                      </div>
+                      <img 
+                        src={cert.issuerLogo} 
+                        alt={cert.issuerName} 
+                        className="w-full h-full object-cover" // 📌 নো প্যাডিং, পুরো বক্স জুড়ে ছবি ফিট হবে
+                      />
                     ) : (
-                      <div className="w-11 h-11 rounded-full bg-gray-100 dark:bg-[#111] border border-gray-200 dark:border-gray-800 flex items-center justify-center text-gray-400 shrink-0">
-                        <Award className="w-5 h-5" />
-                      </div>
+                      <Award className="w-6 h-6 text-gray-400" />
                     )}
-                    <span className="text-[11px] font-bold text-gray-600 dark:text-gray-300 uppercase tracking-widest bg-gray-100 dark:bg-white/5 px-3 py-1.5 rounded-full border border-gray-200/50 dark:border-white/5 line-clamp-1">
-                      {cert.issuerName}
-                    </span>
                   </div>
+                </div>
 
-                  {/* Title */}
-                  <h3 className="font-bold text-xl leading-snug text-black dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 mb-6">
+                {/* 📝 Content Section */}
+                <div className="flex flex-col flex-1 pt-10 px-4 pb-2">
+                  
+                  {/* Issuer Name */}
+                  <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-2 line-clamp-1">
+                    {cert.issuerName}
+                  </span>
+                  
+                  {/* Course Title */}
+                  <h3 className="font-bold text-lg leading-snug text-black dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 mb-6">
                     {cert.title}
                   </h3>
 
-                  {/* Bottom Verification Button */}
-                  <div className="mt-auto pt-4 border-t border-gray-100 dark:border-white/5 flex items-center">
+                  {/* Bottom Action Button */}
+                  <div className="mt-auto pt-4 border-t border-gray-100 dark:border-white/5">
                     {cert.credentialUrl ? (
                       <a 
                         href={cert.credentialUrl} 
                         target="_blank" 
                         rel="noreferrer" 
-                        className="flex-1 inline-flex items-center justify-center gap-2 text-sm font-bold text-black dark:text-white hover:text-white hover:bg-black dark:hover:bg-white dark:hover:text-black transition-colors group/link bg-gray-50 dark:bg-[#111] py-3 px-4 rounded-xl border border-gray-200/50 dark:border-white/5"
+                        className="w-full inline-flex items-center justify-center gap-2 text-sm font-bold text-black dark:text-white hover:text-white hover:bg-black dark:hover:bg-white dark:hover:text-black transition-colors group/link bg-gray-50 dark:bg-[#111] py-3.5 px-4 rounded-xl border border-gray-200/50 dark:border-white/5 shadow-sm"
                       >
                         Verify Credential <ExternalLink className="w-4 h-4 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
                       </a>
                     ) : (
-                      <div className="flex-1 inline-flex items-center justify-center gap-2 text-sm font-bold text-gray-400 bg-gray-50 dark:bg-[#111] py-3 px-4 rounded-xl cursor-not-allowed border border-gray-100 dark:border-gray-800/50">
+                      <div className="w-full inline-flex items-center justify-center gap-2 text-sm font-bold text-gray-400 bg-gray-50 dark:bg-[#111] py-3.5 px-4 rounded-xl cursor-not-allowed border border-gray-100 dark:border-gray-800/50">
                         <ShieldCheck className="w-4 h-4" /> Internally Verified
                       </div>
                     )}
