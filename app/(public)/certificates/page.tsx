@@ -31,11 +31,11 @@ async function getPublicCertificates() {
     const client = await MongoClient.connect(process.env.MONGODB_URI as string);
     const db = client.db();
     
-    // যেহেতু Date ফিল্ড নেই, তাই _id (যা অটো-টাইমস্ট্যাম্প ধরে রাখে) অনুযায়ী সর্ট করা হলো
-    const rawCertificates = await db.collection("certificates")
-      .find({})
-      .sort({ _id: -1 })
-      .toArray();
+    // আগে অ্যাড করা সার্টিফিকেট আগে দেখানোর জন্য _id অনুযায়ী Ascending (1) সর্ট করা হলো
+        const rawCertificates = await db.collection("certificates")
+          .find({})
+          .sort({ _id: 1 })
+          .toArray();
       
     await client.close();
     
