@@ -60,8 +60,8 @@ export default function Header({ settings, tracks }: HeaderProps) {
   // ⚙️ Logic: Add dynamic links based on pathname
   let desktopNavLinks = [...baseNavLinks];
 
-  // 📌 যদি ইউজার About পেজে থাকে, তবে About-এর ঠিক পরেই Certificates অ্যাড হবে
-  if (pathname === "/about" || pathname.startsWith("/about/")) {
+  // 📌 যদি ইউজার About অথবা Certificates পেজে থাকে, তবে About-এর ঠিক পরেই Certificates অ্যাড হবে
+  if (pathname === "/about" || pathname.startsWith("/about/") || pathname === "/certificates" || pathname.startsWith("/certificates/")) {
     desktopNavLinks.splice(1, 0, { name: "Certificates", href: "/certificates" });
   }
 
@@ -338,6 +338,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
             <div className="flex items-center gap-1 bg-black/5 dark:bg-white/5 p-1 rounded-full border border-black/5 dark:border-white/5">
               <AnimatePresence mode="popLayout">
                 {desktopNavLinks.map((link) => {
+                  // 📌 Active Check: Exact match অথবা Sub-route match
                   const isActive = pathname === link.href || pathname.startsWith(`${link.href}/`);
                   return (
                     <motion.div
