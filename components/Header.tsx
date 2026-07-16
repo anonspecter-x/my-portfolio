@@ -57,10 +57,18 @@ export default function Header({ settings, tracks }: HeaderProps) {
     { name: "Blog", href: "/blog" }, 
   ];
 
-  // ⚙️ Logic: Add Contact only if on /contact page
-  const desktopNavLinks = pathname === "/contact" 
-    ? [...baseNavLinks, { name: "Contact", href: "/contact" }] 
-    : baseNavLinks;
+  // ⚙️ Logic: Add dynamic links based on pathname
+  let desktopNavLinks = [...baseNavLinks];
+
+  // 📌 যদি ইউজার About পেজে থাকে, তবে About-এর ঠিক পরেই Certificates অ্যাড হবে
+  if (pathname === "/about" || pathname.startsWith("/about/")) {
+    desktopNavLinks.splice(1, 0, { name: "Certificates", href: "/certificates" });
+  }
+
+  // 📌 Contact page এ থাকলে Contact লিংক দেখাবে
+  if (pathname === "/contact") {
+    desktopNavLinks.push({ name: "Contact", href: "/contact" });
+  }
 
   // Mobile menu should always show Home if not on Home page
   const mobileNavLinks = pathname === "/" 
@@ -328,25 +336,35 @@ export default function Header({ settings, tracks }: HeaderProps) {
             </AnimatePresence>
 
             <div className="flex items-center gap-1 bg-black/5 dark:bg-white/5 p-1 rounded-full border border-black/5 dark:border-white/5">
-              {desktopNavLinks.map((link) => {
-                const isActive = pathname.startsWith(link.href);
-                return (
-                  <Link 
-                    key={link.name} 
-                    href={link.href} 
-                    className={`relative px-4 py-1.5 rounded-full transition-colors duration-300 ${isActive ? "text-black dark:text-white" : "hover:text-black dark:hover:text-white"}`}
-                  >
-                    {isActive && (
-                      <motion.div
-                        layoutId="activeNavBackground"
-                        className="absolute inset-0 bg-white dark:bg-[#222] rounded-full shadow-sm border border-gray-200/50 dark:border-gray-700/50"
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                      />
-                    )}
-                    <span className="relative z-10">{link.name}</span>
-                  </Link>
-                );
-              })}
+              <AnimatePresence mode="popLayout">
+                {desktopNavLinks.map((link) => {
+                  const isActive = pathname === link.href || pathname.startsWith(`${link.href}/`);
+                  return (
+                    <motion.div
+                      key={link.name}
+                      layout
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Link 
+                        href={link.href} 
+                        className={`relative px-4 py-1.5 rounded-full transition-colors duration-300 flex ${isActive ? "text-black dark:text-white" : "hover:text-black dark:hover:text-white"}`}
+                      >
+                        {isActive && (
+                          <motion.div
+                            layoutId="activeNavBackground"
+                            className="absolute inset-0 bg-white dark:bg-[#222] rounded-full shadow-sm border border-gray-200/50 dark:border-gray-700/50"
+                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                          />
+                        )}
+                        <span className="relative z-10">{link.name}</span>
+                      </Link>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
             </div>
           </nav>
 
@@ -613,21 +631,30 @@ export default function Header({ settings, tracks }: HeaderProps) {
             <div className="flex flex-col pt-28 px-8 gap-5 relative z-10">
               <p className="text-[10px] font-mono tracking-[0.3em] text-gray-400 uppercase mb-2">Navigation</p>
               
-              {mobileNavLinks.map((link, idx) => {
-                const isActive = pathname === link.href || (pathname === "/" && link.href === "/");
-                return (
-                  <motion.div key={idx} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.1, duration: 0.4 }}>
-                    <Link 
-                      href={link.href}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={`text-3xl font-extrabold tracking-tight flex items-center justify-between group transition-colors ${isActive ? "text-blue-600 dark:text-blue-400" : "text-black dark:text-white"}`}
+              <AnimatePresence mode="popLayout">
+                {mobileNavLinks.map((link, idx) => {
+                  const isActive = pathname === link.href || (pathname === "/" && link.href === "/");
+                  return (
+                    <motion.div 
+                      key={link.name} 
+                      layout
+                      initial={{ opacity: 0, x: -20 }} 
+                      animate={{ opacity: 1, x: 0 }} 
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ delay: idx * 0.05, duration: 0.3 }}
                     >
-                      {link.name}
-                      <ArrowUpRight className={`w-5 h-5 transition-all duration-300 ${isActive ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0"} text-gray-400`} />
-                    </Link>
-                  </motion.div>
-                );
-              })}
+                      <Link 
+                        href={link.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`text-3xl font-extrabold tracking-tight flex items-center justify-between group transition-colors ${isActive ? "text-blue-600 dark:text-blue-400" : "text-black dark:text-white"}`}
+                      >
+                        {link.name}
+                        <ArrowUpRight className={`w-5 h-5 transition-all duration-300 ${isActive ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0"} text-gray-400`} />
+                      </Link>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
             </div>
 
             {/* Bottom Mobile Footer */}
