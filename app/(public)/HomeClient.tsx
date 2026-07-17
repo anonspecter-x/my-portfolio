@@ -5,7 +5,7 @@ import {
   ArrowRight, FileText, Code2, Layout, LayoutTemplate, 
   ChevronRight, ChevronDown, ChevronUp, ExternalLink, 
   Quote, Star, Lightbulb, PenTool, Rocket, PhoneCall,
-  Calendar, Clock, Plus 
+  Calendar, Clock, Plus, Award, ShieldCheck
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
@@ -62,10 +62,11 @@ interface HomeClientProps {
   testimonials?: any[];
   brands?: any[]; 
   blogs?: any[]; 
+  certificates?: any[]; // 📌 Added certificates
   settings: any; 
 }
 
-export default function HomeClient({ realProjects, realSkills, services = [], testimonials = [], brands = [], blogs = [], settings }: HomeClientProps) {
+export default function HomeClient({ realProjects, realSkills, services = [], testimonials = [], brands = [], blogs = [], certificates = [], settings }: HomeClientProps) {
   const { scrollYProgress } = useScroll();
   const yBackground = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
   const rotateBackground = useTransform(scrollYProgress, [0, 1], [0, 45]);

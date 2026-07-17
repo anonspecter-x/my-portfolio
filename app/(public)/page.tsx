@@ -66,20 +66,23 @@ async function getPageData() {
     // 📌 ডাটাবেজ থেকে স্কিলস আনা হচ্ছে
     const rawSkills = await db.collection("skills").find({}).sort({ percentage: -1 }).toArray();
 
-    // 📌 ডাটাবেজ থেকে সার্ভিসেস/এক্সপেরিয়েন্স আনা হচ্ছে (আগে অ্যাড করা আইটেম আগে দেখাবে)
+    // 📌 ডাটাবেজ থেকে সার্ভিসেস/এক্সপেরিয়েন্স আনা হচ্ছে
     const rawServices = await db.collection("services").find({}).sort({ createdAt: 1 }).toArray();
 
-    // 📌 ডাটাবেজ থেকে টেস্টিমোনিয়াল আনা হচ্ছে (প্রায়োরিটি অনুযায়ী)
+    // 📌 ডাটাবেজ থেকে টেস্টিমোনিয়াল আনা হচ্ছে 
     const rawTestimonials = await db.collection("testimonials").find({}).sort({ priority: -1, createdAt: -1 }).toArray();
 
     // 📌 ডাটাবেজ থেকে ব্র্যান্ড লোগো আনা হচ্ছে
     const rawBrands = await db.collection("brands").find({}).sort({ order: 1 }).toArray();
 
-    // 📌 ডাটাবেজ থেকে লেটেস্ট পাবলিশড ব্লগগুলো আনা হচ্ছে (নতুন)
+    // 📌 ডাটাবেজ থেকে লেটেস্ট পাবলিশড ব্লগগুলো আনা হচ্ছে 
     const rawBlogs = await db.collection("posts")
-      .find({ status: "published" }) // শুধুমাত্র পাবলিশড পোস্ট
+      .find({ status: "published" }) 
       .sort({ createdAt: -1 })
       .toArray();
+
+    // 📌 ডাটাবেজ থেকে সার্টিফিকেটগুলো আনা হচ্ছে (Ascending order)
+    const rawCertificates = await db.collection("certificates").find({}).sort({ _id: 1 }).toArray();
 
     // ডাটাবেজ থেকে সেটিংস আনা হচ্ছে
     const settingsData = await db.collection("settings").findOne({});
@@ -105,7 +108,7 @@ async function getPageData() {
       };
     });
 
-    // 📌 স্কিলস ফরম্যাট করা (subtitle সহ)
+    // 📌 স্কিলস ফরম্যাট করা
     const formattedSkills = rawSkills.map(s => ({
       _id: s._id.toString(),
       name: s.name,
@@ -120,7 +123,7 @@ async function getPageData() {
       title: s.title,
       description: s.description,
       image: s.image || "",
-      mediaType: s.mediaType ? String(s.mediaType) : "" // 📌 ভিডিও বা ইমেজের টাইপ ফ্রন্টএন্ডে পাঠানো হলো
+      mediaType: s.mediaType ? String(s.mediaType) : "" 
     }));
 
     // 📌 টেস্টিমোনিয়াল ফরম্যাট করা
@@ -142,7 +145,7 @@ async function getPageData() {
       order: b.order
     }));
 
-    // 📌 ব্লগ ফরম্যাট করা (নতুন যুক্ত হলো)
+    // 📌 ব্লগ ফরম্যাট করা 
     const formattedBlogs = rawBlogs.map(b => ({
       _id: b._id.toString(),
       title: b.title,
@@ -153,7 +156,17 @@ async function getPageData() {
       readingTime: b.readingTime || "1 min read"
     }));
 
-    // 📌 FIXED: পুরো settings অবজেক্টটি পাস করা হলো যাতে Social Links গুলো HomeClient এ পৌঁছায়
+    // 📌 সার্টিফিকেট ফরম্যাট করা (নতুন যুক্ত হলো)
+    const formattedCertificates = rawCertificates.map(c => ({
+      _id: c._id.toString(),
+      title: c.title,
+      issuerName: c.issuerName,
+      issuerLogo: c.issuerLogo || null,
+      certificateImage: c.certificateImage || null,
+      credentialUrl: c.credentialUrl || null
+    }));
+
+    // 📌 সেটিংস ফরম্যাট করা
     const formattedSettings = settingsData ? {
       ...settingsData,
       _id: settingsData._id.toString(),
@@ -165,19 +178,19 @@ async function getPageData() {
       services: formattedServices,
       testimonials: formattedTestimonials,
       brands: formattedBrands, 
-      blogs: formattedBlogs, // 👈 নতুন যুক্ত হলো
+      blogs: formattedBlogs, 
+      certificates: formattedCertificates, // 👈 নতুন যুক্ত হলো
       settings: formattedSettings 
     };
 
   } catch (error) {
     console.error("Failed to fetch data:", error);
-    // 👈 error এর ক্ষেত্রে blogs: [] যুক্ত হলো
-    return { projects: [], skills: [], services: [], testimonials: [], brands: [], blogs: [], settings: null };
+    return { projects: [], skills: [], services: [], testimonials: [], brands: [], blogs: [], certificates: [], settings: null };
   }
 }
 
 export default async function Home() {
-  const { projects, skills, services, testimonials, brands, blogs, settings } = await getPageData(); // 👈 blogs ডিস্ট্রাকচার হলো
+  const { projects, skills, services, testimonials, brands, blogs, certificates, settings } = await getPageData(); 
 
   // ডাটাগুলো ক্লায়েন্ট কম্পোনেন্টে পাস করা হচ্ছে
   return (
@@ -187,7 +200,8 @@ export default async function Home() {
       services={services} 
       testimonials={testimonials} 
       brands={brands} 
-      blogs={blogs} // 👈 HomeClient এ পাঠানো হলো
+      blogs={blogs} 
+      certificates={certificates} // 👈 HomeClient এ পাঠানো হলো
       settings={settings} 
     />
   );
