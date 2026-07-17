@@ -11,7 +11,7 @@ interface Certificate {
   issuerLogo?: string;
   certificateImage?: string;
   credentialUrl?: string;
-  certificateId?: string; // 📌 নতুন ফিল্ড যুক্ত করা হলো
+  certificateId?: string;
 }
 
 interface CertificatesClientProps {
@@ -30,6 +30,7 @@ export default function CertificatesClient({ certificates }: CertificatesClientP
     return () => { document.body.style.overflow = "unset"; };
   }, [selectedImage]);
 
+  // 📌 Animation Variants (Matched with other pages)
   const fadeUp: any = {
     hidden: { opacity: 0, y: 40 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
@@ -43,7 +44,7 @@ export default function CertificatesClient({ certificates }: CertificatesClientP
   return (
     <main className="relative min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] pt-32 pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto overflow-hidden selection:bg-blue-500/30">
       
-      {/* 🎨 Background Elements */}
+      {/* 🎨 Animated Background Elements */}
       <motion.div 
         animate={{ y: [0, -20, 0], opacity: [0.5, 0.8, 0.5] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
@@ -55,36 +56,38 @@ export default function CertificatesClient({ certificates }: CertificatesClientP
         className="absolute bottom-40 right-[-10%] w-[300px] h-[300px] bg-purple-500/10 blur-[120px] rounded-full pointer-events-none -z-10"
       />
 
-      {/* 🌟 Header */}
+      {/* ================= 🌟 THE HERO SECTION ================= */}
       <motion.div 
         initial="hidden" animate="visible" variants={stagger}
         className="max-w-3xl mb-16 md:mb-24 relative z-10"
       >
-        <motion.div variants={fadeUp} className="inline-flex items-center w-fit gap-2 px-3.5 py-1.5 rounded-full bg-white dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-xs font-bold mb-6 text-gray-700 dark:text-gray-300 shadow-sm uppercase tracking-widest">
-          <ShieldCheck className="w-4 h-4 text-blue-500" /> Verified Credentials
+        {/* 📌 Badge exactly matched with other pages */}
+        <motion.div variants={fadeUp} className="inline-flex items-center w-fit gap-2 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-xs font-semibold mb-6 text-gray-600 dark:text-gray-400">
+          <ShieldCheck className="w-3.5 h-3.5" /> Verified Credentials
         </motion.div>
         
-        <motion.h1 variants={fadeUp} className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-black dark:text-white leading-[1.1] mb-6">
+        {/* 📌 H1 exactly matched with other pages */}
+        <motion.h1 variants={fadeUp} className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-black dark:text-white leading-[1.1] mb-6">
           Professional <br className="hidden md:block" />
-          <span className="text-gray-400 dark:text-gray-500">
-            Certifications.
-          </span>
+          <span className="text-gray-400">certifications.</span>
         </motion.h1>
         
-        <motion.p variants={fadeUp} className="text-gray-600 dark:text-gray-400 text-lg md:text-xl font-medium max-w-2xl leading-relaxed">
+        {/* 📌 P tag exactly matched with other pages */}
+        <motion.p variants={fadeUp} className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl">
           A showcase of my continuous learning journey, technical validations, and professional milestones achieved through recognized global platforms.
         </motion.p>
       </motion.div>
 
-      {/* 🌟 Standard Premium Grid */}
+      {/* ================= 🌟 CERTIFICATES GRID ================= */}
       <motion.div 
         initial="hidden" animate="visible" variants={stagger}
         className="relative z-10"
       >
         {certificates.length === 0 ? (
-          <motion.div variants={fadeUp} className="text-center py-20 border border-dashed border-gray-300 dark:border-gray-800 rounded-3xl bg-gray-50/50 dark:bg-[#0a0a0a]/50">
-            <Award className="w-16 h-16 text-gray-300 dark:text-gray-700 mx-auto mb-5" />
-            <p className="text-base text-gray-500 dark:text-gray-400 font-medium">Certifications are currently being updated.</p>
+          // 🚫 Empty State (Matched with Blog/Brands page empty state styling)
+          <motion.div variants={fadeUp} className="text-center py-32 border border-dashed border-gray-200 dark:border-gray-800 rounded-[2rem] bg-gray-50/50 dark:bg-[#111]/50">
+            <Award className="w-12 h-12 text-gray-300 dark:text-gray-700 mx-auto mb-4" />
+            <p className="text-gray-500 dark:text-gray-400 text-lg font-medium">Certifications are currently being updated.</p>
           </motion.div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
@@ -92,43 +95,40 @@ export default function CertificatesClient({ certificates }: CertificatesClientP
               <motion.div 
                 key={cert._id} 
                 variants={fadeUp} 
-                className="group relative bg-white dark:bg-[#050505] border border-gray-200 dark:border-white/5 rounded-3xl p-3 shadow-sm hover:shadow-2xl dark:hover:shadow-[0_8px_30px_-15px_rgba(255,255,255,0.08)] transition-all duration-500 flex flex-col"
+                // 📌 Card style matched exactly with Blog Card (bg, border, rounded-2rem, shadow)
+                className="group flex flex-col bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-[2rem] overflow-hidden hover:border-blue-500/30 transition-all duration-500 shadow-sm hover:shadow-xl hover:-translate-y-1 h-full relative z-10"
               >
                 
-                {/* 🖼️ Image & Logo Wrapper (Fixed overflow issue here) */}
-                <div className="relative z-10">
-                  
-                  {/* Top Image Container (overflow-hidden only applies to the main image) */}
-                  <div 
-                    onClick={() => cert.certificateImage && setSelectedImage(cert.certificateImage)}
-                    className={`relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-gray-100 dark:bg-[#0a0a0a] border border-gray-200/50 dark:border-white/5 ${cert.certificateImage ? 'cursor-zoom-in' : 'flex items-center justify-center'}`}
-                  >
-                    {cert.certificateImage ? (
-                      <>
-                        <img 
-                          src={cert.certificateImage} 
-                          alt={cert.title} 
-                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-                        />
-                        {/* Dark overlay with view button on hover */}
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 dark:group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 backdrop-blur-[2px]">
-                          <div className="bg-white/90 dark:bg-black/90 px-4 py-2 rounded-full flex items-center gap-2 text-sm font-bold text-black dark:text-white shadow-xl scale-90 group-hover:scale-100 transition-transform duration-300">
-                            <Maximize2 className="w-4 h-4" /> View Full
-                          </div>
+                {/* 🖼️ Image Container (Matched with Blog Image wrapper style) */}
+                <div 
+                  onClick={() => cert.certificateImage && setSelectedImage(cert.certificateImage)}
+                  className={`relative w-full aspect-[4/3] bg-gray-100 dark:bg-[#111] border-b border-gray-200 dark:border-gray-800 overflow-hidden ${cert.certificateImage ? 'cursor-zoom-in' : 'flex items-center justify-center'}`}
+                >
+                  {cert.certificateImage ? (
+                    <>
+                      <img 
+                        src={cert.certificateImage} 
+                        alt={cert.title} 
+                        // Grayscale matching style
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out grayscale-[20%] group-hover:grayscale-0 group-hover:scale-105" 
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 dark:group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 backdrop-blur-[2px]">
+                        <div className="bg-white/90 dark:bg-black/90 px-4 py-2 rounded-full flex items-center gap-2 text-sm font-bold text-black dark:text-white shadow-xl scale-90 group-hover:scale-100 transition-transform duration-300">
+                          <Maximize2 className="w-4 h-4" /> View Full
                         </div>
-                      </>
-                    ) : (
-                      <Award className="w-12 h-12 text-gray-300 dark:text-gray-800" />
-                    )}
-                  </div>
+                      </div>
+                    </>
+                  ) : (
+                    <Award className="w-12 h-12 text-gray-300 dark:text-gray-800" />
+                  )}
 
-                  {/* 🏅 Issuer Logo - Positioned Absolute Overlapping Image (Outside overflow-hidden) */}
-                  <div className="absolute -bottom-5 left-4 w-12 h-12 rounded-[12px] bg-white border-2 border-white dark:border-[#050505] shadow-md flex items-center justify-center z-20 group-hover:-translate-y-1 transition-transform duration-300">
+                  {/* 🏅 Issuer Logo - Positioned elegantly inside the image boundary */}
+                  <div className="absolute bottom-4 left-4 w-12 h-12 rounded-[12px] bg-white border border-gray-200 dark:border-gray-800 shadow-md flex items-center justify-center z-20 group-hover:-translate-y-1 transition-transform duration-300">
                     {cert.issuerLogo ? (
                       <img 
                         src={cert.issuerLogo} 
                         alt={cert.issuerName} 
-                        className="w-full h-full rounded-[8px] object-contain bg-white p-0.5" 
+                        className="w-full h-full rounded-[8px] object-contain bg-white p-1" 
                       />
                     ) : (
                       <Award className="w-6 h-6 text-gray-400" />
@@ -136,35 +136,42 @@ export default function CertificatesClient({ certificates }: CertificatesClientP
                   </div>
                 </div>
 
-                {/* 📝 Content Area */}
-                <div className="flex flex-col flex-1 pt-9 px-2 pb-2">
-                  <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-1.5">
-                    {cert.issuerName}
-                  </span>
+                {/* 📝 Content Area (Matched with Blog Content padding) */}
+                <div className="p-6 md:p-8 flex flex-col flex-1">
                   
-                  <h3 className="font-bold text-lg leading-tight text-black dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
+                  {/* Category / Issuer */}
+                  <div className="mb-4 flex items-center justify-between">
+                    <span className="text-[10px] font-bold tracking-widest uppercase text-blue-600 dark:text-blue-400">
+                      {cert.issuerName}
+                    </span>
+                  </div>
+                  
+                  {/* Title */}
+                  <h3 className="text-xl font-bold text-black dark:text-white mb-4 group-hover:text-blue-500 transition-colors duration-300 leading-snug line-clamp-3">
                     {cert.title}
                   </h3>
 
-                  {/* 📌 Verification Button / Code Pushed to bottom */}
-                  <div className="mt-auto pt-6">
+                  <div className="flex-1"></div> {/* Spacer to push button to bottom */}
+
+                  {/* 📌 Verification Button (Minimalistic and matched with previous tags/borders) */}
+                  <div className="mt-auto pt-6 border-t border-gray-100 dark:border-gray-800/60">
                     {cert.credentialUrl ? (
                       <a 
                         href={cert.credentialUrl} 
                         target="_blank" 
                         rel="noreferrer" 
-                        className="flex items-center justify-between w-full text-sm font-bold text-black dark:text-white bg-gray-50 dark:bg-[#111] hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black py-3 px-4 rounded-xl border border-gray-200/50 dark:border-white/5 transition-colors group/link"
+                        className="group/btn flex items-center justify-between w-full text-[13px] font-bold text-black dark:text-white bg-gray-50 dark:bg-[#111] hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black py-3 px-4 rounded-xl border border-gray-200 dark:border-gray-800 transition-colors shadow-sm"
                       >
                         Verify Credential 
-                        <ExternalLink className="w-4 h-4 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
+                        <ExternalLink className="w-4 h-4 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
                       </a>
                     ) : cert.certificateId ? (
-                      <div className="flex items-center justify-between w-full text-sm font-bold text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-[#111] py-3 px-4 rounded-xl border border-gray-100 dark:border-gray-800/50 cursor-default">
+                      <div className="flex items-center justify-between w-full text-[13px] font-bold text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-[#111] py-3 px-4 rounded-xl border border-gray-200 dark:border-gray-800 cursor-default">
                         <span className="truncate mr-2">ID: {cert.certificateId}</span>
                         <ShieldCheck className="w-4 h-4 text-blue-500 shrink-0" />
                       </div>
                     ) : (
-                      <div className="flex items-center justify-between w-full text-sm font-bold text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-[#111] py-3 px-4 rounded-xl border border-gray-100 dark:border-gray-800/50 cursor-default">
+                      <div className="flex items-center justify-between w-full text-[13px] font-bold text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-[#111] py-3 px-4 rounded-xl border border-gray-200 dark:border-gray-800 cursor-default">
                         Internally Verified
                         <ShieldCheck className="w-4 h-4 text-blue-500 shrink-0" />
                       </div>
@@ -200,7 +207,7 @@ export default function CertificatesClient({ certificates }: CertificatesClientP
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 20 }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="relative max-w-6xl w-full max-h-[90vh] rounded-2xl md:rounded-[2rem] overflow-hidden shadow-2xl border border-gray-200/50 dark:border-white/10 bg-white dark:bg-[#050505]"
+              className="relative max-w-6xl w-full max-h-[90vh] rounded-[2rem] overflow-hidden shadow-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0a0a0a]"
               onClick={(e) => e.stopPropagation()} 
             >
               <img 
