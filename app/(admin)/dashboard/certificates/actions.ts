@@ -10,6 +10,7 @@ export async function saveCertificate(formData: FormData) {
   const title = formData.get("title") as string;
   const issuerName = formData.get("issuerName") as string;
   const credentialUrl = formData.get("credentialUrl") as string;
+  const certificateId = formData.get("certificateId") as string; // 📌 নতুন ফিল্ডটি রিসিভ করা হলো
 
   if (!title || !issuerName) {
     throw new Error("Certificate Title and Issuer Name are required.");
@@ -27,6 +28,7 @@ export async function saveCertificate(formData: FormData) {
     title,
     issuerName,
     credentialUrl: credentialUrl || "",
+    certificateId: certificateId || "", // 📌 ডাটাবেসে সেভ করার জন্য অবজেক্টে যুক্ত করা হলো
     updatedAt: new Date(),
   };
 
@@ -66,12 +68,12 @@ export async function saveCertificate(formData: FormData) {
 
   await client.close();
 
-  // ক্যাশ ক্লিয়ার করা যাতে ফ্রন্টএন্ডে সাথে সাথে আপডেট দেখায়
+  // ক্যাশ ক্লিয়ার করা যাতে ফ্রন্টএন্ডে সাথে সাথে আপডেট দেখায়
   revalidatePath("/dashboard/certificates");
   revalidatePath("/"); // পাবলিক পেজের ক্যাশ রিলিজের জন্য
 }
 
-// 📌 ৩. সার্টিফিকেট ডিলিট করার সম্পূর্ণ ফাংশন (R2 ক্লিয়ারেন্স সহ)
+// 📌 ৩. সার্টিফিকেট ডিলিট করার সম্পূর্ণ ফাংশন (R2 ক্লিয়ারেন্স সহ)
 export async function deleteCertificate(id: string) {
   if (!id) return;
 
