@@ -70,7 +70,7 @@ export default function Header({ settings, tracks }: HeaderProps) {
     desktopNavLinks.push({ name: "Contact", href: "/contact" });
   }
 
-  // 📌 Mobile menu should always show Home (if not on Home page) AND Terminal
+  // Mobile menu should always show Home if not on Home page, and always include Terminal
   const mobileNavLinks = pathname === "/" 
     ? [...desktopNavLinks, { name: "Terminal", href: "/terminal" }]
     : [{ name: "Home", href: "/" }, ...desktopNavLinks, { name: "Terminal", href: "/terminal" }];
@@ -261,7 +261,6 @@ export default function Header({ settings, tracks }: HeaderProps) {
     }
   };
 
-  // 📌 Terminal Active check
   const isTerminalActive = pathname === "/terminal" || pathname.startsWith("/terminal/");
 
   return (
@@ -322,8 +321,6 @@ export default function Header({ settings, tracks }: HeaderProps) {
 
           {/* 📌 Desktop Navigation */}
           <nav className="hidden md:flex items-center text-[13px] font-bold text-gray-500 dark:text-gray-400 relative">
-            
-            {/* Left Home Icon */}
             <AnimatePresence>
               {pathname !== "/" && (
                 <motion.div 
@@ -340,10 +337,11 @@ export default function Header({ settings, tracks }: HeaderProps) {
               )}
             </AnimatePresence>
 
-            {/* Center Navigation Links */}
+            {/* Gray Pill containing regular nav links */}
             <div className="flex items-center gap-1 bg-black/5 dark:bg-white/5 p-1 rounded-full border border-black/5 dark:border-white/5">
               <AnimatePresence mode="popLayout">
                 {desktopNavLinks.map((link) => {
+                  // 📌 Active Check: Exact match অথবা Sub-route match
                   const isActive = pathname === link.href || pathname.startsWith(`${link.href}/`);
                   return (
                     <motion.div
@@ -373,25 +371,30 @@ export default function Header({ settings, tracks }: HeaderProps) {
               </AnimatePresence>
             </div>
 
-            {/* 📌 Right Terminal Icon (Always visible, active state styling applied) */}
-            <div className="overflow-hidden flex items-center">
+            {/* 📌 New Standalone Terminal Button (Styled like "Let's Talk") */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.2 }}
+              className="ml-3"
+            >
               <Link 
                 href="/terminal" 
-                title="Open Terminal"
-                className={`flex items-center justify-center p-2 ml-2 rounded-full transition-all duration-300 group/term ${
-                  isTerminalActive
-                    ? "bg-white dark:bg-[#222] text-black dark:text-white shadow-sm border border-gray-200/50 dark:border-gray-700/50" 
-                    : "border border-transparent hover:bg-black/5 dark:hover:bg-white/10"
-                }`}
-              >
-                <SquareTerminal className={`w-4 h-4 transition-colors ${
+                className={`relative flex items-center justify-center rounded-full transition-all duration-300 hover:scale-[1.04] active:scale-95 shadow-sm border ${
                   isTerminalActive 
-                    ? "text-black dark:text-white" 
-                    : "text-gray-500 group-hover/term:text-black dark:text-gray-400 dark:group-hover/term:text-white"
-                }`} />
+                    ? 'bg-[#111] text-emerald-400 dark:bg-white dark:text-emerald-600 border-black/20 dark:border-white/20' 
+                    : 'bg-black text-white dark:bg-white dark:text-black border-black/10 dark:border-white/10'
+                }`}
+                style={{ width: '34px', height: '34px' }}
+                title="Terminal Console"
+              >
+                <SquareTerminal className="w-4 h-4" />
+                {/* Glowing dot when active */}
+                {isTerminalActive && (
+                  <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse border-2 border-white dark:border-[#0a0a0a]"></span>
+                )}
               </Link>
-            </div>
-            
+            </motion.div>
           </nav>
 
           {/* Right Action Buttons */}
