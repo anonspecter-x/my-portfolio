@@ -5,7 +5,7 @@ import {
   ArrowRight, FileText, Code2, Layout, LayoutTemplate, 
   ChevronRight, ChevronDown, ChevronUp, ExternalLink, 
   Quote, Star, Lightbulb, PenTool, Rocket, PhoneCall,
-  Calendar, Clock, Plus 
+  Calendar, Clock, Plus, Award, ShieldCheck
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
@@ -55,6 +55,16 @@ const processStepVariant = (index: number): any => ({
   }
 });
 
+interface Certificate {
+  _id: string;
+  title: string;
+  issuerName: string;
+  issuerLogo?: string;
+  certificateImage?: string;
+  credentialUrl?: string;
+  certificateId?: string;
+}
+
 interface HomeClientProps {
   realProjects: any[];
   realSkills: any[];
@@ -62,10 +72,11 @@ interface HomeClientProps {
   testimonials?: any[];
   brands?: any[]; 
   blogs?: any[]; 
+  certificates?: Certificate[];
   settings: any; 
 }
 
-export default function HomeClient({ realProjects, realSkills, services = [], testimonials = [], brands = [], blogs = [], settings }: HomeClientProps) {
+export default function HomeClient({ realProjects, realSkills, services = [], testimonials = [], brands = [], blogs = [], certificates = [], settings }: HomeClientProps) {
   const { scrollYProgress } = useScroll();
   const yBackground = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
   const rotateBackground = useTransform(scrollYProgress, [0, 1], [0, 45]);
@@ -172,6 +183,45 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
     if (blogScrollTimeout.current) clearTimeout(blogScrollTimeout.current);
     blogScrollTimeout.current = setTimeout(() => {
       setIsBlogInteracting(false);
+    }, 800);
+  };
+
+  // ==========================================
+  // 🎓 CERTIFICATES AUTO-SCROLL LOGIC
+  // ==========================================
+  const infiniteCertificates = certificates && certificates.length > 0 ? [...certificates, ...certificates, ...certificates, ...certificates] : [];
+  const certScrollerRef = useRef<HTMLDivElement>(null);
+  const [isCertInteracting, setIsCertInteracting] = useState(false);
+  const certScrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const scroller = certScrollerRef.current;
+    if (!scroller || infiniteCertificates.length === 0) return;
+
+    let animationId: number;
+    const scroll = () => {
+      if (!isCertInteracting) {
+        scroller.scrollLeft += 1; 
+        if (scroller.scrollLeft >= scroller.scrollWidth / 2) {
+          scroller.scrollLeft -= scroller.scrollWidth / 2;
+        }
+      }
+      animationId = requestAnimationFrame(scroll);
+    };
+
+    animationId = requestAnimationFrame(scroll);
+    return () => cancelAnimationFrame(animationId);
+  }, [isCertInteracting, infiniteCertificates.length]);
+
+  const handleCertInteractionStart = () => {
+    setIsCertInteracting(true);
+    if (certScrollTimeout.current) clearTimeout(certScrollTimeout.current);
+  };
+
+  const handleCertInteractionEnd = () => {
+    if (certScrollTimeout.current) clearTimeout(certScrollTimeout.current);
+    certScrollTimeout.current = setTimeout(() => {
+      setIsCertInteracting(false);
     }, 800);
   };
 
@@ -302,14 +352,10 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               Trusted by Innovative Companies
             </p>
             <div className="relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] pause-on-hover flex py-8 md:py-12 -my-8 md:-my-12">
-              {/* 📌 প্যাডিং (py-12) বাড়ানো হয়েছে যাতে গ্লো-টা কাটার মতো জায়গা না পায় এবং -my-12 দিয়ে স্পেসিং ব্যালেন্স করা হয়েছে */}
               <div className="flex shrink-0 animate-brand-marquee gap-12 md:gap-20 items-center px-6">
                 {displayBrands.map((brand, idx) => (
                   <div key={`brand1-${idx}`} className="relative shrink-0 flex items-center justify-center w-24 md:w-36 h-12 md:h-16 group cursor-pointer">
-                    
-                    {/* 📌 আপনার পছন্দের Radial Gradient: inset-[-50%] দেওয়া হয়েছে যেন গ্লো-টা বড় হয়ে একদম স্মুথলি মিলিয়ে যায় */}
                     <div className="absolute inset-[-50%] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.85)_0%,rgba(255,255,255,0)_65%)] opacity-0 group-hover:dark:opacity-100 transition-opacity duration-500 pointer-events-none z-0"></div>
-                    
                     <img 
                       src={brand.logo} 
                       alt={brand.name} 
@@ -321,9 +367,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               <div aria-hidden="true" className="flex shrink-0 animate-brand-marquee gap-12 md:gap-20 items-center px-6">
                 {displayBrands.map((brand, idx) => (
                   <div key={`brand2-${idx}`} className="relative shrink-0 flex items-center justify-center w-24 md:w-36 h-12 md:h-16 group cursor-pointer">
-                    
                     <div className="absolute inset-[-50%] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.85)_0%,rgba(255,255,255,0)_65%)] opacity-0 group-hover:dark:opacity-100 transition-opacity duration-500 pointer-events-none z-0"></div>
-                    
                     <img 
                       src={brand.logo} 
                       alt={brand.name} 
@@ -400,7 +444,6 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                   <div 
                     key={service._id} 
                     onClick={() => setActiveAccordion(idx)}
-                    // 📌 New Added: Perfect theme matching for accordion active state
                     className={`border rounded-xl cursor-pointer transition-all duration-300 overflow-hidden ${activeAccordion === idx ? 'bg-blue-50/50 dark:bg-blue-500/5 border-blue-200 dark:border-blue-500/30' : 'bg-gray-50/50 dark:bg-[#0a0a0a] border-gray-200 dark:border-white/5 hover:border-gray-300 dark:hover:border-white/10'}`}
                   >
                     <div className="flex justify-between items-center p-5 md:p-6">
@@ -683,6 +726,106 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
             </div>
           )}
         </motion.section>
+
+        {/* ================= 🎓 CERTIFICATES SECTION ================= */}
+        {certificates && certificates.length > 0 && (
+          <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer} className="py-20 md:py-32 border-t border-gray-200/50 dark:border-gray-800/50" id="certificates">
+            <div className="mb-12 md:mb-16 text-center">
+              <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 md:mb-6 text-black dark:text-white">
+                Professional Credentials
+              </motion.h2>
+              <motion.p variants={fadeUp} className="text-sm md:text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                My continuous learning journey and technical validations through global platforms.
+              </motion.p>
+            </div>
+
+            <div 
+              ref={certScrollerRef}
+              onMouseEnter={handleCertInteractionStart}
+              onMouseLeave={handleCertInteractionEnd}
+              onTouchStart={handleCertInteractionStart}
+              onTouchEnd={handleCertInteractionEnd}
+              className="flex relative w-full overflow-x-auto [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)] pt-4 pb-12 gap-5 md:gap-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            >
+              {infiniteCertificates.map((cert, idx) => (
+                <div 
+                  key={`cert-${cert._id || idx}-${idx}`} 
+                  className="w-[280px] md:w-[360px] shrink-0 group relative bg-white dark:bg-[#050505] border border-gray-100 dark:border-white/5 rounded-3xl p-3 shadow-sm hover:shadow-xl dark:hover:shadow-[0_8px_30px_-15px_rgba(255,255,255,0.05)] transition-all duration-500 flex flex-col hover:-translate-y-2"
+                >
+                  {/* 🖼️ Image & Logo Wrapper */}
+                  <div className="relative z-10">
+                    <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-gray-100 dark:bg-[#0a0a0a] border border-gray-200/50 dark:border-white/5 flex items-center justify-center">
+                      {cert.certificateImage ? (
+                        <img 
+                          src={cert.certificateImage} 
+                          alt={cert.title} 
+                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                        />
+                      ) : (
+                        <Award className="w-12 h-12 text-gray-300 dark:text-gray-800" />
+                      )}
+                    </div>
+
+                    {/* 🏅 Issuer Logo */}
+                    <div className="absolute -bottom-5 left-4 w-12 h-12 rounded-[12px] bg-white border-2 border-white dark:border-[#050505] shadow-md flex items-center justify-center z-20 group-hover:-translate-y-1 transition-transform duration-300">
+                      {cert.issuerLogo ? (
+                        <img 
+                          src={cert.issuerLogo} 
+                          alt={cert.issuerName} 
+                          className="w-full h-full rounded-[8px] object-contain bg-white p-0.5" 
+                        />
+                      ) : (
+                        <Award className="w-6 h-6 text-gray-400" />
+                      )}
+                    </div>
+                  </div>
+
+                  {/* 📝 Content Area */}
+                  <div className="flex flex-col flex-1 pt-9 px-2 pb-2">
+                    <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-1.5">
+                      {cert.issuerName}
+                    </span>
+                    
+                    <h3 className="font-bold text-lg leading-tight text-black dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
+                      {cert.title}
+                    </h3>
+
+                    {/* Verification Status */}
+                    <div className="mt-auto pt-6">
+                      {cert.credentialUrl ? (
+                        <a 
+                          href={cert.credentialUrl} 
+                          target="_blank" 
+                          rel="noreferrer" 
+                          className="flex items-center justify-between w-full text-xs font-bold text-black dark:text-white bg-gray-50 dark:bg-[#111] hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black py-3 px-4 rounded-xl border border-gray-200/50 dark:border-white/5 transition-colors group/link"
+                        >
+                          Verify Credential 
+                          <ExternalLink className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
+                        </a>
+                      ) : cert.certificateId ? (
+                        <div className="flex items-center justify-between w-full text-xs font-bold text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-[#111] py-3 px-4 rounded-xl border border-gray-100 dark:border-gray-800/50 cursor-default">
+                          <span className="truncate mr-2">ID: {cert.certificateId}</span>
+                          <ShieldCheck className="w-4 h-4 text-blue-500 shrink-0" />
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-between w-full text-xs font-bold text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-[#111] py-3 px-4 rounded-xl border border-gray-100 dark:border-gray-800/50 cursor-default">
+                          Internally Verified
+                          <ShieldCheck className="w-4 h-4 text-blue-500 shrink-0" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <motion.div variants={fadeUp} className="mt-8 md:mt-12 flex justify-center w-full relative z-10">
+              <Link href="/certificates" className="group flex items-center gap-2 px-6 md:px-8 py-3 md:py-4 bg-gray-50 dark:bg-[#111] text-black dark:text-white font-semibold text-sm md:text-base rounded-full hover:bg-gray-100 dark:hover:bg-[#222] transition-all border border-gray-200 dark:border-white/10">
+                View All Certificates <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" />
+              </Link>
+            </motion.div>
+          </motion.section>
+        )}
 
         {/* ================= TESTIMONIALS SECTION ================= */}
         {baseTestimonials.length > 0 && (

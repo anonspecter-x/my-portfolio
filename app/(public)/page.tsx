@@ -75,10 +75,16 @@ async function getPageData() {
     // 📌 ডাটাবেজ থেকে ব্র্যান্ড লোগো আনা হচ্ছে
     const rawBrands = await db.collection("brands").find({}).sort({ order: 1 }).toArray();
 
-    // 📌 ডাটাবেজ থেকে লেটেস্ট পাবলিশড ব্লগগুলো আনা হচ্ছে (নতুন)
+    // 📌 ডাটাবেজ থেকে লেটেস্ট পাবলিশড ব্লগগুলো আনা হচ্ছে
     const rawBlogs = await db.collection("posts")
       .find({ status: "published" }) // শুধুমাত্র পাবলিশড পোস্ট
       .sort({ createdAt: -1 })
+      .toArray();
+
+    // 📌 ডাটাবেজ থেকে সার্টিফিকেটগুলো আনা হচ্ছে (নতুন যুক্ত হলো)
+    const rawCertificates = await db.collection("certificates")
+      .find({})
+      .sort({ _id: 1 })
       .toArray();
 
     // ডাটাবেজ থেকে সেটিংস আনা হচ্ছে
@@ -120,7 +126,7 @@ async function getPageData() {
       title: s.title,
       description: s.description,
       image: s.image || "",
-      mediaType: s.mediaType ? String(s.mediaType) : "" // 📌 ভিডিও বা ইমেজের টাইপ ফ্রন্টএন্ডে পাঠানো হলো
+      mediaType: s.mediaType ? String(s.mediaType) : "" 
     }));
 
     // 📌 টেস্টিমোনিয়াল ফরম্যাট করা
@@ -142,7 +148,7 @@ async function getPageData() {
       order: b.order
     }));
 
-    // 📌 ব্লগ ফরম্যাট করা (নতুন যুক্ত হলো)
+    // 📌 ব্লগ ফরম্যাট করা
     const formattedBlogs = rawBlogs.map(b => ({
       _id: b._id.toString(),
       title: b.title,
@@ -153,7 +159,18 @@ async function getPageData() {
       readingTime: b.readingTime || "1 min read"
     }));
 
-    // 📌 FIXED: পুরো settings অবজেক্টটি পাস করা হলো যাতে Social Links গুলো HomeClient এ পৌঁছায়
+    // 📌 সার্টিফিকেট ফরম্যাট করা (নতুন যুক্ত হলো)
+    const formattedCertificates = rawCertificates.map(c => ({
+      _id: c._id.toString(),
+      title: c.title,
+      issuerName: c.issuerName,
+      issuerLogo: c.issuerLogo || "",
+      certificateImage: c.certificateImage || "",
+      credentialUrl: c.credentialUrl || "",
+      certificateId: c.certificateId || "",
+    }));
+
+    // 📌 সেটিংস ফরম্যাট করা
     const formattedSettings = settingsData ? {
       ...settingsData,
       _id: settingsData._id.toString(),
@@ -165,19 +182,20 @@ async function getPageData() {
       services: formattedServices,
       testimonials: formattedTestimonials,
       brands: formattedBrands, 
-      blogs: formattedBlogs, // 👈 নতুন যুক্ত হলো
+      blogs: formattedBlogs,
+      certificates: formattedCertificates, // 👈 নতুন যুক্ত হলো
       settings: formattedSettings 
     };
 
   } catch (error) {
     console.error("Failed to fetch data:", error);
-    // 👈 error এর ক্ষেত্রে blogs: [] যুক্ত হলো
-    return { projects: [], skills: [], services: [], testimonials: [], brands: [], blogs: [], settings: null };
+    // 👈 error এর ক্ষেত্রে certificates: [] যুক্ত হলো
+    return { projects: [], skills: [], services: [], testimonials: [], brands: [], blogs: [], certificates: [], settings: null };
   }
 }
 
 export default async function Home() {
-  const { projects, skills, services, testimonials, brands, blogs, settings } = await getPageData(); // 👈 blogs ডিস্ট্রাকচার হলো
+  const { projects, skills, services, testimonials, brands, blogs, certificates, settings } = await getPageData(); 
 
   // ডাটাগুলো ক্লায়েন্ট কম্পোনেন্টে পাস করা হচ্ছে
   return (
@@ -187,7 +205,8 @@ export default async function Home() {
       services={services} 
       testimonials={testimonials} 
       brands={brands} 
-      blogs={blogs} // 👈 HomeClient এ পাঠানো হলো
+      blogs={blogs} 
+      certificates={certificates} // 👈 HomeClient এ পাঠানো হলো
       settings={settings} 
     />
   );
