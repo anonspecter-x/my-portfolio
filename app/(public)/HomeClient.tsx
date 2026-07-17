@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
-import { GitHubCalendar } from "react-github-calendar";
+import GitHubCalendar from "react-github-calendar";
 
 // 📌 সেন্ট্রালাইজড ব্র্যান্ড আইকন ম্যাপ ইম্পোর্ট করা হলো
 import { iconMap } from "@/lib/iconMap";
@@ -446,7 +446,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
             </motion.p>
           </div>
 
-          {/* ================= 📌 GITHUB CONTRIBUTION GRAPH ================= */}
+          {/* ================= 📌 GITHUB CONTRIBUTION GRAPH (No-Package Alternative) ================= */}
           <motion.div variants={fadeUp} className="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6 md:p-10 shadow-sm hover:shadow-lg transition-shadow duration-300 mb-16 md:mb-24 overflow-hidden">
             <div className="w-full flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
@@ -467,18 +467,13 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               </a>
             </div>
             
-            {/* স্ক্রলবার হাইড বা স্টাইল করার জন্য কাস্টম ক্লাস */}
             <div className="w-full overflow-x-auto pb-4 [scrollbar-width:thin] [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:bg-gray-200 dark:[&::-webkit-scrollbar-thumb]:bg-gray-800 [&::-webkit-scrollbar-track]:bg-transparent">
-              <div className="min-w-[800px] flex justify-center text-gray-800 dark:text-gray-200">
-                <GitHubCalendar 
-                  username={getGithubUsername()} 
-                  blockSize={14}
-                  blockMargin={6}
-                  fontSize={14}
-                  theme={{
-                    light: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
-                    dark: ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'],
-                  }}
+              <div className="min-w-[800px] flex justify-center items-center py-2">
+                {/* সরাসরি লাইভ SVG ফেচ করা হচ্ছে। '2563eb' হলো আপনার পোর্টফোলিওর ব্লু থিম কালার */}
+                <img 
+                  src={`https://ghchart.rshah.org/2563eb/${getGithubUsername()}`} 
+                  alt="GitHub Contributions" 
+                  className="w-full max-w-4xl opacity-90 hover:opacity-100 transition-opacity duration-300 dark:invert dark:hue-rotate-180" 
                 />
               </div>
             </div>
