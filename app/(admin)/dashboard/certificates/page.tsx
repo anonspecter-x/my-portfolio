@@ -11,6 +11,7 @@ interface CertificateType {
   issuerLogo?: string;
   certificateImage?: string;
   credentialUrl?: string;
+  certificateId?: string; // 📌 নতুন ফিল্ড যুক্ত করা হলো
 }
 
 // ডাটাবেজ থেকে সকল সার্টিফিকেট রিড করার ফাংশন

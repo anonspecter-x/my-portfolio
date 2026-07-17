@@ -23,6 +23,7 @@ interface CertificateType {
   issuerLogo?: string;
   certificateImage?: string;
   credentialUrl?: string;
+  certificateId?: string; // 📌 নতুন ফিল্ড যুক্ত করা হলো
 }
 
 // 📌 ডাটাবেস থেকে সার্টিফিকেট ফেচ করার ফাংশন

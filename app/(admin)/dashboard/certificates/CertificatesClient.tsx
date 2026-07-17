@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import { saveCertificate, deleteCertificate } from "./actions";
 import { 
   Plus, Trash2, Edit2, Award, ExternalLink, 
-  Image as ImageIcon, CheckCircle2, X, Building2, Info 
+  Image as ImageIcon, CheckCircle2, X, Building2, Info, ShieldCheck 
 } from "lucide-react";
 
 interface Certificate {
@@ -14,6 +14,7 @@ interface Certificate {
   issuerLogo?: string;
   certificateImage?: string;
   credentialUrl?: string;
+  certificateId?: string; // 📌 নতুন ফিল্ড যুক্ত করা হলো
 }
 
 export default function CertificatesClient({ certificates }: { certificates: Certificate[] }) {
@@ -141,11 +142,12 @@ export default function CertificatesClient({ certificates }: { certificates: Cer
               </div>
             </div>
 
-            {/* SECTION 3: External Verification Link */}
+            {/* SECTION 3: External Verification Link & ID */}
             <div className="p-5 bg-gray-50/50 dark:bg-[#111]/50 border border-gray-100 dark:border-gray-800/60 rounded-2xl space-y-4">
               <h3 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-2 flex items-center gap-1.5">
                 <ExternalLink className="w-3.5 h-3.5" /> 3. Verification Routing
               </h3>
+              
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-gray-600 dark:text-gray-400">Credential Verification URL (Optional)</label>
                 <input 
@@ -154,6 +156,19 @@ export default function CertificatesClient({ certificates }: { certificates: Cer
                   defaultValue={editCert?.credentialUrl || ""} 
                   key={editCert?._id + 'url'}
                   placeholder="https://coursera.org/verify/..." 
+                  className="w-full bg-white dark:bg-[#050505] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-colors shadow-sm" 
+                />
+              </div>
+
+              {/* 📌 নতুন Certificate ID ইনপুট ফিল্ড */}
+              <div className="space-y-1.5 mt-4">
+                <label className="text-xs font-bold text-gray-600 dark:text-gray-400">Certificate ID / No. (If URL is not available)</label>
+                <input 
+                  type="text" 
+                  name="certificateId" 
+                  defaultValue={editCert?.certificateId || ""} 
+                  key={editCert?._id + 'certId'}
+                  placeholder="e.g. UC-12345678" 
                   className="w-full bg-white dark:bg-[#050505] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-colors shadow-sm" 
                 />
               </div>
@@ -225,7 +240,8 @@ export default function CertificatesClient({ certificates }: { certificates: Cer
 
                   <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-800/80">
                     <div>
-                      {cert.credentialUrl && (
+                      {/* 📌 লিংক, আইডি অথবা ইন্টার্নালি ভেরিফাইড ডিসপ্লে করার লজিক */}
+                      {cert.credentialUrl ? (
                         <a 
                           href={cert.credentialUrl} 
                           target="_blank" 
@@ -234,6 +250,14 @@ export default function CertificatesClient({ certificates }: { certificates: Cer
                         >
                           <ExternalLink className="w-4 h-4" /> Verify
                         </a>
+                      ) : cert.certificateId ? (
+                        <span className="text-gray-500 dark:text-gray-400 flex items-center gap-1 text-xs font-semibold">
+                          ID: {cert.certificateId}
+                        </span>
+                      ) : (
+                        <span className="text-green-500 flex items-center gap-1 text-xs font-semibold">
+                          <ShieldCheck className="w-3.5 h-3.5" /> Internally Verified
+                        </span>
                       )}
                     </div>
 

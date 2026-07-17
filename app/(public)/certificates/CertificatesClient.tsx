@@ -11,6 +11,7 @@ interface Certificate {
   issuerLogo?: string;
   certificateImage?: string;
   credentialUrl?: string;
+  certificateId?: string; // 📌 নতুন ফিল্ড যুক্ত করা হলো
 }
 
 interface CertificatesClientProps {
@@ -145,7 +146,7 @@ export default function CertificatesClient({ certificates }: CertificatesClientP
                     {cert.title}
                   </h3>
 
-                  {/* Verification Button pushed to bottom */}
+                  {/* 📌 Verification Button / Code Pushed to bottom */}
                   <div className="mt-auto pt-6">
                     {cert.credentialUrl ? (
                       <a 
@@ -157,10 +158,15 @@ export default function CertificatesClient({ certificates }: CertificatesClientP
                         Verify Credential 
                         <ExternalLink className="w-4 h-4 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
                       </a>
+                    ) : cert.certificateId ? (
+                      <div className="flex items-center justify-between w-full text-sm font-bold text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-[#111] py-3 px-4 rounded-xl border border-gray-100 dark:border-gray-800/50 cursor-default">
+                        <span className="truncate mr-2">ID: {cert.certificateId}</span>
+                        <ShieldCheck className="w-4 h-4 text-blue-500 shrink-0" />
+                      </div>
                     ) : (
-                      <div className="flex items-center justify-between w-full text-sm font-bold text-gray-400 bg-gray-50 dark:bg-[#111] py-3 px-4 rounded-xl border border-gray-100 dark:border-gray-800/50 cursor-not-allowed">
+                      <div className="flex items-center justify-between w-full text-sm font-bold text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-[#111] py-3 px-4 rounded-xl border border-gray-100 dark:border-gray-800/50 cursor-default">
                         Internally Verified
-                        <ShieldCheck className="w-4 h-4" />
+                        <ShieldCheck className="w-4 h-4 text-blue-500 shrink-0" />
                       </div>
                     )}
                   </div>
