@@ -227,16 +227,6 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
 
   const displayBrands = [...brands, ...brands, ...brands];
 
-  // 📌 GitHub Username Extract Logic
-  const getGithubUsername = () => {
-    if (settings?.social_github) {
-      // url: https://github.com/meetsakib -> username: meetsakib
-      const urlParts = settings.social_github.replace(/\/$/, "").split('/');
-      return urlParts[urlParts.length - 1]; 
-    }
-    return "octocat"; // Default Fallback
-  };
-
   return (
     <main className="relative min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] transition-colors duration-1000 ease-in-out selection:bg-blue-500/30 font-sans overflow-clip">
       
@@ -444,39 +434,6 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               Web developer skilled in MERN stack and Next.js, specializing in dynamic websites and custom solutions.
             </motion.p>
           </div>
-
-          {/* ================= 📌 GITHUB CONTRIBUTION GRAPH (No-Package Alternative) ================= */}
-          <motion.div variants={fadeUp} className="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6 md:p-10 shadow-sm hover:shadow-lg transition-shadow duration-300 mb-16 md:mb-24 overflow-hidden">
-            <div className="w-full flex items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-[#111] flex items-center justify-center border border-gray-200 dark:border-gray-800">
-                  <FaGithub className="w-5 h-5 text-black dark:text-white" />
-                </div>
-                <h3 className="text-xl md:text-2xl font-bold text-black dark:text-white tracking-tight">
-                  Days I Code
-                </h3>
-              </div>
-              <a 
-                href={settings?.social_github || "#"} 
-                target="_blank" 
-                rel="noreferrer" 
-                className="text-[13px] font-bold text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5"
-              >
-                Follow on GitHub <ArrowRight className="w-3.5 h-3.5" />
-              </a>
-            </div>
-            
-            <div className="w-full overflow-x-auto pb-4 [scrollbar-width:thin] [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:bg-gray-200 dark:[&::-webkit-scrollbar-thumb]:bg-gray-800 [&::-webkit-scrollbar-track]:bg-transparent">
-              <div className="min-w-[800px] flex justify-center items-center py-2">
-                {/* সরাসরি লাইভ SVG ফেচ করা হচ্ছে। '2563eb' হলো আপনার পোর্টফোলিওর ব্লু থিম কালার */}
-                <img 
-                  src={`https://ghchart.rshah.org/2563eb/${getGithubUsername()}`} 
-                  alt="GitHub Contributions" 
-                  className="w-full max-w-4xl opacity-90 hover:opacity-100 transition-opacity duration-300 dark:invert dark:hue-rotate-180" 
-                />
-              </div>
-            </div>
-          </motion.div>
 
           {/* 📌 Accordion & Image */}
           {services.length > 0 && (
