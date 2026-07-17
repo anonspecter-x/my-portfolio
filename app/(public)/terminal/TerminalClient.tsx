@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, KeyboardEvent } from "react";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { 
   Terminal as TerminalIcon, ShieldCheck, Cpu, 
   Database, Network, Activity, ArrowRight 
@@ -22,8 +22,8 @@ interface TerminalClientProps {
     posts: Post[];
     skills: Skill[];
     certificates: Certificate[];
-    brands?: Brand[];
-    testimonials?: Testimonial[];
+    brands: Brand[];
+    testimonials: Testimonial[];
   };
 }
 
@@ -41,19 +41,19 @@ export default function TerminalClient({ data }: TerminalClientProps) {
   const [history, setHistory] = useState<CommandOutput[]>([]);
   const [currentPath, setCurrentPath] = useState("~");
   
-  // Terminal Command History (Up/Down Arrow Keys)
+  // Terminal Command History
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const terminalBodyRef = useRef<HTMLDivElement>(null);
 
-  // 📌 Animation Variants
-  const fadeUp: any = {
+  // 📌 Animation Variants (Fixed types)
+  const fadeUp: Variants = {
     hidden: { opacity: 0, y: 40 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
   };
-  const stagger: any = {
+  const stagger: Variants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
   };
@@ -81,7 +81,6 @@ export default function TerminalClient({ data }: TerminalClientProps) {
     ]);
   }, []);
 
-  // 📌 Auto-scroll to bottom
   useEffect(() => {
     if (terminalBodyRef.current) {
       terminalBodyRef.current.scrollTop = terminalBodyRef.current.scrollHeight;
@@ -92,7 +91,30 @@ export default function TerminalClient({ data }: TerminalClientProps) {
     inputRef.current?.focus();
   };
 
-  // 📌 Virtual File System Logic (All pages added)
+  // 📌 Advanced Path Resolver (Fixes cd ../.. and absolute paths)
+  const resolvePath = (current: string, target: string) => {
+    if (!target || target === "~") return "~";
+    
+    let parts = current === "~" ? [] : current.replace(/^~\//, "").split("/").filter(Boolean);
+    const targetParts = target.split("/").filter(Boolean);
+    
+    if (target.startsWith("~")) {
+      parts = []; // Reset if absolute path is provided
+    }
+
+    for (const part of targetParts) {
+      if (part === ".") continue;
+      if (part === "..") {
+        parts.pop();
+      } else if (part !== "~") {
+        parts.push(part);
+      }
+    }
+
+    return parts.length === 0 ? "~" : `~/${parts.join("/")}`;
+  };
+
+  // 📌 Virtual File System Logic
   const getDirectoryContents = (path: string) => {
     const cleanPath = path.replace(/\/$/, "");
 
@@ -117,13 +139,19 @@ export default function TerminalClient({ data }: TerminalClientProps) {
     } else if (cleanPath === "~/certificates") {
       return data.certificates.map((c, i) => ({ name: `cert_${i}.txt`, type: "file", data: c }));
     } else if (cleanPath === "~/brands") {
-      return (data.brands || []).map((b, i) => ({ name: `brand_${i}.json`, type: "file", data: b }));
+      return data.brands.map((b, i) => ({ name: `brand_${i}.json`, type: "file", data: b }));
     } else if (cleanPath === "~/testimonials") {
-      return (data.testimonials || []).map((t, i) => ({ name: `review_${i}.txt`, type: "file", data: t }));
+      return data.testimonials.map((t, i) => ({ name: `review_${i}.txt`, type: "file", data: t }));
     } else if (cleanPath.startsWith("~/projects/")) {
-      return [{ name: "details.json", type: "file" }, { name: "readme.md", type: "file" }];
+      const slug = cleanPath.split("/")[2];
+      if (data.projects.some(p => p.slug.toLowerCase() === slug.toLowerCase())) {
+        return [{ name: "details.json", type: "file" }, { name: "readme.md", type: "file" }];
+      }
     } else if (cleanPath.startsWith("~/blog/")) {
-      return [{ name: "article.md", type: "file" }];
+      const slug = cleanPath.split("/")[2];
+      if (data.posts.some(p => p.slug.toLowerCase() === slug.toLowerCase())) {
+        return [{ name: "article.md", type: "file" }];
+      }
     }
     return null;
   };
@@ -141,7 +169,6 @@ export default function TerminalClient({ data }: TerminalClientProps) {
     let output: React.ReactNode = "";
     let newPath = currentPath;
 
-    // Command History Logic
     setCommandHistory(prev => [trimmedCmd, ...prev]);
     setHistoryIndex(-1);
 
@@ -168,23 +195,9 @@ export default function TerminalClient({ data }: TerminalClientProps) {
         break;
 
       case "ls":
-        let targetForLs = currentPath;
-        if (args.length > 1) {
-          const target = args[1].toLowerCase();
-          if (target === "~") {
-            targetForLs = "~";
-          } else if (target === "..") {
-            if (currentPath !== "~") {
-              const parts = currentPath.split("/");
-              parts.pop();
-              targetForLs = parts.join("/") || "~";
-            }
-          } else {
-            targetForLs = currentPath === "~" ? `~/${target}` : `${currentPath}/${target}`;
-          }
-        }
-
+        const targetForLs = args.length > 1 ? resolvePath(currentPath, args[1]) : currentPath;
         const contents = getDirectoryContents(targetForLs);
+        
         if (contents) {
           output = (
             <div className="flex flex-wrap gap-x-6 gap-y-2">
@@ -204,15 +217,8 @@ export default function TerminalClient({ data }: TerminalClientProps) {
         const targetDir = args[1];
         if (!targetDir || targetDir === "~") {
           newPath = "~";
-        } else if (targetDir === "..") {
-          if (currentPath !== "~") {
-            const parts = currentPath.split("/");
-            parts.pop();
-            newPath = parts.join("/") || "~";
-          }
         } else {
-          const cleanTargetDir = targetDir.replace(/\/$/, ""); 
-          const simulatedPath = currentPath === "~" ? `~/${cleanTargetDir}` : `${currentPath}/${cleanTargetDir}`;
+          const simulatedPath = resolvePath(currentPath, targetDir);
           const isValid = getDirectoryContents(simulatedPath) !== null;
           
           if (isValid) {
@@ -227,35 +233,44 @@ export default function TerminalClient({ data }: TerminalClientProps) {
         const file = args[1];
         if (!file) {
           output = <span className="text-red-400">cat: missing file operand</span>;
-        } else if (currentPath === "~" && file === "about.txt") {
-          output = "Senior Full-Stack Developer specializing in scalable architectures and premium web experiences.";
-        } else if (currentPath === "~" && file === "contact.txt") {
-          output = (
-            <div className="text-gray-300">
-              <p>Email: <a href="mailto:contact@meetsakib.com" className="text-blue-400 hover:underline">contact@meetsakib.com</a></p>
-              <p>Location: Dhaka, Bangladesh</p>
-              <p className="mt-2 text-yellow-400">💡 Hint: Type <code className="bg-gray-800 px-1 rounded text-white font-bold">open /contact</code> to access the secure contact form.</p>
-            </div>
-          );
-        } else if (currentPath === "~" && file === "privacy_policy.md") {
-          output = (
-            <div className="text-gray-300">
-              <h2 className="text-white font-bold text-lg mb-2"># Privacy Policy & Data Handling</h2>
-              <p>We deeply respect your privacy and are committed to protecting any personally identifiable information you may provide us. We do not sell data to third parties.</p>
-              <p className="mt-2 text-yellow-400">💡 Hint: Type <code className="bg-gray-800 px-1 rounded text-white font-bold">open /privacy</code> for the full legal document.</p>
-            </div>
-          );
-        } else if (currentPath === "~" && file === "terms_of_service.md") {
-          output = (
-            <div className="text-gray-300">
-              <h2 className="text-white font-bold text-lg mb-2"># Terms of Service</h2>
-              <p>By accessing the site or initiating a project, you agree that you have read, understood, and agreed to be bound by all of these Terms of Service.</p>
-              <p className="mt-2 text-yellow-400">💡 Hint: Type <code className="bg-gray-800 px-1 rounded text-white font-bold">open /terms</code> for the full legal document.</p>
-            </div>
-          );
-        } else if (currentPath === "~" && file === "sitemap.xml") {
-          output = (
-            <pre className="text-gray-400 text-xs overflow-x-auto p-2 bg-[#111] rounded-lg border border-gray-800">
+        } else {
+          const targetFile = resolvePath(currentPath, file);
+          
+          if (targetFile === "~/about.txt") {
+            output = (
+              <div className="text-gray-300 space-y-2">
+                <p className="font-bold text-white text-lg">Engineer. Architect. Creator.</p>
+                <p>Hi, I'm Md Nazmus Shakib. A Senior Full-Stack Developer obsessed with crafting digital ecosystems that balance stunning aesthetics with absolute, uncompromising performance.</p>
+                <p className="mt-2 text-yellow-400">💡 Hint: Type <code className="bg-gray-800 px-1 rounded text-white font-bold">open /about</code> to view the full graphical experience.</p>
+              </div>
+            );
+          } else if (targetFile === "~/contact.txt") {
+            output = (
+              <div className="text-gray-300">
+                <p>Email: <a href="mailto:contact@meetsakib.com" className="text-blue-400 hover:underline">contact@meetsakib.com</a></p>
+                <p>Location: Dhaka, Bangladesh</p>
+                <p className="mt-2 text-yellow-400">💡 Hint: Type <code className="bg-gray-800 px-1 rounded text-white font-bold">open /contact</code> to access the secure contact form.</p>
+              </div>
+            );
+          } else if (targetFile === "~/privacy_policy.md") {
+            output = (
+              <div className="text-gray-300">
+                <h2 className="text-white font-bold text-lg mb-2"># Privacy Policy & Data Handling</h2>
+                <p>We deeply respect your privacy and are committed to protecting any personally identifiable information you may provide us. We do not sell data to third parties.</p>
+                <p className="mt-2 text-yellow-400">💡 Hint: Type <code className="bg-gray-800 px-1 rounded text-white font-bold">open /privacy</code> for the full legal document.</p>
+              </div>
+            );
+          } else if (targetFile === "~/terms_of_service.md") {
+            output = (
+              <div className="text-gray-300">
+                <h2 className="text-white font-bold text-lg mb-2"># Terms of Service</h2>
+                <p>By accessing the site or initiating a project, you agree that you have read, understood, and agreed to be bound by all of these Terms of Service.</p>
+                <p className="mt-2 text-yellow-400">💡 Hint: Type <code className="bg-gray-800 px-1 rounded text-white font-bold">open /terms</code> for the full legal document.</p>
+              </div>
+            );
+          } else if (targetFile === "~/sitemap.xml") {
+            output = (
+              <pre className="text-gray-400 text-xs overflow-x-auto p-2 bg-[#111] rounded-lg border border-gray-800">
 {`<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://meetsakib.com/</loc></url>
@@ -265,58 +280,78 @@ export default function TerminalClient({ data }: TerminalClientProps) {
   <url><loc>https://meetsakib.com/brands</loc></url>
   <url><loc>https://meetsakib.com/contact</loc></url>
 </urlset>`}
-            </pre>
-          );
-        } else if (currentPath === "~" && file === "skills.json") {
-          output = (
-            <pre className="text-yellow-300 font-mono text-xs overflow-x-auto whitespace-pre-wrap">
-              {JSON.stringify(data.skills, null, 2)}
-            </pre>
-          );
-        } else if (currentPath.startsWith("~/projects/") && file === "details.json") {
-          const slug = currentPath.split("/")[2];
-          const project = data.projects.find(p => p.slug === slug);
-          output = project ? (
-            <pre className="text-yellow-300 text-xs overflow-x-auto">{JSON.stringify(project, null, 2)}</pre>
-          ) : <span className="text-red-400">cat: details.json: No such file</span>;
-        } else if (currentPath.startsWith("~/blog/") && file === "article.md") {
-          const slug = currentPath.split("/")[2];
-          const post = data.posts.find(p => p.slug === slug);
-          output = post ? (
-            <div className="text-orange-300 border border-gray-700 bg-[#111] p-3 rounded-lg w-fit shadow-md">
-              <p className="font-bold text-white text-lg"># {post.title}</p>
-              <p className="text-gray-400 mt-2">Category: {post.category}</p>
-              <p className="mt-4 text-yellow-400 text-xs">💡 Hint: Use <code className="bg-gray-800 px-1 rounded text-white font-bold">open /blog/{slug}</code> to read the full article.</p>
-            </div>
-          ) : <span className="text-red-400">cat: article.md: No such file</span>;
-        } else if (currentPath === "~/certificates" && file.startsWith("cert_") && file.endsWith(".txt")) {
-          const index = parseInt(file.split("_")[1].split(".")[0]);
-          const cert = data.certificates[index];
-          output = cert ? (
-            <div className="text-emerald-300 border border-gray-700 bg-[#111] p-3 rounded-lg w-fit shadow-md">
-              <p className="font-bold text-white border-b border-gray-700 pb-1 mb-2">Certificate Information</p>
-              <p><span className="text-gray-400">Title:</span> {cert.title}</p>
-              <p><span className="text-gray-400">Issuer:</span> {cert.issuer}</p>
-            </div>
-          ) : <span className="text-red-400">cat: {file}: No such file</span>;
-        } else if (currentPath === "~/brands" && file.startsWith("brand_") && file.endsWith(".json")) {
-          const index = parseInt(file.split("_")[1].split(".")[0]);
-          const brand = data.brands?.[index];
-          output = brand ? (
-            <pre className="text-yellow-300 text-xs overflow-x-auto">{JSON.stringify(brand, null, 2)}</pre>
-          ) : <span className="text-red-400">cat: {file}: No such file</span>;
-        } else if (currentPath === "~/testimonials" && file.startsWith("review_") && file.endsWith(".txt")) {
-          const index = parseInt(file.split("_")[1].split(".")[0]);
-          const review = data.testimonials?.[index];
-          output = review ? (
-            <div className="text-pink-300 border border-gray-700 bg-[#111] p-4 rounded-lg shadow-md max-w-lg">
-              <p className="font-bold text-white text-lg">{review.name}</p>
-              <p className="text-xs text-gray-400 uppercase tracking-widest mb-3">{review.role}</p>
-              <p className="italic text-gray-300">"{review.review}"</p>
-            </div>
-          ) : <span className="text-red-400">cat: {file}: No such file</span>;
-        } else {
-          output = <span className="text-red-400">cat: {file}: No such file or directory</span>;
+              </pre>
+            );
+          } else if (targetFile === "~/skills.json") {
+            output = (
+              <pre className="text-yellow-300 font-mono text-xs overflow-x-auto whitespace-pre-wrap">
+                {JSON.stringify(data.skills, null, 2)}
+              </pre>
+            );
+          } else if (targetFile.startsWith("~/projects/")) {
+            const parts = targetFile.split("/");
+            const slug = parts[2];
+            const fileName = parts[3];
+            const project = data.projects.find(p => p.slug.toLowerCase() === slug.toLowerCase());
+            
+            if (project && fileName === "details.json") {
+              output = <pre className="text-yellow-300 text-xs overflow-x-auto">{JSON.stringify(project, null, 2)}</pre>;
+            } else if (project && fileName === "readme.md") {
+              output = (
+                <div className="text-gray-300">
+                  <h1 className="text-xl font-bold text-white"># {project.title}</h1>
+                  <p className="mt-2">{project.description}</p>
+                </div>
+              );
+            } else {
+              output = <span className="text-red-400">cat: {file}: No such file</span>;
+            }
+          } else if (targetFile.startsWith("~/blog/")) {
+            const parts = targetFile.split("/");
+            const slug = parts[2];
+            const fileName = parts[3];
+            const post = data.posts.find(p => p.slug.toLowerCase() === slug.toLowerCase());
+            
+            if (post && fileName === "article.md") {
+              output = (
+                <div className="text-orange-300 border border-gray-700 bg-[#111] p-3 rounded-lg w-fit shadow-md">
+                  <p className="font-bold text-white text-lg"># {post.title}</p>
+                  <p className="text-gray-400 mt-2">Category: {post.category}</p>
+                  <p className="mt-4 text-yellow-400 text-xs">💡 Hint: Use <code className="bg-gray-800 px-1 rounded text-white font-bold">open /blog/{post.slug}</code> to read the full article.</p>
+                </div>
+              );
+            } else {
+              output = <span className="text-red-400">cat: {file}: No such file</span>;
+            }
+          } else if (targetFile.startsWith("~/certificates/cert_") && targetFile.endsWith(".txt")) {
+            const index = parseInt(targetFile.split("cert_")[1].split(".")[0]);
+            const cert = data.certificates[index];
+            output = cert ? (
+              <div className="text-emerald-300 border border-gray-700 bg-[#111] p-3 rounded-lg w-fit shadow-md">
+                <p className="font-bold text-white border-b border-gray-700 pb-1 mb-2">Certificate Information</p>
+                <p><span className="text-gray-400">Title:</span> {cert.title}</p>
+                <p><span className="text-gray-400">Issuer:</span> {cert.issuer}</p>
+              </div>
+            ) : <span className="text-red-400">cat: {file}: No such file</span>;
+          } else if (targetFile.startsWith("~/brands/brand_") && targetFile.endsWith(".json")) {
+            const index = parseInt(targetFile.split("brand_")[1].split(".")[0]);
+            const brand = data.brands[index];
+            output = brand ? (
+              <pre className="text-yellow-300 text-xs overflow-x-auto">{JSON.stringify(brand, null, 2)}</pre>
+            ) : <span className="text-red-400">cat: {file}: No such file</span>;
+          } else if (targetFile.startsWith("~/testimonials/review_") && targetFile.endsWith(".txt")) {
+            const index = parseInt(targetFile.split("review_")[1].split(".")[0]);
+            const review = data.testimonials[index];
+            output = review ? (
+              <div className="text-pink-300 border border-gray-700 bg-[#111] p-4 rounded-lg shadow-md max-w-lg">
+                <p className="font-bold text-white text-lg">{review.name}</p>
+                <p className="text-xs text-gray-400 uppercase tracking-widest mb-3">{review.role}</p>
+                <p className="italic text-gray-300">"{review.review}"</p>
+              </div>
+            ) : <span className="text-red-400">cat: {file}: No such file</span>;
+          } else {
+            output = <span className="text-red-400">cat: {file}: No such file or directory</span>;
+          }
         }
         break;
 
@@ -350,7 +385,6 @@ export default function TerminalClient({ data }: TerminalClientProps) {
         break;
 
       default:
-        // Smart Fallback for UX
         const smartTarget = baseCmd.replace(/\/$/, ""); 
         const smartContents = getDirectoryContents(currentPath);
         
@@ -440,7 +474,7 @@ export default function TerminalClient({ data }: TerminalClientProps) {
       {/* 🌟 Split Layout Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start relative z-10">
         
-        {/* 📌 Left Side: System Monitor & Stats (lg:col-span-4) */}
+        {/* 📌 Left Side: System Monitor & Stats */}
         <motion.div 
           initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
           className="hidden lg:flex flex-col gap-6 lg:col-span-4 sticky top-32"
@@ -460,7 +494,7 @@ export default function TerminalClient({ data }: TerminalClientProps) {
               </div>
               <div className="flex items-center justify-between pb-1">
                 <span className="text-sm font-medium text-gray-500 flex items-center gap-2"><Network className="w-4 h-4"/> Indexed Files</span>
-                <span className="text-sm font-bold text-black dark:text-white">{(data.projects?.length || 0) + (data.posts?.length || 0) + (data.certificates?.length || 0) + 15} Total</span>
+                <span className="text-sm font-bold text-black dark:text-white">{(data.projects.length) + (data.posts.length) + (data.certificates.length) + 15} Total</span>
               </div>
             </div>
           </div>
@@ -476,14 +510,14 @@ export default function TerminalClient({ data }: TerminalClientProps) {
           </div>
         </motion.div>
 
-        {/* 📌 Right Side: Massive Terminal Window (lg:col-span-8) */}
+        {/* 📌 Right Side: Massive Terminal Window */}
         <motion.div 
           initial="hidden" animate="visible" variants={stagger}
           className="lg:col-span-8 w-full"
         >
           <motion.div variants={fadeUp} className="bg-[#121212] border border-gray-800 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col font-mono text-sm h-[60vh] lg:h-[75vh]" onClick={handleTerminalClick}>
             
-            {/* 💻 Terminal Header (Mac OS Style) */}
+            {/* 💻 Terminal Header */}
             <div className="bg-[#1e1e1e] px-5 py-4 flex items-center justify-between border-b border-gray-800 shrink-0">
               <div className="flex gap-2.5">
                 <div className="w-3.5 h-3.5 rounded-full bg-red-500 hover:bg-red-600 transition-colors cursor-pointer"></div>
@@ -493,7 +527,7 @@ export default function TerminalClient({ data }: TerminalClientProps) {
               <div className="text-gray-400 text-xs font-semibold flex items-center gap-2 bg-[#2d2d2d] px-3 py-1 rounded-md">
                 <ShieldCheck className="w-3.5 h-3.5 text-blue-400" /> guest@meetsakib-os
               </div>
-              <div className="w-16"></div> {/* Spacer */}
+              <div className="w-16"></div>
             </div>
 
             {/* 💻 Terminal Body */}
@@ -536,7 +570,6 @@ export default function TerminalClient({ data }: TerminalClientProps) {
         </motion.div>
       </div>
 
-      {/* 🎨 Heavy Terminal Custom Scrollbar CSS */}
       <style dangerouslySetInnerHTML={{__html: `
         .custom-scrollbar::-webkit-scrollbar { width: 10px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #121212; border-left: 1px solid #1e1e1e; }

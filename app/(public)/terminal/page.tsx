@@ -22,22 +22,32 @@ export function generateMetadata(): Metadata {
   };
 }
 
+// 📌 MongoDB Connection Caching for better performance
+let cachedClient: MongoClient | null = null;
+
+async function getDb() {
+  if (cachedClient) return cachedClient.db();
+  if (!process.env.MONGODB_URI) {
+    throw new Error("MONGODB_URI is missing");
+  }
+  const client = await MongoClient.connect(process.env.MONGODB_URI);
+  cachedClient = client;
+  return client.db();
+}
+
 async function getHeavyTerminalData() {
   try {
-    if (!process.env.MONGODB_URI) {
-      throw new Error("MONGODB_URI is missing");
-    }
-
-    const client = await MongoClient.connect(process.env.MONGODB_URI);
-    const db = client.db();
+    const db = await getDb();
     
     // 📌 Fetching Everything Needed for a Realistic File System
-    const rawProjects = await db.collection("projects").find({}).sort({ createdAt: -1 }).toArray();
-    const rawPosts = await db.collection("posts").find({ status: "published" }).sort({ createdAt: -1 }).toArray();
-    const rawSkills = await db.collection("skills").find({}).sort({ percentage: -1 }).toArray();
-    const rawCertificates = await db.collection("certificates").find({}).sort({ _id: 1 }).toArray();
-    
-    await client.close();
+    const [rawProjects, rawPosts, rawSkills, rawCertificates, rawBrands, rawTestimonials] = await Promise.all([
+      db.collection("projects").find({}).sort({ createdAt: -1 }).toArray(),
+      db.collection("posts").find({ status: "published" }).sort({ createdAt: -1 }).toArray(),
+      db.collection("skills").find({}).sort({ percentage: -1 }).toArray(),
+      db.collection("certificates").find({}).sort({ _id: 1 }).toArray(),
+      db.collection("brands").find({}).sort({ _id: 1 }).toArray(),
+      db.collection("testimonials").find({}).sort({ _id: 1 }).toArray()
+    ]);
     
     return {
       projects: rawProjects.map(p => ({
@@ -58,11 +68,20 @@ async function getHeavyTerminalData() {
       certificates: rawCertificates.map(c => ({
         title: c.title,
         issuer: c.issuerName
+      })),
+      brands: rawBrands.map(b => ({
+        name: b.name,
+        website: b.website
+      })),
+      testimonials: rawTestimonials.map(t => ({
+        name: t.name,
+        role: t.role,
+        review: t.review
       }))
     };
   } catch (error) {
     console.error("Terminal Database Fetch Error:", error);
-    return { projects: [], posts: [], skills: [], certificates: [] };
+    return { projects: [], posts: [], skills: [], certificates: [], brands: [], testimonials: [] };
   }
 }
 
