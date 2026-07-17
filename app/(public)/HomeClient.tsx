@@ -767,7 +767,7 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                     </div>
 
                     {/* 🏅 Issuer Logo */}
-                    <div className="absolute -bottom-5 left-4 w-12 h-12 rounded-[12px] bg-white border-2 border-white dark:border-[#050505] shadow-md flex items-center justify-center z-20 group-hover:-translate-y-1 transition-transform duration-300">
+                    <div className="absolute -bottom-5 left-4 w-12 h-12 rounded-[12px] bg-white shadow-md flex items-center justify-center z-20 group-hover:-translate-y-1 transition-transform duration-300">
                       {cert.issuerLogo ? (
                         <img 
                           src={cert.issuerLogo} 
