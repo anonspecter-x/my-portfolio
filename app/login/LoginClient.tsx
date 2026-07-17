@@ -23,14 +23,21 @@ export default function LoginClient({ settings }: LoginClientProps) {
   const logoText = settings?.developerName ? settings.developerName.split(" ")[0] + "." : "Nazmus.";
   const devFullName = settings?.developerName || "Admin Portal";
 
+  // Vercel/Linear style custom easing
+  const smoothEase = [0.32, 0.72, 0, 1];
+
   return (
-    <main className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#fafafa] dark:bg-[#000000] selection:bg-gray-300 dark:selection:bg-gray-700">
+    <main className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#FAFAFA] dark:bg-[#000000] selection:bg-black/10 dark:selection:bg-white/20">
       
-      {/* 🌟 Header Section */}
-      <div className="sm:mx-auto sm:w-full sm:max-w-md flex flex-col items-center">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: smoothEase }}
+        className="sm:mx-auto sm:w-full sm:max-w-[420px] flex flex-col items-center z-10"
+      >
         
         {/* 📌 Dynamic Logo */}
-        <Link href="/" className="flex items-center justify-center gap-2 group mb-6 hover:opacity-80 transition-opacity">
+        <Link href="/" className="flex items-center justify-center gap-2.5 group mb-8 hover:opacity-80 transition-opacity">
           {settings?.siteLogoLight || settings?.siteLogoDark || settings?.siteLogo ? (
             <>
               {(settings?.siteLogoLight || settings?.siteLogo) && (
@@ -60,86 +67,85 @@ export default function LoginClient({ settings }: LoginClientProps) {
           )}
         </Link>
 
-        <h2 className="mt-2 text-center text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
-          Sign in to dashboard
+        <h2 className="mt-1 text-center text-[22px] font-semibold tracking-tight text-gray-900 dark:text-white">
+          Sign in to Admin
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-500 dark:text-gray-400">
-          Enter your credentials to securely access the admin portal.
+        <p className="mt-2 text-center text-[14px] text-gray-500 dark:text-gray-400">
+          Authenticate to access your workspace
         </p>
-      </div>
+      </motion.div>
 
-      {/* 🌟 Login Form Container */}
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-[400px]">
-        <div className="bg-white dark:bg-[#0a0a0a] py-8 px-4 sm:rounded-2xl sm:px-10 border border-gray-200/80 dark:border-white/10 shadow-[0_1px_2px_rgba(0,0,0,0.05)] dark:shadow-none">
+      {/* 🌟 Ultra-Premium Login Form Container */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.05, ease: smoothEase }}
+        className="mt-8 sm:mx-auto sm:w-full sm:max-w-[420px] z-10"
+      >
+        <div className="bg-white dark:bg-black py-8 px-6 sm:rounded-2xl sm:px-10 border border-gray-200 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(255,255,255,0.02)] relative overflow-hidden">
           
-          <form action={formAction} className="space-y-6">
+          <form action={formAction} className="space-y-5">
             
             {/* 🔴 Error Alert */}
             <AnimatePresence>
               {errorMessage && (
                 <motion.div 
-                  initial={{ opacity: 0, height: 0 }} 
-                  animate={{ opacity: 1, height: "auto" }} 
-                  exit={{ opacity: 0, height: 0 }}
+                  initial={{ opacity: 0, height: 0, marginBottom: 0 }} 
+                  animate={{ opacity: 1, height: "auto", marginBottom: 20 }} 
+                  exit={{ opacity: 0, height: 0, marginBottom: 0 }}
                   className="overflow-hidden"
                 >
-                  <div className="flex items-start gap-2.5 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm border border-red-100 dark:border-red-900/30">
+                  <div className="flex items-start gap-2.5 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 p-3 rounded-xl text-sm border border-red-100 dark:border-red-500/20">
                     <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                    <p className="font-medium text-xs leading-relaxed">{errorMessage}</p>
+                    <p className="font-medium text-[13px] leading-relaxed">{errorMessage}</p>
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
 
             {/* ✉️ Email Input */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Email address
+            <div className="space-y-2">
+              <label htmlFor="email" className="block text-[13px] font-medium text-gray-700 dark:text-gray-300">
+                Email Address
               </label>
-              <div className="mt-2">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  placeholder="name@example.com"
-                  className="block w-full appearance-none rounded-lg border border-gray-300 dark:border-gray-800 bg-white dark:bg-[#050505] px-3 py-2.5 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 focus:border-black dark:focus:border-white focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white sm:text-sm transition-colors"
-                />
-              </div>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                placeholder="name@example.com"
+                className="block w-full rounded-xl border border-gray-200 dark:border-white/10 bg-[#FAFAFA] dark:bg-[#0A0A0A] px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 focus:bg-white dark:focus:bg-black focus:border-black dark:focus:border-white focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white sm:text-sm transition-all duration-200"
+              />
             </div>
 
             {/* 🔒 Password Input */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <div className="space-y-2">
+              <label htmlFor="password" className="block text-[13px] font-medium text-gray-700 dark:text-gray-300">
                 Password
               </label>
-              <div className="mt-2">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  placeholder="••••••••"
-                  className="block w-full appearance-none rounded-lg border border-gray-300 dark:border-gray-800 bg-white dark:bg-[#050505] px-3 py-2.5 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 focus:border-black dark:focus:border-white focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white sm:text-sm transition-colors"
-                />
-              </div>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                placeholder="••••••••"
+                className="block w-full rounded-xl border border-gray-200 dark:border-white/10 bg-[#FAFAFA] dark:bg-[#0A0A0A] px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 focus:bg-white dark:focus:bg-black focus:border-black dark:focus:border-white focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white sm:text-sm transition-all duration-200"
+              />
             </div>
 
             {/* 🚀 Submit Button */}
-            <div>
+            <div className="pt-2">
               <button
                 type="submit"
                 disabled={isPending}
-                className="flex w-full justify-center items-center gap-2 rounded-lg bg-black dark:bg-white px-4 py-2.5 text-sm font-semibold text-white dark:text-black shadow-sm hover:bg-gray-800 dark:hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black dark:focus-visible:outline-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex w-full justify-center items-center gap-2 rounded-xl bg-black dark:bg-white px-4 py-3 text-[14px] font-semibold text-white dark:text-black shadow-sm hover:bg-gray-900 dark:hover:bg-gray-200 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black dark:focus-visible:outline-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 {isPending ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" /> Verifying...
-                  </>
+                  <Loader2 className="w-4 h-4 animate-spin text-white dark:text-black" />
                 ) : (
-                  "Continue"
+                  "Sign In"
                 )}
               </button>
             </div>
@@ -151,14 +157,14 @@ export default function LoginClient({ settings }: LoginClientProps) {
         <div className="mt-8 text-center">
           <Link 
             href="/" 
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors group"
+            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-gray-500 hover:text-gray-900 dark:text-gray-500 dark:hover:text-gray-300 transition-colors group"
           >
-            <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
-            Back to website
+            <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform duration-200" />
+            Return to website
           </Link>
         </div>
 
-      </div>
+      </motion.div>
     </main>
   );
 }
