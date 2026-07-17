@@ -123,7 +123,7 @@ export default function CertificatesClient({ certificates }: CertificatesClientP
                   )}
 
                   {/* 🏅 Issuer Logo - Positioned elegantly inside the image boundary */}
-                  <div className="absolute bottom-4 left-4 w-12 h-12 rounded-[12px] bg-white border border-gray-200 dark:border-gray-800 shadow-md flex items-center justify-center z-20 group-hover:-translate-y-1 transition-transform duration-300">
+                  <div className="absolute bottom-4 left-4 w-12 h-12 rounded-[12px] bg-white shadow-md flex items-center justify-center z-20 group-hover:-translate-y-1 transition-transform duration-300">
                     {cert.issuerLogo ? (
                       <img 
                         src={cert.issuerLogo} 
