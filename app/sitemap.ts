@@ -29,7 +29,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   // ১. স্ট্যাটিক পেজগুলো 
-  const staticRoutes = ['', '/about', '/projects', '/blog', '/contact'].map((route) => ({
+  const staticRoutes = [
+    '', 
+    '/about', 
+    '/certificates', 
+    '/projects', 
+    '/brands', 
+    '/blog', 
+    '/contact', 
+    '/leave-review', 
+    '/terms', 
+    '/privacy'
+  ].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
