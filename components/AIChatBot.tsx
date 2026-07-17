@@ -184,7 +184,7 @@ export default function AIChatBot() {
                   {/* Top 2 Columns for WhatsApp & Messenger */}
                   <div className="grid grid-cols-2 gap-3.5">
                     <a 
-                      href="https://wa.me/YOUR_NUMBER" 
+                      href="https://wa.me/801727604342" 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="group relative overflow-hidden flex flex-col items-center justify-center p-4 rounded-xl bg-gray-50 dark:bg-[#111] border border-gray-200/80 dark:border-gray-800 shadow-sm hover:shadow-md hover:border-green-500/50 dark:hover:border-green-500/50 transition-all"
@@ -198,7 +198,7 @@ export default function AIChatBot() {
                     </a>
                     
                     <a 
-                      href="https://m.me/YOUR_PAGE_ID" 
+                      href="https://m.me/anonspecter.x" 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="group relative overflow-hidden flex flex-col items-center justify-center p-4 rounded-xl bg-gray-50 dark:bg-[#111] border border-gray-200/80 dark:border-gray-800 shadow-sm hover:shadow-md hover:border-blue-500/50 dark:hover:border-blue-500/50 transition-all"
