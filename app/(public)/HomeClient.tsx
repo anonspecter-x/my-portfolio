@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
-import GitHubCalendar from "react-github-calendar";
+import { GitHubCalendar } from "react-github-calendar";
 
 // 📌 সেন্ট্রালাইজড ব্র্যান্ড আইকন ম্যাপ ইম্পোর্ট করা হলো
 import { iconMap } from "@/lib/iconMap";
