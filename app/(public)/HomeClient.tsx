@@ -750,30 +750,29 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
               {infiniteCertificates.map((cert, idx) => (
                 <div 
                   key={`cert-${cert._id || idx}-${idx}`} 
-                  // 📌 Background, border, and shadows match the new Certificates page. Only rounded-3xl kept for Home UI.
-                  className="w-[280px] md:w-[360px] shrink-0 group flex flex-col bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-3xl overflow-hidden hover:border-blue-500/30 transition-all duration-500 shadow-sm hover:shadow-xl hover:-translate-y-2 relative z-10"
+                  className="w-[280px] md:w-[360px] shrink-0 group relative bg-white dark:bg-[#050505] border border-gray-100 dark:border-white/5 rounded-3xl p-3 shadow-sm hover:shadow-xl dark:hover:shadow-[0_8px_30px_-15px_rgba(255,255,255,0.05)] transition-all duration-500 flex flex-col hover:-translate-y-2"
                 >
-                  
-                  {/* 🖼️ Image Wrapper (Matched with new style) */}
-                  <div className="relative w-full aspect-[4/3] bg-gray-100 dark:bg-[#111] border-b border-gray-200 dark:border-gray-800 overflow-hidden flex items-center justify-center">
-                    {cert.certificateImage ? (
-                      <img 
-                        src={cert.certificateImage} 
-                        alt={cert.title} 
-                        // Grayscale and hover effect matched with new style
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out grayscale-[20%] group-hover:grayscale-0 group-hover:scale-105" 
-                      />
-                    ) : (
-                      <Award className="w-12 h-12 text-gray-300 dark:text-gray-800" />
-                    )}
+                  {/* 🖼️ Image & Logo Wrapper */}
+                  <div className="relative z-10">
+                    <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-gray-100 dark:bg-[#0a0a0a] border border-gray-200/50 dark:border-white/5 flex items-center justify-center">
+                      {cert.certificateImage ? (
+                        <img 
+                          src={cert.certificateImage} 
+                          alt={cert.title} 
+                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                        />
+                      ) : (
+                        <Award className="w-12 h-12 text-gray-300 dark:text-gray-800" />
+                      )}
+                    </div>
 
-                    {/* 🏅 Issuer Logo - Shadow only, no border (Matched with new style) */}
-                    <div className="absolute bottom-4 left-4 w-12 h-12 rounded-[12px] bg-white shadow-md flex items-center justify-center z-20 group-hover:-translate-y-1 transition-transform duration-300">
+                    {/* 🏅 Issuer Logo */}
+                    <div className="absolute -bottom-5 left-4 w-12 h-12 rounded-[12px] bg-white border-2 border-white dark:border-[#050505] shadow-md flex items-center justify-center z-20 group-hover:-translate-y-1 transition-transform duration-300">
                       {cert.issuerLogo ? (
                         <img 
                           src={cert.issuerLogo} 
                           alt={cert.issuerName} 
-                          className="w-full h-full rounded-[8px] object-contain bg-white p-1" 
+                          className="w-full h-full rounded-[8px] object-contain bg-white p-0.5" 
                         />
                       ) : (
                         <Award className="w-6 h-6 text-gray-400" />
@@ -781,42 +780,35 @@ export default function HomeClient({ realProjects, realSkills, services = [], te
                     </div>
                   </div>
 
-                  {/* 📝 Content Area (Matched with new padding and typography) */}
-                  <div className="p-6 md:p-8 flex flex-col flex-1">
+                  {/* 📝 Content Area */}
+                  <div className="flex flex-col flex-1 pt-9 px-2 pb-2">
+                    <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-1.5">
+                      {cert.issuerName}
+                    </span>
                     
-                    {/* Category / Issuer */}
-                    <div className="mb-4 flex items-center justify-between">
-                      <span className="text-[10px] font-bold tracking-widest uppercase text-blue-600 dark:text-blue-400">
-                        {cert.issuerName}
-                      </span>
-                    </div>
-                    
-                    {/* Title */}
-                    <h3 className="text-[18px] md:text-xl font-bold text-black dark:text-white mb-4 group-hover:text-blue-500 transition-colors duration-300 leading-snug line-clamp-3">
+                    <h3 className="font-bold text-lg leading-tight text-black dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
                       {cert.title}
                     </h3>
 
-                    <div className="flex-1"></div> {/* Spacer to push button to bottom */}
-
-                    {/* 📌 Verification Button (Matched with new button borders and styling) */}
-                    <div className="mt-auto pt-6 border-t border-gray-100 dark:border-gray-800/60">
+                    {/* Verification Status */}
+                    <div className="mt-auto pt-6">
                       {cert.credentialUrl ? (
                         <a 
                           href={cert.credentialUrl} 
                           target="_blank" 
                           rel="noreferrer" 
-                          className="group/btn flex items-center justify-between w-full text-[13px] font-bold text-black dark:text-white bg-gray-50 dark:bg-[#111] hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black py-3 px-4 rounded-xl border border-gray-200 dark:border-gray-800 transition-colors shadow-sm"
+                          className="flex items-center justify-between w-full text-xs font-bold text-black dark:text-white bg-gray-50 dark:bg-[#111] hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black py-3 px-4 rounded-xl border border-gray-200/50 dark:border-white/5 transition-colors group/link"
                         >
                           Verify Credential 
-                          <ExternalLink className="w-4 h-4 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+                          <ExternalLink className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
                         </a>
                       ) : cert.certificateId ? (
-                        <div className="flex items-center justify-between w-full text-[13px] font-bold text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-[#111] py-3 px-4 rounded-xl border border-gray-200 dark:border-gray-800 cursor-default">
+                        <div className="flex items-center justify-between w-full text-xs font-bold text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-[#111] py-3 px-4 rounded-xl border border-gray-100 dark:border-gray-800/50 cursor-default">
                           <span className="truncate mr-2">ID: {cert.certificateId}</span>
                           <ShieldCheck className="w-4 h-4 text-blue-500 shrink-0" />
                         </div>
                       ) : (
-                        <div className="flex items-center justify-between w-full text-[13px] font-bold text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-[#111] py-3 px-4 rounded-xl border border-gray-200 dark:border-gray-800 cursor-default">
+                        <div className="flex items-center justify-between w-full text-xs font-bold text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-[#111] py-3 px-4 rounded-xl border border-gray-100 dark:border-gray-800/50 cursor-default">
                           Internally Verified
                           <ShieldCheck className="w-4 h-4 text-blue-500 shrink-0" />
                         </div>
