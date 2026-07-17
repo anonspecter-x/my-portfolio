@@ -24,7 +24,7 @@ export default function LoginClient({ settings }: LoginClientProps) {
   const devFullName = settings?.developerName || "Admin Portal";
 
   // Vercel/Linear style custom easing
-  const smoothEase = [0.32, 0.72, 0, 1];
+  const smoothEase: any = [0.32, 0.72, 0, 1];
 
   return (
     <main className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[#FAFAFA] dark:bg-[#000000] selection:bg-black/10 dark:selection:bg-white/20">
