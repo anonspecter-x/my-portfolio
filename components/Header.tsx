@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation"; 
 import { Moon, Sun, Music, Menu, X, Play, Pause, Disc3, Code2, ArrowUpRight, Volume2, Home, SkipBack, SkipForward, Volume1, VolumeX, SquareTerminal } from "lucide-react";
-import { iconMap } from "@/lib/iconmap"; // 📌 Icon Map Imported
+import { iconMap } from "@/lib/iconMap"; // 📌 Icon Map Imported
 
 interface TrackType {
   _id: string;
