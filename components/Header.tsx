@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation"; 
 import { Moon, Sun, Music, Menu, X, Play, Pause, Disc3, Code2, ArrowUpRight, Volume2, Home, SkipBack, SkipForward, Volume1, VolumeX, SquareTerminal } from "lucide-react";
+import { iconMap } from "@/lib/iconmap"; // 📌 Icon Map Imported
 
 interface TrackType {
   _id: string;
@@ -70,10 +71,10 @@ export default function Header({ settings, tracks }: HeaderProps) {
     desktopNavLinks.push({ name: "Contact", href: "/contact" });
   }
 
-  // Mobile menu should always show Home if not on Home page, and always include Terminal
+  // Mobile menu should always show Home if not on Home page
   const mobileNavLinks = pathname === "/" 
-    ? [...desktopNavLinks, { name: "Terminal", href: "/terminal" }]
-    : [{ name: "Home", href: "/" }, ...desktopNavLinks, { name: "Terminal", href: "/terminal" }];
+    ? [...desktopNavLinks]
+    : [{ name: "Home", href: "/" }, ...desktopNavLinks];
 
   // 📌 Dynamic Social Links Logic based on Settings
   const availableSocials = [
@@ -691,25 +692,44 @@ export default function Header({ settings, tracks }: HeaderProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.4 }}
-              className="p-8 pb-10 border-t border-gray-200/50 dark:border-gray-800/50 relative z-10 bg-white/50 dark:bg-[#0a0a0a]/50"
+              className="p-8 pb-10 border-t border-gray-200/50 dark:border-gray-800/50 relative z-10 bg-white/50 dark:bg-[#0a0a0a]/50 flex flex-col"
             >
-              <p className="text-[10px] font-mono tracking-[0.3em] text-gray-400 uppercase mb-5">Connect</p>
+              <p className="text-[10px] font-mono tracking-[0.3em] text-gray-400 uppercase mb-5 text-center">Connect</p>
               
+              {/* 📌 Social Links as Centered Icons */}
               {socialLinks.length > 0 && (
-                <div className="flex flex-wrap items-center gap-4 mb-6">
+                <div className="flex flex-wrap items-center justify-center gap-6 mb-8">
                   {socialLinks.map((social, idx) => (
-                    <Link key={idx} href={social.href} target="_blank" rel="noopener noreferrer" className="text-[14px] font-bold text-black dark:text-white hover:text-blue-600 transition-colors">
-                      {social.name}
+                    <Link key={idx} href={social.href} target="_blank" rel="noopener noreferrer" className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:scale-110 transition-all flex items-center justify-center" title={social.name}>
+                      {iconMap[social.name] || <span className="text-[14px] font-bold">{social.name}</span>}
                     </Link>
                   ))}
                 </div>
               )}
               
-              {pathname !== "/contact" && (
-                <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="w-full bg-black dark:bg-white text-white dark:text-black py-4 rounded-xl flex items-center justify-center gap-2 font-bold text-sm shadow-xl active:scale-95 transition-transform">
-                  Let's Talk <ArrowUpRight className="w-4 h-4" />
+              {/* 📌 New Let's Talk and Terminal Layout */}
+              <div className="flex items-center gap-3 w-full">
+                <Link 
+                  href="/terminal" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`w-[56px] h-[56px] shrink-0 rounded-2xl flex items-center justify-center transition-all shadow-sm active:scale-95 border ${
+                    isTerminalActive 
+                      ? 'bg-[#111] text-emerald-400 dark:bg-white dark:text-emerald-600 border-black/20 dark:border-white/20' 
+                      : 'bg-black/5 dark:bg-white/5 text-black dark:text-white border-black/10 dark:border-white/10'
+                  }`}
+                  title="Terminal"
+                >
+                  <SquareTerminal className="w-6 h-6" />
                 </Link>
-              )}
+
+                {pathname !== "/contact" ? (
+                  <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 bg-black dark:bg-white text-white dark:text-black h-[56px] rounded-2xl flex items-center justify-center gap-2 font-bold text-sm shadow-xl active:scale-95 transition-transform">
+                    Let's Talk <ArrowUpRight className="w-4 h-4" />
+                  </Link>
+                ) : (
+                  <div className="flex-1 h-[56px]"></div>
+                )}
+              </div>
             </motion.div>
           </motion.div>
         )}
