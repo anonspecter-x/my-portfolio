@@ -109,6 +109,13 @@ export default function AIChatBot() {
     }
   };
 
+  // 🚀 Handle Key Press
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSend();
+    }
+  };
+
   // 🚀 Markdown Parser for Professional Display
   const renderText = (text: string) => {
     const parts = text.split(/(\[[^\]]+\]\([^)]+\))/g);
