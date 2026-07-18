@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, X, Send, Bot, Sparkles, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { MessageSquare, X, Send, Bot, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
 
 type Message = {
   sender: "bot" | "user";
@@ -35,7 +35,6 @@ export default function AIChatBot() {
   const chatEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // 📌 ওয়েলকাম মেসেজ ফেচ করা
   useEffect(() => {
     const fetchGreeting = async () => {
       try {
@@ -51,7 +50,6 @@ export default function AIChatBot() {
     fetchGreeting();
   }, []);
 
-  // 📌 অটো-স্ক্রোল
   useEffect(() => {
     if (chatEndRef.current && viewMode === "chat") {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -94,7 +92,6 @@ export default function AIChatBot() {
     if (e.key === "Enter") handleSend();
   };
 
-  // 📌 Markdown লিংক এবং বোল্ড টেক্সট রেন্ডার করা
   const renderText = (text: string) => {
     const parts = text.split(/(\[[^\]]+\]\([^)]+\))/g);
     
@@ -102,7 +99,7 @@ export default function AIChatBot() {
       const linkMatch = part.match(/\[([^\]]+)\]\(([^)]+)\)/);
       if (linkMatch) {
         return (
-          <a key={index} href={linkMatch[2]} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 font-semibold underline underline-offset-4 decoration-blue-400/40 hover:decoration-blue-600 dark:hover:decoration-blue-400 transition-colors">
+          <a key={index} href={linkMatch[2]} target="_blank" rel="noopener noreferrer" className="text-blue-700 dark:text-blue-400 font-semibold underline underline-offset-4 decoration-blue-500/40 hover:decoration-blue-700 dark:hover:decoration-blue-400 transition-colors">
             {linkMatch[1]}
           </a>
         );
@@ -139,30 +136,29 @@ export default function AIChatBot() {
       <AnimatePresence>
         {isOpen && (
           <motion.div 
-            initial={{ opacity: 0, y: 20, scale: 0.95 }} 
-            animate={{ opacity: 1, y: 0, scale: 1 }} 
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="origin-bottom-right absolute bottom-16 right-0 w-[320px] sm:w-[380px] bg-white/70 dark:bg-[#050505]/80 backdrop-blur-2xl saturate-200 border border-gray-200/60 dark:border-white/10 rounded-[2rem] shadow-[0_30px_60px_rgba(0,0,0,0.12)] dark:shadow-[0_30px_60px_rgba(0,0,0,0.6)] overflow-hidden flex flex-col"
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="absolute bottom-16 right-0 w-[320px] sm:w-[380px] bg-white/30 dark:bg-[#111111]/40 backdrop-blur-3xl saturate-[1.2] border border-white/50 dark:border-white/10 rounded-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.15)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] overflow-hidden flex flex-col"
           >
             
-            {/* 📌 MENU VIEW - Glassmorphism Restyled */}
+            {/* 📌 MENU VIEW - Pure Realistic Glass */}
             {viewMode === "menu" && (
               <div className="flex flex-col w-full h-full">
                 
-                {/* Premium Glass Header */}
-                <div className="p-5 flex items-start justify-between relative border-b border-gray-200/50 dark:border-white/5">
-                  <div className="flex gap-3 items-center relative z-10">
+                {/* Header Pane */}
+                <div className="p-5 flex items-start justify-between relative border-b border-white/40 dark:border-white/10 bg-white/20 dark:bg-white/5">
+                  <div className="flex gap-3 items-center">
                     <div className="relative">
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 dark:bg-white/5 rounded-full border border-gray-200/60 dark:border-white/10 flex items-center justify-center backdrop-blur-md shadow-sm">
-                        <Bot className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700 dark:text-gray-300" />
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/40 dark:bg-black/40 rounded-full border border-white/60 dark:border-white/20 flex items-center justify-center shadow-sm">
+                        <Bot className="w-5 h-5 sm:w-6 sm:h-6 text-gray-800 dark:text-gray-200" />
                       </div>
-                      <span className="absolute bottom-0 right-0 w-3 h-3 sm:w-3.5 sm:h-3.5 bg-green-500 border-2 border-white dark:border-[#0a0a0a] rounded-full"></span>
+                      <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white/80 dark:border-[#222] rounded-full"></span>
                     </div>
                     <div className="flex flex-col">
-                      <span className="font-bold text-[14px] sm:text-[16px] tracking-wide text-black dark:text-white">Syntaxi Assistant</span>
-                      <span className="text-[10px] sm:text-[11px] text-gray-500 dark:text-gray-400 font-medium flex items-center gap-1.5 mt-0.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                      <span className="font-bold text-[14px] sm:text-[16px] tracking-wide text-gray-900 dark:text-white">Syntaxi Assistant</span>
+                      <span className="text-[10px] sm:text-[11px] text-gray-700 dark:text-gray-300 font-medium flex items-center gap-1.5 mt-0.5">
                         Online • Replies instantly
                       </span>
                     </div>
@@ -170,156 +166,148 @@ export default function AIChatBot() {
                   
                   <button 
                     onClick={() => setIsOpen(false)} 
-                    className="hover:bg-gray-200/50 dark:hover:bg-white/10 p-1.5 rounded-full transition-colors relative z-10"
+                    className="bg-white/30 dark:bg-black/30 hover:bg-white/50 dark:hover:bg-black/50 border border-white/50 dark:border-white/10 p-1.5 rounded-full transition-colors"
                   >
-                    <X className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                    <X className="w-4 h-4 text-gray-800 dark:text-gray-300" />
                   </button>
                 </div>
 
-                {/* Content Body */}
-                <div className="p-4 sm:p-5 flex flex-col gap-4 sm:gap-5 bg-transparent">
+                {/* Body Pane */}
+                <div className="p-4 sm:p-5 flex flex-col gap-4 sm:gap-5">
                   
-                  {/* Glass Social Cards */}
                   <div className="grid grid-cols-2 gap-3 sm:gap-3.5">
                     <a 
                       href="https://wa.me/8801727604342" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="group relative overflow-hidden flex flex-col items-center justify-center p-4 rounded-2xl bg-white/40 dark:bg-white/5 border border-gray-200/60 dark:border-white/10 shadow-sm hover:shadow-md hover:bg-green-50/50 dark:hover:bg-green-500/10 hover:border-green-500/30 dark:hover:border-green-500/30 transition-all backdrop-blur-md"
+                      className="flex flex-col items-center justify-center p-4 rounded-xl bg-white/30 dark:bg-black/20 border border-white/50 dark:border-white/10 shadow-sm hover:bg-white/50 dark:hover:bg-white/10 transition-colors backdrop-blur-md"
                     >
-                      <div className="mb-2.5 text-green-600 dark:text-green-500 group-hover:scale-110 group-hover:-translate-y-0.5 transition-transform duration-300">
+                      <div className="mb-2.5 text-green-700 dark:text-green-500">
                         <WhatsAppIcon />
                       </div>
                       <span className="text-[12px] sm:text-[13px] font-bold text-gray-900 dark:text-gray-100">WhatsApp</span>
-                      <span className="text-[9px] sm:text-[10px] text-gray-500 font-medium mt-0.5">Direct Chat</span>
+                      <span className="text-[9px] sm:text-[10px] text-gray-600 dark:text-gray-400 font-medium mt-0.5">Direct Chat</span>
                     </a>
                     
                     <a 
                       href="https://m.me/anonspecter.x" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="group relative overflow-hidden flex flex-col items-center justify-center p-4 rounded-2xl bg-white/40 dark:bg-white/5 border border-gray-200/60 dark:border-white/10 shadow-sm hover:shadow-md hover:bg-blue-50/50 dark:hover:bg-blue-500/10 hover:border-blue-500/30 dark:hover:border-blue-500/30 transition-all backdrop-blur-md"
+                      className="flex flex-col items-center justify-center p-4 rounded-xl bg-white/30 dark:bg-black/20 border border-white/50 dark:border-white/10 shadow-sm hover:bg-white/50 dark:hover:bg-white/10 transition-colors backdrop-blur-md"
                     >
-                      <div className="mb-2.5 text-blue-600 dark:text-blue-500 group-hover:scale-110 group-hover:-translate-y-0.5 transition-transform duration-300">
+                      <div className="mb-2.5 text-blue-700 dark:text-blue-500">
                         <MessengerIcon />
                       </div>
                       <span className="text-[12px] sm:text-[13px] font-bold text-gray-900 dark:text-gray-100">Messenger</span>
-                      <span className="text-[9px] sm:text-[10px] text-gray-500 font-medium mt-0.5">Quick Reply</span>
+                      <span className="text-[9px] sm:text-[10px] text-gray-600 dark:text-gray-400 font-medium mt-0.5">Quick Reply</span>
                     </a>
                   </div>
 
                   <div className="relative flex items-center py-1">
-                    <div className="flex-grow border-t border-gray-200/80 dark:border-white/10"></div>
-                    <span className="flex-shrink-0 mx-4 text-gray-400 dark:text-gray-500 text-[10px] uppercase tracking-widest font-bold">Or Ask AI</span>
-                    <div className="flex-grow border-t border-gray-200/80 dark:border-white/10"></div>
+                    <div className="flex-grow border-t border-white/50 dark:border-white/10"></div>
+                    <span className="flex-shrink-0 mx-4 text-gray-600 dark:text-gray-400 text-[10px] uppercase tracking-widest font-bold">Or Ask AI</span>
+                    <div className="flex-grow border-t border-white/50 dark:border-white/10"></div>
                   </div>
 
-                  {/* Glass AI Button */}
                   <button 
                     onClick={() => setViewMode("chat")}
-                    className="group relative w-full flex items-center justify-between p-4 rounded-2xl bg-gray-900/5 dark:bg-white/10 border border-gray-200/60 dark:border-white/10 backdrop-blur-md shadow-sm hover:bg-gray-900/10 dark:hover:bg-white/20 transition-all overflow-hidden"
+                    className="flex items-center justify-between p-4 rounded-xl bg-white/40 dark:bg-black/30 border border-white/60 dark:border-white/10 shadow-sm hover:bg-white/60 dark:hover:bg-white/10 transition-colors backdrop-blur-md"
                   >
-                    <div className="flex items-center gap-3.5 relative z-10">
-                      <div className="bg-white/80 dark:bg-black/20 p-2.5 rounded-xl backdrop-blur-md border border-gray-200/50 dark:border-white/10 shadow-sm">
+                    <div className="flex items-center gap-3.5">
+                      <div className="bg-white/60 dark:bg-white/10 p-2.5 rounded-lg border border-white/50 dark:border-white/5 shadow-sm">
                         <Sparkles className="w-5 h-5 text-gray-900 dark:text-white" />
                       </div>
                       <div className="flex flex-col items-start">
-                        <span className="text-[13px] sm:text-[14px] font-bold text-black dark:text-white tracking-wide">Chat with Syntaxi AI</span>
-                        <span className="text-[10px] sm:text-[11px] text-gray-500 dark:text-gray-400 font-medium mt-0.5">Smart Assistant • 24/7</span>
+                        <span className="text-[13px] sm:text-[14px] font-bold text-gray-900 dark:text-white tracking-wide">Chat with Syntaxi AI</span>
+                        <span className="text-[10px] sm:text-[11px] text-gray-700 dark:text-gray-400 font-medium mt-0.5">Smart Assistant • 24/7</span>
                       </div>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-black dark:group-hover:text-white group-hover:translate-x-1 transition-all relative z-10" />
+                    <ChevronRight className="w-5 h-5 text-gray-700 dark:text-gray-400" />
                   </button>
                 </div>
               </div>
             )}
 
-            {/* 📌 CHAT VIEW - Glassmorphism Restyled */}
+            {/* 📌 CHAT VIEW - Pure Realistic Glass */}
             {viewMode === "chat" && (
               <div className="flex flex-col w-full h-full">
                 
-                {/* Chat Header */}
-                <div className="bg-white/40 dark:bg-black/20 backdrop-blur-xl p-4 flex items-center justify-between text-black dark:text-white shadow-sm z-10 border-b border-gray-200/60 dark:border-white/10">
+                {/* Chat Header Pane */}
+                <div className="bg-white/20 dark:bg-white/5 border-b border-white/40 dark:border-white/10 p-4 flex items-center justify-between text-gray-900 dark:text-white shadow-sm">
                   <div className="flex items-center gap-2.5 font-bold text-sm tracking-wide">
                     <button 
                       onClick={() => setViewMode("menu")}
-                      className="hover:bg-gray-200/50 dark:hover:bg-white/10 p-1.5 -ml-1.5 rounded-full transition-colors mr-1"
+                      className="bg-white/30 dark:bg-black/30 hover:bg-white/50 dark:hover:bg-black/50 border border-white/50 dark:border-white/10 p-1.5 -ml-1.5 rounded-full transition-colors mr-1"
                       title="Back to Options"
                     >
-                      <ChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                      <ChevronLeft className="w-4 h-4 text-gray-800 dark:text-gray-300" />
                     </button>
-                    <div className="bg-gray-100 dark:bg-white/10 backdrop-blur-md p-1.5 rounded-lg border border-gray-200/50 dark:border-white/10 shadow-sm">
-                      <Sparkles className="w-4 h-4 text-gray-700 dark:text-gray-200" />
+                    <div className="bg-white/40 dark:bg-black/40 p-1.5 rounded-md border border-white/60 dark:border-white/10 shadow-sm">
+                      <Sparkles className="w-4 h-4 text-gray-800 dark:text-gray-200" />
                     </div>
                     Ask Syntaxi AI
                   </div>
                   <button 
                     onClick={() => setIsOpen(false)} 
-                    className="hover:bg-gray-200/50 dark:hover:bg-white/10 p-1.5 rounded-full transition-colors"
+                    className="bg-white/30 dark:bg-black/30 hover:bg-white/50 dark:hover:bg-black/50 border border-white/50 dark:border-white/10 p-1.5 rounded-full transition-colors"
                   >
-                    <X className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                    <X className="w-4 h-4 text-gray-800 dark:text-gray-300" />
                   </button>
                 </div>
 
-                {/* Chat Area */}
-                <div className="h-[400px] p-5 flex flex-col gap-5 overflow-y-auto bg-transparent custom-scrollbar">
+                {/* Chat Area Pane */}
+                <div className="h-[400px] p-5 flex flex-col gap-5 overflow-y-auto custom-scrollbar">
                   {isInitializing ? (
-                    <div className="flex justify-center items-center h-full text-gray-500 dark:text-gray-400 gap-2 font-medium">
-                      <Loader2 className="w-4 h-4 animate-spin" /> <span className="text-sm tracking-wide">Waking up Syntaxi...</span>
+                    <div className="flex justify-center items-center h-full text-gray-600 dark:text-gray-400 gap-2 font-medium">
+                       <span className="text-sm tracking-wide bg-white/40 dark:bg-black/40 px-4 py-2 rounded-lg border border-white/50 dark:border-white/10 backdrop-blur-md shadow-sm">Waking up Syntaxi...</span>
                     </div>
                   ) : (
                     chatHistory.map((chat, idx) => (
-                      <motion.div 
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
+                      <div 
                         key={idx} 
                         className={`flex w-full ${chat.sender === "user" ? "justify-end" : "justify-start"}`}
                       >
                         {chat.sender === "bot" ? (
                           <div className="flex w-full justify-start max-w-[90%]">
                             <div className="flex flex-col items-center mr-2.5 shrink-0 mt-1">
-                              <div className="w-7 h-7 rounded-full bg-gray-100 dark:bg-white/10 flex items-center justify-center border border-gray-200/60 dark:border-white/10 shadow-sm backdrop-blur-md">
-                                <Bot className="w-3.5 h-3.5 text-gray-700 dark:text-gray-300" />
+                              <div className="w-7 h-7 rounded-full bg-white/40 dark:bg-black/40 flex items-center justify-center border border-white/60 dark:border-white/10 shadow-sm backdrop-blur-md">
+                                <Bot className="w-3.5 h-3.5 text-gray-800 dark:text-gray-300" />
                               </div>
                             </div>
                             <div className="flex flex-col flex-1">
-                              <span className="text-[10px] font-bold text-gray-400 mb-1 ml-1 uppercase tracking-wider">Syntaxi</span>
-                              <div className="p-4 text-[13.5px] leading-relaxed shadow-sm bg-white/60 dark:bg-[#1a1a1a]/60 backdrop-blur-md border border-gray-200/60 dark:border-white/10 text-gray-800 dark:text-gray-200 rounded-2xl rounded-tl-sm">
+                              <span className="text-[10px] font-bold text-gray-600 dark:text-gray-400 mb-1 ml-1 uppercase tracking-wider">Syntaxi</span>
+                              <div className="p-4 text-[13.5px] leading-relaxed shadow-sm bg-white/50 dark:bg-black/30 backdrop-blur-md border border-white/60 dark:border-white/10 text-gray-900 dark:text-gray-100 rounded-2xl rounded-tl-sm">
                                 {renderText(chat.text)}
                               </div>
                             </div>
                           </div>
                         ) : (
-                          <div className="p-4 text-[13.5px] leading-relaxed max-w-[85%] shadow-md bg-gray-900/90 dark:bg-gray-100/90 backdrop-blur-md text-white dark:text-black rounded-2xl rounded-tr-sm">
+                          <div className="p-4 text-[13.5px] leading-relaxed max-w-[85%] shadow-sm bg-gray-900/80 dark:bg-white/80 backdrop-blur-md text-white dark:text-black border border-gray-700/50 dark:border-white/50 rounded-2xl rounded-tr-sm">
                             {chat.text}
                           </div>
                         )}
-                      </motion.div>
+                      </div>
                     ))
                   )}
                   
                   {isLoading && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex w-full justify-start items-start gap-2.5 max-w-[90%]">
-                      <div className="w-7 h-7 rounded-full bg-gray-100 dark:bg-white/10 flex items-center justify-center shrink-0 border border-gray-200/60 dark:border-white/10 shadow-sm backdrop-blur-md mt-1">
-                        <Bot className="w-3.5 h-3.5 text-gray-700 dark:text-gray-300 animate-pulse" />
+                    <div className="flex w-full justify-start items-start gap-2.5 max-w-[90%]">
+                      <div className="w-7 h-7 rounded-full bg-white/40 dark:bg-black/40 flex items-center justify-center shrink-0 border border-white/60 dark:border-white/10 shadow-sm backdrop-blur-md mt-1">
+                        <Bot className="w-3.5 h-3.5 text-gray-800 dark:text-gray-300" />
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-[10px] font-bold text-gray-400 mb-1 ml-1 uppercase tracking-wider">Syntaxi</span>
-                        <div className="p-4 bg-white/60 dark:bg-[#1a1a1a]/60 backdrop-blur-md border border-gray-200/60 dark:border-white/10 rounded-2xl rounded-tl-sm shadow-sm flex items-center gap-2 h-[42px]">
-                          <span className="flex gap-1">
-                            <span className="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></span>
-                            <span className="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></span>
-                            <span className="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></span>
-                          </span>
+                        <span className="text-[10px] font-bold text-gray-600 dark:text-gray-400 mb-1 ml-1 uppercase tracking-wider">Syntaxi</span>
+                        <div className="px-4 py-3 bg-white/50 dark:bg-black/30 backdrop-blur-md border border-white/60 dark:border-white/10 rounded-2xl rounded-tl-sm shadow-sm flex items-center gap-1.5 h-[42px] text-gray-600 dark:text-gray-400 text-xs font-medium tracking-widest">
+                          Generating...
                         </div>
                       </div>
-                    </motion.div>
+                    </div>
                   )}
                   <div ref={chatEndRef} />
                 </div>
 
-                {/* Input Area */}
-                <div className="p-3.5 bg-white/40 dark:bg-black/40 backdrop-blur-xl border-t border-gray-200/60 dark:border-white/10 flex items-center gap-2">
+                {/* Input Area Pane */}
+                <div className="p-3.5 bg-white/20 dark:bg-white/5 border-t border-white/40 dark:border-white/10 flex items-center gap-2">
                   <input 
                     ref={inputRef}
                     type="text" 
@@ -328,12 +316,12 @@ export default function AIChatBot() {
                     onKeyDown={handleKeyPress}
                     disabled={isLoading || isInitializing}
                     placeholder="Ask me anything..." 
-                    className="flex-1 bg-white/50 dark:bg-white/5 text-sm px-4 py-3.5 rounded-xl outline-none focus:bg-white/80 dark:focus:bg-white/10 text-black dark:text-white transition-all disabled:opacity-50 border border-gray-200/50 dark:border-white/10 focus:border-gray-400 dark:focus:border-gray-500 backdrop-blur-md" 
+                    className="flex-1 bg-white/40 dark:bg-black/40 text-sm px-4 py-3.5 rounded-xl outline-none text-gray-900 dark:text-white disabled:opacity-50 border border-white/50 dark:border-white/10 backdrop-blur-md placeholder:text-gray-600 dark:placeholder:text-gray-400" 
                   />
                   <button 
                     onClick={handleSend}
                     disabled={!message.trim() || isLoading}
-                    className="bg-gray-900 dark:bg-white text-white dark:text-black p-3.5 rounded-xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100 shadow-md"
+                    className="bg-white/50 dark:bg-white/20 border border-white/60 dark:border-white/30 text-gray-900 dark:text-white p-3.5 rounded-xl disabled:opacity-50 shadow-sm backdrop-blur-md"
                   >
                     <Send className="w-4 h-4 ml-0.5" />
                   </button>
@@ -344,14 +332,12 @@ export default function AIChatBot() {
         )}
       </AnimatePresence>
 
-      <motion.button 
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+      <button 
         onClick={toggleWindow} 
-        className="w-14 h-14 bg-white/80 dark:bg-[#050505]/80 backdrop-blur-2xl saturate-200 text-gray-900 dark:text-white rounded-full shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] flex items-center justify-center border border-gray-200/60 dark:border-white/10"
+        className="w-14 h-14 bg-white/40 dark:bg-[#111111]/60 backdrop-blur-3xl saturate-[1.5] text-gray-900 dark:text-white rounded-full shadow-[0_8px_32px_0_rgba(0,0,0,0.15)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] flex items-center justify-center border border-white/60 dark:border-white/20"
       >
         {isOpen ? <X className="w-6 h-6" /> : <MessageSquare className="w-6 h-6" />}
-      </motion.button>
+      </button>
     </div>
   );
 }
