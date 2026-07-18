@@ -152,6 +152,14 @@ export default function AIChatBot() {
     });
   };
 
+  // 🚀 Toggle Window state
+  const toggleWindow = () => {
+    if (!isOpen) {
+      setViewMode("menu"); 
+    }
+    setIsOpen(!isOpen);
+  };
+
   return (
     <div className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50 font-sans">
       <AnimatePresence>
