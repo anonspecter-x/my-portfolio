@@ -99,7 +99,7 @@ export default function AIChatBot() {
       const linkMatch = part.match(/\[([^\]]+)\]\(([^)]+)\)/);
       if (linkMatch) {
         return (
-          <a key={index} href={linkMatch[2]} target="_blank" rel="noopener noreferrer" className="text-blue-700 dark:text-blue-400 font-bold underline underline-offset-4 hover:opacity-80 transition-opacity">
+          <a key={index} href={linkMatch[2]} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 font-semibold underline underline-offset-4 hover:opacity-80 transition-opacity">
             {linkMatch[1]}
           </a>
         );
@@ -136,29 +136,29 @@ export default function AIChatBot() {
       <AnimatePresence>
         {isOpen && (
           <motion.div 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
-            exit={{ opacity: 0 }}
+            initial={{ opacity: 0, y: 10, scale: 0.98 }} 
+            animate={{ opacity: 1, y: 0, scale: 1 }} 
+            exit={{ opacity: 0, y: 10, scale: 0.98 }}
             transition={{ duration: 0.15 }}
-            className="absolute bottom-16 right-0 w-[320px] sm:w-[380px] bg-white/60 dark:bg-[#050505]/70 backdrop-blur-[80px] saturate-[1.5] border-[1.5px] border-white/80 dark:border-white/20 rounded-2xl shadow-[0_24px_48px_rgba(0,0,0,0.2)] dark:shadow-[0_24px_48px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col"
+            className="absolute bottom-16 right-0 w-[320px] sm:w-[380px] bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-2xl border border-gray-200/50 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col"
           >
             
-            {/* 📌 MENU VIEW - Heavy Acrylic Glass */}
+            {/* 📌 MENU VIEW - Standard Professional Glass */}
             {viewMode === "menu" && (
               <div className="flex flex-col w-full h-full">
                 
-                {/* Header Pane */}
-                <div className="p-5 flex items-start justify-between relative border-b-[1.5px] border-white/70 dark:border-white/10 bg-white/30 dark:bg-white/5">
+                {/* Header */}
+                <div className="p-5 flex items-start justify-between border-b border-gray-200/50 dark:border-white/10">
                   <div className="flex gap-3 items-center">
                     <div className="relative">
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/50 dark:bg-black/50 rounded-full border-[1.5px] border-white/90 dark:border-white/30 flex items-center justify-center shadow-md">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white dark:bg-[#111] rounded-full border border-gray-200 dark:border-white/10 flex items-center justify-center shadow-sm">
                         <Bot className="w-5 h-5 sm:w-6 sm:h-6 text-gray-800 dark:text-gray-200" />
                       </div>
-                      <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white/90 dark:border-[#111] rounded-full"></span>
+                      <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-[#0a0a0a] rounded-full"></span>
                     </div>
                     <div className="flex flex-col">
-                      <span className="font-extrabold text-[14px] sm:text-[16px] tracking-wide text-gray-900 dark:text-white">Syntaxi Assistant</span>
-                      <span className="text-[10px] sm:text-[11px] text-gray-700 dark:text-gray-300 font-bold flex items-center gap-1.5 mt-0.5">
+                      <span className="font-bold text-[14px] sm:text-[16px] tracking-wide text-gray-900 dark:text-white">Syntaxi Assistant</span>
+                      <span className="text-[10px] sm:text-[11px] text-gray-500 dark:text-gray-400 font-medium flex items-center gap-1.5 mt-0.5">
                         Online • Replies instantly
                       </span>
                     </div>
@@ -166,13 +166,13 @@ export default function AIChatBot() {
                   
                   <button 
                     onClick={() => setIsOpen(false)} 
-                    className="bg-white/40 dark:bg-black/40 hover:bg-white/70 dark:hover:bg-black/70 border-[1.5px] border-white/80 dark:border-white/20 p-1.5 rounded-full transition-colors shadow-sm"
+                    className="hover:bg-gray-100 dark:hover:bg-white/10 p-1.5 rounded-full transition-colors"
                   >
-                    <X className="w-4 h-4 text-gray-900 dark:text-white" />
+                    <X className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                   </button>
                 </div>
 
-                {/* Body Pane */}
+                {/* Body */}
                 <div className="p-4 sm:p-5 flex flex-col gap-4 sm:gap-5">
                   
                   <div className="grid grid-cols-2 gap-3 sm:gap-3.5">
@@ -180,86 +180,86 @@ export default function AIChatBot() {
                       href="https://wa.me/8801727604342" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="flex flex-col items-center justify-center p-4 rounded-xl bg-white/50 dark:bg-black/40 border-[1.5px] border-white/80 dark:border-white/20 shadow-lg hover:bg-white/70 dark:hover:bg-white/10 transition-colors backdrop-blur-2xl"
+                      className="flex flex-col items-center justify-center p-4 rounded-xl bg-white/50 dark:bg-white/5 border border-gray-200/50 dark:border-white/10 shadow-sm hover:bg-gray-50 dark:hover:bg-white/10 transition-colors"
                     >
-                      <div className="mb-2.5 text-green-700 dark:text-green-500">
+                      <div className="mb-2 text-green-600 dark:text-green-500">
                         <WhatsAppIcon />
                       </div>
-                      <span className="text-[12px] sm:text-[13px] font-extrabold text-gray-900 dark:text-gray-100">WhatsApp</span>
-                      <span className="text-[9px] sm:text-[10px] text-gray-700 dark:text-gray-400 font-bold mt-0.5">Direct Chat</span>
+                      <span className="text-[12px] sm:text-[13px] font-semibold text-gray-900 dark:text-gray-100">WhatsApp</span>
+                      <span className="text-[9px] sm:text-[10px] text-gray-500 dark:text-gray-400 font-medium mt-0.5">Direct Chat</span>
                     </a>
                     
                     <a 
                       href="https://m.me/anonspecter.x" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="flex flex-col items-center justify-center p-4 rounded-xl bg-white/50 dark:bg-black/40 border-[1.5px] border-white/80 dark:border-white/20 shadow-lg hover:bg-white/70 dark:hover:bg-white/10 transition-colors backdrop-blur-2xl"
+                      className="flex flex-col items-center justify-center p-4 rounded-xl bg-white/50 dark:bg-white/5 border border-gray-200/50 dark:border-white/10 shadow-sm hover:bg-gray-50 dark:hover:bg-white/10 transition-colors"
                     >
-                      <div className="mb-2.5 text-blue-700 dark:text-blue-500">
+                      <div className="mb-2 text-blue-600 dark:text-blue-500">
                         <MessengerIcon />
                       </div>
-                      <span className="text-[12px] sm:text-[13px] font-extrabold text-gray-900 dark:text-gray-100">Messenger</span>
-                      <span className="text-[9px] sm:text-[10px] text-gray-700 dark:text-gray-400 font-bold mt-0.5">Quick Reply</span>
+                      <span className="text-[12px] sm:text-[13px] font-semibold text-gray-900 dark:text-gray-100">Messenger</span>
+                      <span className="text-[9px] sm:text-[10px] text-gray-500 dark:text-gray-400 font-medium mt-0.5">Quick Reply</span>
                     </a>
                   </div>
 
                   <div className="relative flex items-center py-1">
-                    <div className="flex-grow border-t-[1.5px] border-white/70 dark:border-white/10"></div>
-                    <span className="flex-shrink-0 mx-4 text-gray-700 dark:text-gray-400 text-[10px] uppercase tracking-widest font-extrabold">Or Ask AI</span>
-                    <div className="flex-grow border-t-[1.5px] border-white/70 dark:border-white/10"></div>
+                    <div className="flex-grow border-t border-gray-200/50 dark:border-white/10"></div>
+                    <span className="flex-shrink-0 mx-4 text-gray-400 text-[10px] uppercase tracking-widest font-semibold">Or Ask AI</span>
+                    <div className="flex-grow border-t border-gray-200/50 dark:border-white/10"></div>
                   </div>
 
                   <button 
                     onClick={() => setViewMode("chat")}
-                    className="flex items-center justify-between p-4 rounded-xl bg-white/50 dark:bg-black/40 border-[1.5px] border-white/80 dark:border-white/20 shadow-lg hover:bg-white/70 dark:hover:bg-white/10 transition-colors backdrop-blur-2xl"
+                    className="flex items-center justify-between p-4 rounded-xl bg-white/50 dark:bg-white/5 border border-gray-200/50 dark:border-white/10 shadow-sm hover:bg-gray-50 dark:hover:bg-white/10 transition-colors"
                   >
                     <div className="flex items-center gap-3.5">
-                      <div className="bg-white/70 dark:bg-white/20 p-2.5 rounded-lg border-[1.5px] border-white/90 dark:border-white/10 shadow-md">
-                        <Sparkles className="w-5 h-5 text-gray-900 dark:text-white" />
+                      <div className="bg-white dark:bg-[#1a1a1a] p-2.5 rounded-lg border border-gray-200/50 dark:border-white/5 shadow-sm">
+                        <Sparkles className="w-5 h-5 text-gray-800 dark:text-gray-200" />
                       </div>
                       <div className="flex flex-col items-start">
-                        <span className="text-[13px] sm:text-[14px] font-extrabold text-gray-900 dark:text-white tracking-wide">Chat with Syntaxi AI</span>
-                        <span className="text-[10px] sm:text-[11px] text-gray-800 dark:text-gray-300 font-bold mt-0.5">Smart Assistant • 24/7</span>
+                        <span className="text-[13px] sm:text-[14px] font-semibold text-gray-900 dark:text-white tracking-wide">Chat with Syntaxi AI</span>
+                        <span className="text-[10px] sm:text-[11px] text-gray-500 dark:text-gray-400 font-medium mt-0.5">Smart Assistant • 24/7</span>
                       </div>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-gray-800 dark:text-white" />
+                    <ChevronRight className="w-5 h-5 text-gray-400" />
                   </button>
                 </div>
               </div>
             )}
 
-            {/* 📌 CHAT VIEW - Heavy Acrylic Glass */}
+            {/* 📌 CHAT VIEW - Standard Professional Glass */}
             {viewMode === "chat" && (
               <div className="flex flex-col w-full h-full">
                 
-                {/* Chat Header Pane */}
-                <div className="bg-white/30 dark:bg-white/5 border-b-[1.5px] border-white/70 dark:border-white/10 p-4 flex items-center justify-between text-gray-900 dark:text-white shadow-sm">
-                  <div className="flex items-center gap-2.5 font-extrabold text-sm tracking-wide">
+                {/* Chat Header */}
+                <div className="bg-gray-50/50 dark:bg-[#111]/50 border-b border-gray-200/50 dark:border-white/10 p-4 flex items-center justify-between text-gray-900 dark:text-white shadow-sm">
+                  <div className="flex items-center gap-2.5 font-semibold text-sm tracking-wide">
                     <button 
                       onClick={() => setViewMode("menu")}
-                      className="bg-white/40 dark:bg-black/40 hover:bg-white/70 dark:hover:bg-black/70 border-[1.5px] border-white/80 dark:border-white/20 p-1.5 -ml-1.5 rounded-full transition-colors mr-1 shadow-sm"
+                      className="hover:bg-black/5 dark:hover:bg-white/10 p-1.5 -ml-1.5 rounded-full transition-colors mr-1"
                       title="Back to Options"
                     >
-                      <ChevronLeft className="w-4 h-4 text-gray-900 dark:text-white" />
+                      <ChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-300" />
                     </button>
-                    <div className="bg-white/50 dark:bg-black/50 p-1.5 rounded-md border-[1.5px] border-white/80 dark:border-white/20 shadow-md">
-                      <Sparkles className="w-4 h-4 text-gray-900 dark:text-white" />
+                    <div className="bg-white dark:bg-[#1a1a1a] p-1.5 rounded-md border border-gray-200/50 dark:border-white/5 shadow-sm">
+                      <Sparkles className="w-4 h-4 text-gray-800 dark:text-gray-200" />
                     </div>
                     Ask Syntaxi AI
                   </div>
                   <button 
                     onClick={() => setIsOpen(false)} 
-                    className="bg-white/40 dark:bg-black/40 hover:bg-white/70 dark:hover:bg-black/70 border-[1.5px] border-white/80 dark:border-white/20 p-1.5 rounded-full transition-colors shadow-sm"
+                    className="hover:bg-black/5 dark:hover:bg-white/10 p-1.5 rounded-full transition-colors"
                   >
-                    <X className="w-4 h-4 text-gray-900 dark:text-white" />
+                    <X className="w-4 h-4 text-gray-600 dark:text-gray-300" />
                   </button>
                 </div>
 
-                {/* Chat Area Pane */}
+                {/* Chat Area */}
                 <div className="h-[400px] p-5 flex flex-col gap-5 overflow-y-auto custom-scrollbar">
                   {isInitializing ? (
-                    <div className="flex justify-center items-center h-full text-gray-800 dark:text-gray-300 gap-2 font-bold">
-                       <span className="text-sm tracking-wide bg-white/50 dark:bg-black/50 px-5 py-2.5 rounded-xl border-[1.5px] border-white/80 dark:border-white/20 backdrop-blur-2xl shadow-lg">Waking up Syntaxi...</span>
+                    <div className="flex justify-center items-center h-full text-gray-500 dark:text-gray-400 gap-2 font-medium">
+                       <span className="text-sm">Waking up Syntaxi...</span>
                     </div>
                   ) : (
                     chatHistory.map((chat, idx) => (
@@ -270,19 +270,19 @@ export default function AIChatBot() {
                         {chat.sender === "bot" ? (
                           <div className="flex w-full justify-start max-w-[90%]">
                             <div className="flex flex-col items-center mr-2.5 shrink-0 mt-1">
-                              <div className="w-7 h-7 rounded-full bg-white/60 dark:bg-black/50 flex items-center justify-center border-[1.5px] border-white/90 dark:border-white/20 shadow-md backdrop-blur-2xl">
-                                <Bot className="w-3.5 h-3.5 text-gray-900 dark:text-white" />
+                              <div className="w-7 h-7 rounded-full bg-white dark:bg-[#1a1a1a] flex items-center justify-center border border-gray-200 dark:border-white/10 shadow-sm">
+                                <Bot className="w-3.5 h-3.5 text-gray-700 dark:text-gray-300" />
                               </div>
                             </div>
                             <div className="flex flex-col flex-1">
-                              <span className="text-[10px] font-extrabold text-gray-700 dark:text-gray-400 mb-1 ml-1 uppercase tracking-wider">Syntaxi</span>
-                              <div className="p-4 text-[13.5px] leading-relaxed shadow-lg bg-white/60 dark:bg-black/50 backdrop-blur-2xl border-[1.5px] border-white/80 dark:border-white/20 text-gray-900 dark:text-gray-100 rounded-2xl rounded-tl-sm">
+                              <span className="text-[10px] font-semibold text-gray-400 mb-1 ml-1 uppercase tracking-wider">Syntaxi</span>
+                              <div className="p-4 text-[13.5px] leading-relaxed shadow-sm bg-white dark:bg-[#111] border border-gray-100 dark:border-white/5 text-gray-800 dark:text-gray-200 rounded-2xl rounded-tl-sm">
                                 {renderText(chat.text)}
                               </div>
                             </div>
                           </div>
                         ) : (
-                          <div className="p-4 text-[13.5px] leading-relaxed max-w-[85%] shadow-lg bg-black/85 dark:bg-white/90 backdrop-blur-xl text-white dark:text-black border-[1.5px] border-gray-800/80 dark:border-white rounded-2xl rounded-tr-sm">
+                          <div className="p-4 text-[13.5px] leading-relaxed max-w-[85%] shadow-sm bg-gray-900 dark:bg-gray-100 text-white dark:text-black rounded-2xl rounded-tr-sm">
                             {chat.text}
                           </div>
                         )}
@@ -292,12 +292,12 @@ export default function AIChatBot() {
                   
                   {isLoading && (
                     <div className="flex w-full justify-start items-start gap-2.5 max-w-[90%]">
-                      <div className="w-7 h-7 rounded-full bg-white/60 dark:bg-black/50 flex items-center justify-center shrink-0 border-[1.5px] border-white/90 dark:border-white/20 shadow-md backdrop-blur-2xl mt-1">
-                        <Bot className="w-3.5 h-3.5 text-gray-900 dark:text-white" />
+                      <div className="w-7 h-7 rounded-full bg-white dark:bg-[#1a1a1a] flex items-center justify-center shrink-0 border border-gray-200 dark:border-white/10 shadow-sm mt-1">
+                        <Bot className="w-3.5 h-3.5 text-gray-700 dark:text-gray-300" />
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-[10px] font-extrabold text-gray-700 dark:text-gray-400 mb-1 ml-1 uppercase tracking-wider">Syntaxi</span>
-                        <div className="px-4 py-3 bg-white/60 dark:bg-black/50 backdrop-blur-2xl border-[1.5px] border-white/80 dark:border-white/20 rounded-2xl rounded-tl-sm shadow-lg flex items-center gap-1.5 h-[42px] text-gray-800 dark:text-gray-300 text-xs font-bold tracking-widest">
+                        <span className="text-[10px] font-semibold text-gray-400 mb-1 ml-1 uppercase tracking-wider">Syntaxi</span>
+                        <div className="px-4 py-3 bg-white dark:bg-[#111] border border-gray-100 dark:border-white/5 rounded-2xl rounded-tl-sm shadow-sm flex items-center gap-1.5 h-[42px] text-gray-500 dark:text-gray-400 text-xs font-medium tracking-widest">
                           Generating...
                         </div>
                       </div>
@@ -306,8 +306,8 @@ export default function AIChatBot() {
                   <div ref={chatEndRef} />
                 </div>
 
-                {/* Input Area Pane */}
-                <div className="p-3.5 bg-white/30 dark:bg-white/5 border-t-[1.5px] border-white/70 dark:border-white/10 flex items-center gap-2">
+                {/* Input Area */}
+                <div className="p-3.5 bg-gray-50/50 dark:bg-[#111]/50 border-t border-gray-200/50 dark:border-white/10 flex items-center gap-2">
                   <input 
                     ref={inputRef}
                     type="text" 
@@ -316,12 +316,12 @@ export default function AIChatBot() {
                     onKeyDown={handleKeyPress}
                     disabled={isLoading || isInitializing}
                     placeholder="Ask me anything..." 
-                    className="flex-1 bg-white/60 dark:bg-black/50 text-sm px-4 py-3.5 rounded-xl outline-none text-gray-900 dark:text-white disabled:opacity-50 border-[1.5px] border-white/80 dark:border-white/20 backdrop-blur-2xl placeholder:text-gray-700 dark:placeholder:text-gray-400 shadow-inner" 
+                    className="flex-1 bg-white dark:bg-[#1a1a1a] text-sm px-4 py-3.5 rounded-xl outline-none text-gray-900 dark:text-white disabled:opacity-50 border border-gray-200/50 dark:border-white/5 placeholder:text-gray-500 dark:placeholder:text-gray-400 shadow-sm focus:ring-1 focus:ring-gray-300 dark:focus:ring-gray-700 transition-shadow" 
                   />
                   <button 
                     onClick={handleSend}
                     disabled={!message.trim() || isLoading}
-                    className="bg-white/70 dark:bg-white/20 border-[1.5px] border-white/90 dark:border-white/30 text-gray-900 dark:text-white p-3.5 rounded-xl disabled:opacity-50 shadow-lg backdrop-blur-2xl hover:bg-white/90 dark:hover:bg-white/30 transition-colors"
+                    className="bg-gray-900 dark:bg-white text-white dark:text-black p-3.5 rounded-xl disabled:opacity-50 shadow-sm hover:opacity-90 transition-opacity"
                   >
                     <Send className="w-4 h-4 ml-0.5" />
                   </button>
@@ -334,7 +334,7 @@ export default function AIChatBot() {
 
       <button 
         onClick={toggleWindow} 
-        className="w-14 h-14 bg-white/60 dark:bg-[#050505]/80 backdrop-blur-[80px] saturate-[1.5] text-gray-900 dark:text-white rounded-full shadow-[0_16px_32px_rgba(0,0,0,0.25)] dark:shadow-[0_16px_32px_rgba(0,0,0,0.8)] flex items-center justify-center border-[1.5px] border-white/80 dark:border-white/20 transition-colors hover:bg-white/80 dark:hover:bg-[#111]"
+        className="w-14 h-14 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full shadow-xl flex items-center justify-center transition-transform hover:scale-105 active:scale-95"
       >
         {isOpen ? <X className="w-6 h-6" /> : <MessageSquare className="w-6 h-6" />}
       </button>
