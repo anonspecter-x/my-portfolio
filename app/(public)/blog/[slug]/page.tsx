@@ -1,7 +1,7 @@
 import { MongoClient } from "mongodb";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Calendar, Clock, Tag, User, Eye } from "lucide-react";
+import { ArrowLeft, Calendar, Tag, User, Eye } from "lucide-react";
 import type { Metadata } from "next";
 import { cache } from "react";
 import ViewTimeTracker from "./ViewTimeTracker";
@@ -23,8 +23,7 @@ const getPost = cache(async (slug: string) => {
       content: post.content,
       coverImage: post.coverImage || null,
       category: post.category || "Uncategorized",
-      readingTime: post.readingTime || "1 min read",
-      // 📌 নতুন যুক্ত হওয়া টোটাল ভিউ টাইম
+      // 📌 নতুন যুক্ত হওয়া টোটাল ভিউ টাইম
       totalViewTime: post.totalViewTime || 0,
       tags: post.tags || [],
       seoTitle: post.seoTitle || post.title,
@@ -180,12 +179,10 @@ export default async function SingleBlogPage({ params }: { params: { slug: strin
               <time dateTime={post.rawCreatedAt} className="flex items-center gap-1.5">
                 <Calendar className="w-4 h-4 text-gray-400" /> {post.createdAt}
               </time>
+              
               <div className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700"></div>
-              <span className="flex items-center gap-1.5" title="Estimated Reading Time">
-                <Clock className="w-4 h-4 text-gray-400" /> {post.readingTime}
-              </span>
-              <div className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700"></div>
-              {/* 📌 টোটাল রিডিং টাইম এখানে দেখানো হলো */}
+              
+              {/* 📌 শুধুমাত্র টোটাল রিডিং টাইম এখানে রাখা হলো */}
               <span className="flex items-center gap-1.5 text-blue-600 dark:text-blue-400" title="Total Accumulated Read Time">
                 <Eye className="w-4 h-4" /> {post.totalViewTime}m Total Read
               </span>
