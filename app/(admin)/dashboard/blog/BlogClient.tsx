@@ -129,7 +129,8 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* 📌 New 4-Column Grid to include Reading Time */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Category</label>
               <select name="category" defaultValue={editPost?.category || "Technology"} key={editPost ? editPost._id + 'cat' : 'new-cat'} className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-colors cursor-pointer">
@@ -149,7 +150,7 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
               </select>
             </div>
 
-            {/* 📌 New Publish Date Field */}
+            {/* Publish Date Field */}
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-wider text-gray-500 flex items-center gap-1">
                 <Calendar className="w-3.5 h-3.5"/> Publish Date
@@ -160,6 +161,21 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
                 defaultValue={formatDateTimeLocal(editPost?.createdAt)}
                 key={editPost ? editPost._id + 'date' : 'new-date'}
                 className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-colors cursor-pointer" 
+              />
+            </div>
+
+            {/* 📌 New Reading Time Field */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-gray-500 flex items-center gap-1">
+                <Clock className="w-3.5 h-3.5"/> Reading Time
+              </label>
+              <input 
+                type="text" 
+                name="readingTime" 
+                defaultValue={editPost?.readingTime || ""}
+                key={editPost ? editPost._id + 'read' : 'new-read'}
+                placeholder="e.g. 5 min read" 
+                className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-colors" 
               />
             </div>
           </div>
