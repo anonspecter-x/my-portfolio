@@ -54,7 +54,7 @@ export default function BrandsClient({ brands }: BrandsClientProps) {
   return (
     <main className="relative min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] pt-32 pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto overflow-hidden selection:bg-blue-500/30">
       
-      {/* 🎨 Homepage Style Custom Marquee CSS */}
+      {/* 🎨 Homepage Style Custom Marquee & Blob CSS */}
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes scroll-brand-marquee {
           from { transform: translateX(0); }
@@ -62,6 +62,16 @@ export default function BrandsClient({ brands }: BrandsClientProps) {
         }
         .animate-brand-marquee {
           animation: scroll-brand-marquee 40s linear infinite; 
+        }
+        @keyframes blob-bounce {
+          0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
+          50% { transform: translateY(-20px) scale(1.1); opacity: 1; }
+        }
+        .animate-blob {
+          animation: blob-bounce 7s infinite ease-in-out;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
         }
         @media (min-width: 1024px) {
           .animate-brand-marquee {
@@ -255,30 +265,34 @@ export default function BrandsClient({ brands }: BrandsClientProps) {
         </div>
       </motion.section>
 
-      {/* ================= 🌟 BOTTOM CTA SECTION ================= */}
+      {/* ================= 🌟 BOTTOM CTA SECTION (Glassmorphism Effect applied) ================= */}
       <motion.section 
         initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={stagger}
-        className="mt-24 md:mt-32 bg-black dark:bg-white text-white dark:text-black rounded-[3rem] p-10 md:p-20 relative overflow-hidden flex flex-col items-center text-center"
+        className="mt-24 md:mt-32 w-full rounded-[2rem] md:rounded-[3rem] p-10 md:p-20 relative overflow-hidden flex flex-col items-center text-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border border-black/10 dark:border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.05)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.3)]"
       >
+        {/* 🌟 Blob Animation for a slow breathing effect on the glassmorphism blurs */}
+        <div className="absolute top-[-20%] left-[-10%] w-72 h-72 bg-blue-400/20 dark:bg-blue-600/20 rounded-full blur-[80px] pointer-events-none animate-blob"></div>
+        <div className="absolute bottom-[-20%] right-[-10%] w-72 h-72 bg-purple-400/20 dark:bg-purple-600/20 rounded-full blur-[80px] pointer-events-none animate-blob animation-delay-2000"></div>
+
         <div className="absolute top-0 right-0 p-10 opacity-10">
-          <Sparkles className="w-64 h-64" />
+          <Sparkles className="w-64 h-64 text-black dark:text-white" />
         </div>
         
         <div className="relative z-10 max-w-3xl flex flex-col items-center">
-          <motion.div variants={fadeUp} className="w-12 h-12 bg-white/10 dark:bg-black/10 border border-white/20 dark:border-black/20 rounded-xl flex items-center justify-center mb-6 text-white dark:text-black">
+          <motion.div variants={fadeUp} className="w-12 h-12 bg-gray-100 dark:bg-white/10 border border-gray-200 dark:border-white/20 rounded-xl flex items-center justify-center mb-6 text-black dark:text-white">
             <Sparkles className="w-5 h-5" />
           </motion.div>
           
-          <motion.h2 variants={fadeUp} className="text-3xl md:text-5xl font-extrabold tracking-tight leading-snug mb-6">
+          <motion.h2 variants={fadeUp} className="text-3xl md:text-5xl font-extrabold tracking-tight leading-snug mb-6 text-black dark:text-white">
             Ready to see your brand <br className="hidden md:block" /> on this list?
           </motion.h2>
           
-          <motion.p variants={fadeUp} className="text-gray-300 dark:text-gray-700 text-lg mb-10 max-w-2xl leading-relaxed">
+          <motion.p variants={fadeUp} className="text-gray-700 dark:text-gray-300 text-lg mb-10 max-w-2xl leading-relaxed">
             Let’s architect a high-performance solution tailored to your business goals. Reach out to discuss your next big technical endeavor.
           </motion.p>
           
           <motion.div variants={fadeUp}>
-            <Link href="/contact" className="px-8 py-4 bg-white dark:bg-black text-black dark:text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:scale-105 transition-transform shadow-lg">
+            <Link href="/contact" className="px-8 py-4 bg-black dark:bg-white text-white dark:text-black font-bold rounded-xl flex items-center justify-center gap-2 hover:scale-105 transition-transform shadow-lg">
               Initiate Collaboration <ArrowRight className="w-4 h-4" />
             </Link>
           </motion.div>
