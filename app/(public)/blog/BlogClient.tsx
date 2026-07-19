@@ -63,7 +63,6 @@ export default function BlogClient({ posts, authorInfo }: { posts: Post[], autho
   };
 
   return (
-    // 📌 FIXED: Removed 'overflow-hidden' and added 'overflow-x-clip' so 'sticky' works perfectly
     <main className="relative min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] pt-32 pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto overflow-x-clip selection:bg-blue-500/30">
       
       {/* 🎨 Animated Background Elements */}
@@ -81,9 +80,9 @@ export default function BlogClient({ posts, authorInfo }: { posts: Post[], autho
       {/* ================= 🌟 THE HERO SECTION ================= */}
       <motion.div 
         initial="hidden" animate="visible" variants={stagger}
-        className="mb-16 md:mb-20 flex flex-col md:flex-row md:items-end justify-between gap-8"
+        className="mb-16 md:mb-20"
       >
-        <div className="max-w-2xl">
+        <div className="max-w-3xl">
           <motion.div variants={fadeUp} className="inline-flex items-center w-fit gap-2 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-xs font-semibold mb-6 text-gray-600 dark:text-gray-400">
             <BookOpen className="w-3.5 h-3.5" /> Journal & Insights
           </motion.div>
@@ -95,36 +94,9 @@ export default function BlogClient({ posts, authorInfo }: { posts: Post[], autho
             Dive into my latest thoughts, technical tutorials, and experiences as a Full Stack Developer.
           </motion.p>
         </div>
-
-        {/* ================= 🔍 PREMIUM SEARCH BAR ================= */}
-        <motion.div variants={fadeUp} className="w-full md:max-w-sm relative group">
-          {/* Glowing Background on Hover */}
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
-          
-          <div className="relative flex items-center w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 focus-within:border-blue-500 dark:focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10">
-            <Search className="w-5 h-5 text-gray-400 ml-4 shrink-0" />
-            <input 
-              type="text" 
-              placeholder="Search articles..." 
-              value={searchQuery}
-              onChange={handleSearch}
-              className="w-full bg-transparent py-3.5 px-3 text-sm outline-none text-black dark:text-white placeholder:text-gray-400 font-medium"
-            />
-            {/* Clear Button */}
-            {searchQuery && (
-              <button 
-                onClick={() => setSearchQuery("")}
-                className="mr-3 p-1 rounded-full text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
-          </div>
-        </motion.div>
       </motion.div>
 
       {/* ================= 🌟 MAIN GRID LAYOUT ================= */}
-      {/* 📌 Added 'items-start' to ensure columns don't stretch, allowing sticky to calculate space */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 relative items-start">
         
         {/* 📝 LEFT AREA: BLOG POSTS (Takes 2 Columns on Desktop) */}
@@ -132,7 +104,7 @@ export default function BlogClient({ posts, authorInfo }: { posts: Post[], autho
           {filteredPosts.length > 0 ? (
             <AnimatePresence mode="wait">
               <motion.div 
-                key={currentPage + searchQuery} // Trigger animation on page/search change
+                key={currentPage + searchQuery} 
                 initial="hidden" animate="visible" exit={{ opacity: 0 }} variants={stagger} 
                 className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8"
               >
@@ -242,9 +214,40 @@ export default function BlogClient({ posts, authorInfo }: { posts: Post[], autho
           )}
         </div>
 
-        {/* ================= 👤 RIGHT AREA: FIXED PROFILE CARD ================= */}
-        {/* 📌 lg:sticky lg:top-32 h-fit will now work correctly since 'overflow-hidden' is removed from <main> */}
-        <div className="lg:col-span-1 order-2 lg:sticky lg:top-32 h-fit z-10">
+        {/* ================= 👤 RIGHT AREA: FIXED SIDEBAR (SEARCH + PROFILE) ================= */}
+        {/* 📌 Flex Column with gap-6, and sticky applied to the parent container */}
+        <div className="lg:col-span-1 order-2 lg:sticky lg:top-32 h-fit z-10 flex flex-col gap-6">
+          
+          {/* 🔍 PREMIUM SEARCH BAR */}
+          <div className="relative group">
+            {/* Glowing Background on Hover */}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-[2rem] blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
+            
+            <div className="relative flex items-center w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-[2rem] overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 focus-within:border-blue-500 dark:focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10">
+              <Search className="w-5 h-5 text-gray-400 ml-6 shrink-0" />
+              <input 
+                type="text" 
+                placeholder="Search articles..." 
+                value={searchQuery}
+                onChange={handleSearch}
+                className="w-full bg-transparent py-4 px-4 text-sm outline-none text-black dark:text-white placeholder:text-gray-400 font-medium"
+              />
+              {/* Clear Button */}
+              <AnimatePresence>
+                {searchQuery && (
+                  <motion.button 
+                    initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
+                    onClick={() => setSearchQuery("")}
+                    className="mr-4 p-1.5 rounded-full text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </motion.button>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+
+          {/* 👤 PROFILE CARD */}
           <div className="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-[2rem] p-8 shadow-sm flex flex-col items-center text-center">
             
             {/* 📸 Profile Photo */}
