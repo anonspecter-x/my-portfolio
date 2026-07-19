@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { saveBlogPost, deleteBlogPost } from "./actions";
 import RichEditor from "@/components/RichEditor";
-import { PenTool, Trash2, Edit2, Image as ImageIcon, Search, Loader2, Code, ImagePlus, Settings, Tag, Clock, Calendar, Eye } from "lucide-react";
+import { PenTool, Trash2, Edit2, Image as ImageIcon, Search, Loader2, Code, Settings, Calendar, Eye } from "lucide-react";
 import imageCompression from 'browser-image-compression'; 
 
 interface Post {
@@ -20,11 +20,9 @@ interface Post {
   category?: string;
   tags?: string[];
   readingTime?: string;
-  // 📌 নতুন ফিল্ড
   totalViewTime?: number;
 }
 
-// 📌 Date Format Helper
 const formatDateTimeLocal = (dateString?: string) => {
   const date = dateString ? new Date(dateString) : new Date();
   const pad = (n: number) => n.toString().padStart(2, '0');
@@ -39,7 +37,6 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
   const [activeTab, setActiveTab] = useState<"published" | "draft">("published");
   const formRef = useRef<HTMLFormElement>(null);
 
-  // 📌 ট্যাব অনুযায়ী পোস্ট ফিল্টার করা
   const filteredPosts = posts.filter(post => (post.status || "published") === activeTab);
 
   const handleEditClick = (post: Post) => {
@@ -57,7 +54,6 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
   const handleSubmit = async (formData: FormData) => {
     setIsSubmitting(true);
     try {
-      // 📌 Image Compression Logic
       const coverImageFile = formData.get("coverImage") as File;
       
       if (coverImageFile && coverImageFile.size > 0) {
@@ -163,7 +159,6 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
               />
             </div>
 
-            {/* 📌 New Total View Time Field */}
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 flex items-center gap-1" title="Set base reading time in minutes">
                 <Eye className="w-3.5 h-3.5"/> Total Read (Mins)
@@ -323,7 +318,7 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
                     <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
                       {post.category || "Uncategorized"}
                     </span>
-                    {/* 📌 লিস্টে টোটাল ভিউ টাইম দেখানো হলো */}
+                    {/* 📌 ঘড়ির আইকন বাদ দিয়ে এখানে শুধু চোখের আইকনের Total Read রাখা হলো */}
                     <span className="text-[10px] text-gray-500 flex items-center gap-1 font-semibold" title="Total accumulated reading time">
                       <Eye className="w-3 h-3 text-blue-500"/> {post.totalViewTime || 0}m
                     </span>
