@@ -227,8 +227,9 @@ export default function BlogClient({ posts, authorInfo }: { posts: Post[], autho
         </div>
 
         {/* 👤 RIGHT AREA: PROFILE CARD (Takes 1 Column on Desktop, Goes to Bottom on Mobile) */}
-        <div className="lg:col-span-1 order-2">
-          <div className="sticky top-32 bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-[2rem] p-8 shadow-sm flex flex-col items-center text-center">
+        {/* 📌 lg:sticky lg:top-32 h-fit অ্যাড করা হয়েছে যেন ডেস্কটপ মোডে এটি স্ক্রল করার সময় ফিক্সড থাকে */}
+        <div className="lg:col-span-1 order-2 lg:sticky lg:top-32 h-fit z-10">
+          <div className="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-[2rem] p-8 shadow-sm flex flex-col items-center text-center">
             
             {/* 📸 Profile Photo */}
             <div className="relative mb-5">
