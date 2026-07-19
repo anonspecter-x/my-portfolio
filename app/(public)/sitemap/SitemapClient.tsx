@@ -73,7 +73,7 @@ export default function SitemapClient({ projects, posts }: SitemapClientProps) {
         {/* 🌟 Left Side: Sticky Header / Intro */}
         <motion.div 
           initial="hidden" animate="visible" variants={stagger}
-          className="lg:col-span-5 sticky top-32 self-start"
+          className="lg:col-span-5 relative lg:sticky lg:top-32 self-start"
         >
           <motion.div variants={fadeUp} className="inline-flex items-center w-fit gap-2 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-xs font-semibold mb-6 text-gray-600 dark:text-gray-400">
             <Map className="w-3.5 h-3.5" /> Site Index & Directory
