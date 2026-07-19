@@ -7,13 +7,11 @@ import { cache } from "react";
 
 export const revalidate = 60;
 
-// 📌 ডাটা ফেচিং ফাংশন (Next.js Cache ব্যবহার করা হলো যেন একই ডাটা দুবার কল না হয়)
 const getPost = cache(async (slug: string) => {
   try {
     const client = await MongoClient.connect(process.env.MONGODB_URI as string);
     const db = client.db();
     
-    // 📌 শুধুমাত্র পাবলিশড পোস্ট খুঁজবে
     const post = await db.collection("posts").findOne({ slug, status: "published" });
     await client.close();
     
@@ -29,7 +27,6 @@ const getPost = cache(async (slug: string) => {
       seoTitle: post.seoTitle || post.title,
       seoDescription: post.seoDescription || "",
       seoKeywords: post.seoKeywords || "",
-      // 📌 Raw Dates for Schema & UI
       rawCreatedAt: post.createdAt,
       rawUpdatedAt: post.updatedAt || post.createdAt,
       createdAt: post.createdAt ? new Date(post.createdAt).toLocaleDateString('en-US', {
@@ -43,7 +40,6 @@ const getPost = cache(async (slug: string) => {
   }
 });
 
-// 📌 অথর (Settings) ডাটা ফেচিং ফাংশন
 const getAuthorInfo = cache(async () => {
   try {
     const client = await MongoClient.connect(process.env.MONGODB_URI as string);
@@ -62,7 +58,6 @@ const getAuthorInfo = cache(async () => {
   }
 });
 
-// 📌 Dynamic SEO Metadata Generation
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPost(slug);
@@ -92,11 +87,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-// 📌 Next.js App Router Page
 export default async function SingleBlogPage({ params }: { params: { slug: string } }) {
   const { slug } = await params;
-  
-  // 📌 সমান্তরালভাবে (Parallel) পোস্ট এবং অথর ডেটা ফেচ করা হচ্ছে পারফরম্যান্সের জন্য
   const [post, authorInfo] = await Promise.all([getPost(slug), getAuthorInfo()]);
 
   if (!post) {
@@ -105,7 +97,6 @@ export default async function SingleBlogPage({ params }: { params: { slug: strin
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.meetsakib.com";
 
-  // 📌 Google JSON-LD Schema (এসইও-এর জন্য কাস্টম স্কিমা)
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -136,13 +127,11 @@ export default async function SingleBlogPage({ params }: { params: { slug: strin
   return (
     <main className="min-h-screen pt-32 pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto">
       
-      {/* 📌 Injecting Schema.org JSON-LD */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Back Button */}
       <Link href="/blog" className="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-black dark:hover:text-white transition-colors mb-10 md:mb-12 group">
         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
         Back to articles
@@ -150,37 +139,53 @@ export default async function SingleBlogPage({ params }: { params: { slug: strin
 
       <article className="max-w-3xl mx-auto">
         
-        {/* ================= 🌟 POST HEADER ================= */}
-        <header className="mb-10 text-center">
-          <div className="flex justify-center items-center flex-wrap gap-4 text-[12px] font-bold tracking-wider uppercase text-gray-500 dark:text-gray-400 mb-6">
-            <span className="text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-3.5 py-1.5 rounded-full">
+        {/* ================= 🌟 NEW UPDATED POST HEADER ================= */}
+        <header className="mb-12 md:mb-16 text-center">
+          
+          {/* 1. Category Tag At Top */}
+          <div className="flex justify-center mb-6">
+            <span className="text-[12px] font-bold tracking-widest uppercase text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-4 py-2 rounded-full border border-blue-100 dark:border-blue-800/30 shadow-sm">
               {post.category}
-            </span>
-            <time dateTime={post.rawCreatedAt} className="flex items-center gap-1.5 bg-gray-100 dark:bg-[#111] px-3.5 py-1.5 rounded-full">
-              <Calendar className="w-4 h-4" /> {post.createdAt}
-            </time>
-            <span className="flex items-center gap-1.5 bg-gray-100 dark:bg-[#111] px-3.5 py-1.5 rounded-full">
-              <Clock className="w-4 h-4" /> {post.readingTime}
             </span>
           </div>
           
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold tracking-tight text-gray-900 dark:text-white leading-[1.15] mb-8">
+          {/* 2. Blog Title */}
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold tracking-tight text-gray-900 dark:text-white leading-[1.15] mb-8 max-w-4xl mx-auto">
             {post.title}
           </h1>
 
-          {/* 👨‍💻 Top Author Info (Minimal) */}
-          <div className="flex items-center justify-center gap-3">
-            {authorInfo?.photo ? (
-              <img src={authorInfo.photo} alt={authorInfo.name} className="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-gray-800" />
-            ) : (
-              <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-[#111] flex items-center justify-center border border-gray-200 dark:border-gray-800">
-                <User className="w-5 h-5 text-gray-500" />
+          {/* 3. Sleek Author & Meta Data Row */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 pt-2">
+            
+            {/* Author Section */}
+            <div className="flex items-center gap-3">
+              {authorInfo?.photo ? (
+                <img src={authorInfo.photo} alt={authorInfo.name} className="w-11 h-11 rounded-full object-cover border border-gray-200 dark:border-gray-800 shadow-sm" />
+              ) : (
+                <div className="w-11 h-11 rounded-full bg-gray-100 dark:bg-[#111] flex items-center justify-center border border-gray-200 dark:border-gray-800 shadow-sm">
+                  <User className="w-5 h-5 text-gray-500" />
+                </div>
+              )}
+              <div className="text-left leading-tight">
+                <p className="text-[15px] font-bold text-gray-900 dark:text-white">{authorInfo?.name}</p>
+                <p className="text-[13px] font-medium text-gray-500 mt-0.5">{authorInfo?.role}</p>
               </div>
-            )}
-            <div className="text-left">
-              <p className="text-sm font-bold text-black dark:text-white leading-none">{authorInfo?.name}</p>
-              <p className="text-xs text-gray-500 mt-1">{authorInfo?.role}</p>
             </div>
+
+            {/* Separator Dot (Hidden on mobile) */}
+            <div className="hidden sm:block w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+
+            {/* Date & Read Time Section */}
+            <div className="flex items-center gap-4 text-[13px] font-semibold text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-[#111] px-5 py-2.5 rounded-full border border-gray-200 dark:border-gray-800 shadow-sm">
+              <time dateTime={post.rawCreatedAt} className="flex items-center gap-1.5">
+                <Calendar className="w-4 h-4 text-gray-400" /> {post.createdAt}
+              </time>
+              <div className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+              <span className="flex items-center gap-1.5">
+                <Clock className="w-4 h-4 text-gray-400" /> {post.readingTime}
+              </span>
+            </div>
+
           </div>
         </header>
 
