@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { Calendar, BookOpen, Clock, ArrowRight, Search, ChevronLeft, ChevronRight, User, X, Eye } from "lucide-react";
+import { Calendar, BookOpen, ArrowRight, Search, ChevronLeft, ChevronRight, User, X, Eye } from "lucide-react";
 
 interface Post {
   _id: string;
@@ -11,8 +11,6 @@ interface Post {
   slug: string;
   coverImage: string | null;
   category: string;
-  readingTime: string;
-  // 📌 নতুন ফিল্ড
   totalViewTime: number;
   createdAt: string;
   createdAtRaw: string;
@@ -28,7 +26,7 @@ interface AuthorInfo {
 export default function BlogClient({ posts, authorInfo }: { posts: Post[], authorInfo: AuthorInfo | null }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const POSTS_PER_PAGE = 6; // 📌 প্রতি পেজে ৬টি ব্লগ
+  const POSTS_PER_PAGE = 6; 
 
   // 📌 Animation Variants
   const fadeUp: any = {
@@ -56,12 +54,12 @@ export default function BlogClient({ posts, authorInfo }: { posts: Post[], autho
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
-    setCurrentPage(1); // সার্চ করলে পেজ ১ এ ফিরে যাবে
+    setCurrentPage(1); 
   };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' }); // পেজ চেঞ্জ হলে উপরে স্ক্রল হবে
+    window.scrollTo({ top: 0, behavior: 'smooth' }); 
   };
 
   return (
@@ -101,7 +99,7 @@ export default function BlogClient({ posts, authorInfo }: { posts: Post[], autho
       {/* ================= 🌟 MAIN GRID LAYOUT ================= */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 relative items-start">
         
-        {/* 📝 LEFT AREA: BLOG POSTS (Takes 2 Columns on Desktop) */}
+        {/* 📝 LEFT AREA: BLOG POSTS */}
         <div className="lg:col-span-2 order-1 flex flex-col gap-10">
           {filteredPosts.length > 0 ? (
             <AnimatePresence mode="wait">
@@ -158,19 +156,17 @@ export default function BlogClient({ posts, authorInfo }: { posts: Post[], autho
                           </div>
                         </div>
 
-                        {/* 📅 Meta Data (Updated with Total View Time) */}
+                        {/* 📅 Meta Data (পুরাতন রিডিং টাইম রিমুভ করে শুধু নতুনটা রাখা হলো) */}
                         <div className="flex items-center gap-4 text-[13px] font-semibold text-gray-500 dark:text-gray-400 pt-5 border-t border-gray-100 dark:border-gray-800/60 mt-auto">
                           <time dateTime={post.createdAtRaw} className="flex items-center gap-1.5">
                             <Calendar className="w-4 h-4" /> 
                             {post.createdAt}
                           </time>
-                          <span className="flex items-center gap-1.5">
-                            <Clock className="w-4 h-4" /> 
-                            {post.readingTime}
-                          </span>
+                          
+                          {/* 📌 শুধু টোটাল রিডিং টাইম এখানে রাখা হলো */}
                           <span className="flex items-center gap-1.5 text-blue-500 dark:text-blue-400 ml-auto" title="Total Accumulated Read Time">
                             <Eye className="w-4 h-4" /> 
-                            {post.totalViewTime}m
+                            {post.totalViewTime}m read
                           </span>
                         </div>
 
@@ -221,12 +217,10 @@ export default function BlogClient({ posts, authorInfo }: { posts: Post[], autho
         </div>
 
         {/* ================= 👤 RIGHT AREA: FIXED SIDEBAR (SEARCH + PROFILE) ================= */}
-        {/* 📌 Flex Column with gap-6, and sticky applied to the parent container */}
         <div className="lg:col-span-1 order-2 lg:sticky lg:top-32 h-fit z-10 flex flex-col gap-6">
           
           {/* 🔍 PREMIUM SEARCH BAR */}
           <div className="relative group">
-            {/* Glowing Background on Hover */}
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-[2rem] blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
             
             <div className="relative flex items-center w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-[2rem] overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 focus-within:border-blue-500 dark:focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10">
@@ -238,7 +232,6 @@ export default function BlogClient({ posts, authorInfo }: { posts: Post[], autho
                 onChange={handleSearch}
                 className="w-full bg-transparent py-4 px-4 text-sm outline-none text-black dark:text-white placeholder:text-gray-400 font-medium"
               />
-              {/* Clear Button */}
               <AnimatePresence>
                 {searchQuery && (
                   <motion.button 
@@ -256,7 +249,6 @@ export default function BlogClient({ posts, authorInfo }: { posts: Post[], autho
           {/* 👤 PROFILE CARD */}
           <div className="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-[2rem] p-8 shadow-sm flex flex-col items-center text-center">
             
-            {/* 📸 Profile Photo */}
             <div className="relative mb-5">
               <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-lg"></div>
               {authorInfo?.photo ? (
@@ -268,7 +260,6 @@ export default function BlogClient({ posts, authorInfo }: { posts: Post[], autho
               )}
             </div>
 
-            {/* 📝 Profile Info */}
             <h3 className="text-xl font-bold text-black dark:text-white mb-1.5">{authorInfo?.name}</h3>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-wide mb-5">
               {authorInfo?.role}
