@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { Calendar, BookOpen, Clock, ArrowRight, Search, ChevronLeft, ChevronRight, User, X } from "lucide-react";
+import { Calendar, BookOpen, Clock, ArrowRight, Search, ChevronLeft, ChevronRight, User, X, Eye } from "lucide-react";
 
 interface Post {
   _id: string;
@@ -12,6 +12,8 @@ interface Post {
   coverImage: string | null;
   category: string;
   readingTime: string;
+  // 📌 নতুন ফিল্ড
+  totalViewTime: number;
   createdAt: string;
   createdAtRaw: string;
 }
@@ -156,7 +158,7 @@ export default function BlogClient({ posts, authorInfo }: { posts: Post[], autho
                           </div>
                         </div>
 
-                        {/* 📅 Meta Data */}
+                        {/* 📅 Meta Data (Updated with Total View Time) */}
                         <div className="flex items-center gap-4 text-[13px] font-semibold text-gray-500 dark:text-gray-400 pt-5 border-t border-gray-100 dark:border-gray-800/60 mt-auto">
                           <time dateTime={post.createdAtRaw} className="flex items-center gap-1.5">
                             <Calendar className="w-4 h-4" /> 
@@ -165,6 +167,10 @@ export default function BlogClient({ posts, authorInfo }: { posts: Post[], autho
                           <span className="flex items-center gap-1.5">
                             <Clock className="w-4 h-4" /> 
                             {post.readingTime}
+                          </span>
+                          <span className="flex items-center gap-1.5 text-blue-500 dark:text-blue-400 ml-auto" title="Total Accumulated Read Time">
+                            <Eye className="w-4 h-4" /> 
+                            {post.totalViewTime}m
                           </span>
                         </div>
 

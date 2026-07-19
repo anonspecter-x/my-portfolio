@@ -1,9 +1,10 @@
 import { MongoClient } from "mongodb";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Calendar, Clock, Tag, User } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Tag, User, Eye } from "lucide-react";
 import type { Metadata } from "next";
 import { cache } from "react";
+import ViewTimeTracker from "./ViewTimeTracker";
 
 export const revalidate = 60;
 
@@ -23,6 +24,8 @@ const getPost = cache(async (slug: string) => {
       coverImage: post.coverImage || null,
       category: post.category || "Uncategorized",
       readingTime: post.readingTime || "1 min read",
+      // 📌 নতুন যুক্ত হওয়া টোটাল ভিউ টাইম
+      totalViewTime: post.totalViewTime || 0,
       tags: post.tags || [],
       seoTitle: post.seoTitle || post.title,
       seoDescription: post.seoDescription || "",
@@ -127,6 +130,9 @@ export default async function SingleBlogPage({ params }: { params: { slug: strin
   return (
     <main className="min-h-screen pt-32 pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto">
       
+      {/* 📌 ব্যাকগ্রাউন্ড ট্র্যাকার কম্পোনেন্ট কল করা হলো */}
+      <ViewTimeTracker slug={slug} />
+
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -142,22 +148,18 @@ export default async function SingleBlogPage({ params }: { params: { slug: strin
         {/* ================= 🌟 NEW UPDATED POST HEADER ================= */}
         <header className="mb-12 md:mb-16 text-center">
           
-          {/* 1. Category Tag At Top */}
           <div className="flex justify-center mb-6">
             <span className="text-[12px] font-bold tracking-widest uppercase text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-4 py-2 rounded-full border border-blue-100 dark:border-blue-800/30 shadow-sm">
               {post.category}
             </span>
           </div>
           
-          {/* 2. Blog Title */}
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold tracking-tight text-gray-900 dark:text-white leading-[1.15] mb-8 max-w-4xl mx-auto">
             {post.title}
           </h1>
 
-          {/* 3. Sleek Author & Meta Data Row */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 pt-2">
             
-            {/* Author Section */}
             <div className="flex items-center gap-3">
               {authorInfo?.photo ? (
                 <img src={authorInfo.photo} alt={authorInfo.name} className="w-11 h-11 rounded-full object-cover border border-gray-200 dark:border-gray-800 shadow-sm" />
@@ -172,24 +174,27 @@ export default async function SingleBlogPage({ params }: { params: { slug: strin
               </div>
             </div>
 
-            {/* Separator Dot (Hidden on mobile) */}
             <div className="hidden sm:block w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
 
-            {/* Date & Read Time Section */}
             <div className="flex items-center gap-4 text-[13px] font-semibold text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-[#111] px-5 py-2.5 rounded-full border border-gray-200 dark:border-gray-800 shadow-sm">
               <time dateTime={post.rawCreatedAt} className="flex items-center gap-1.5">
                 <Calendar className="w-4 h-4 text-gray-400" /> {post.createdAt}
               </time>
               <div className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700"></div>
-              <span className="flex items-center gap-1.5">
+              <span className="flex items-center gap-1.5" title="Estimated Reading Time">
                 <Clock className="w-4 h-4 text-gray-400" /> {post.readingTime}
+              </span>
+              <div className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+              {/* 📌 টোটাল রিডিং টাইম এখানে দেখানো হলো */}
+              <span className="flex items-center gap-1.5 text-blue-600 dark:text-blue-400" title="Total Accumulated Read Time">
+                <Eye className="w-4 h-4" /> {post.totalViewTime}m Total Read
               </span>
             </div>
 
           </div>
         </header>
 
-        {/* ================= 📸 COVER IMAGE ================= */}
+        {/* ================= 🖼️ COVER IMAGE ================= */}
         {post.coverImage && (
           <div className="w-full aspect-video rounded-2xl md:rounded-[2rem] overflow-hidden mb-12 border border-gray-200 dark:border-gray-800 shadow-lg">
             <img src={post.coverImage} alt={post.title} className="w-full h-full object-cover" />

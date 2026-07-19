@@ -15,21 +15,24 @@ export async function saveBlogPost(formData: FormData) {
     const seoDescription = formData.get("seoDescription") as string;
     const seoKeywords = formData.get("seoKeywords") as string;
 
-    // 📌 নতুন যুক্ত হওয়া ফিল্ডগুলো
+    // 📌 নতুন যুক্ত হওয়া ফিল্ডগুলো
     const status = formData.get("status") as string || "published";
     const category = formData.get("category") as string || "Uncategorized";
     const tagsString = formData.get("tags") as string || "";
-    const tags = tagsString.split(",").map(tag => tag.trim()).filter(Boolean); // কমা দিয়ে ট্যাগ আলাদা করা
+    const tags = tagsString.split(",").map(tag => tag.trim()).filter(Boolean); // কমা দিয়ে ট্যাগ আলাদা করা
 
     // 📌 কাস্টম পাবলিশ ডেট রিসিভ করা (অ্যাডমিন প্যানেল থেকে)
     const customCreatedAt = formData.get("createdAt") as string;
     const createdAtDate = customCreatedAt ? new Date(customCreatedAt) : new Date();
 
+    // 📌 টোটাল ভিউ টাইম রিসিভ করা (অ্যাডমিন প্যানেল থেকে)
+    const totalViewTime = Number(formData.get("totalViewTime")) || 0;
+
     if (!title || !content) {
       throw new Error("Title and Content are required.");
     }
 
-    // ⏱️ Reading Time Calculation (HTML ট্যাগ রিমুভ করে ওয়ার্ড কাউন্ট)
+    // ⏱️ Reading Time Calculation (HTML ট্যাগ রিমুভ করে ওয়ার্ড কাউন্ট)
     const plainText = content.replace(/<[^>]*>?/gm, '');
     const wordCount = plainText.split(/\s+/).length;
     const readingTime = Math.max(1, Math.ceil(wordCount / 200)) + " min read";
@@ -47,6 +50,7 @@ export async function saveBlogPost(formData: FormData) {
       category,
       tags,
       readingTime,
+      totalViewTime, // 📌 ডাটাবেসে সেভ করার জন্য অ্যাড করা হলো
       createdAt: createdAtDate, // 📌 কাস্টম ডেট এখানে অ্যাড করা হলো
       updatedAt: new Date() 
     };

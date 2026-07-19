@@ -20,11 +20,13 @@ async function getPosts() {
     seoTitle: post.seoTitle || "",
     seoDescription: post.seoDescription || "",
     seoKeywords: post.seoKeywords || "",
-    // 📌 নতুন যুক্ত হওয়া অ্যাডভান্সড ডাটা
+    // 📌 স্ট্যাটাস ও অন্যান্য ডাটা
     status: post.status || "published",
     category: post.category || "Technology",
     tags: post.tags || [],
     readingTime: post.readingTime || "1 min read",
+    // 📌 নতুন যুক্ত হওয়া টোটাল ভিউ টাইম (মোট কত মিনিট পড়া হয়েছে)
+    totalViewTime: post.totalViewTime || 0,
     createdAt: post.createdAt ? post.createdAt.toISOString() : new Date().toISOString(),
   }));
 }

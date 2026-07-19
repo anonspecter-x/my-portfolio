@@ -41,6 +41,8 @@ async function getBlogData() {
       coverImage: post.coverImage || null,
       category: post.category || "Uncategorized",
       readingTime: post.readingTime || "1 min read",
+      // 📌 নতুন যুক্ত হওয়া টোটাল ভিউ টাইম
+      totalViewTime: post.totalViewTime || 0,
       createdAtRaw: post.createdAt || new Date().toISOString(),
       createdAt: post.createdAt ? new Date(post.createdAt).toLocaleDateString('en-US', {
         month: 'short',

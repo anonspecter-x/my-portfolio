@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { saveBlogPost, deleteBlogPost } from "./actions";
 import RichEditor from "@/components/RichEditor";
-import { PenTool, Trash2, Edit2, Image as ImageIcon, Search, Loader2, Code, ImagePlus, Settings, Tag, Clock, Calendar } from "lucide-react";
+import { PenTool, Trash2, Edit2, Image as ImageIcon, Search, Loader2, Code, ImagePlus, Settings, Tag, Clock, Calendar, Eye } from "lucide-react";
 import imageCompression from 'browser-image-compression'; 
 
 interface Post {
@@ -20,9 +20,11 @@ interface Post {
   category?: string;
   tags?: string[];
   readingTime?: string;
+  // 📌 নতুন ফিল্ড
+  totalViewTime?: number;
 }
 
-// 📌 Date Format Helper (To convert ISO string to datetime-local format)
+// 📌 Date Format Helper
 const formatDateTimeLocal = (dateString?: string) => {
   const date = dateString ? new Date(dateString) : new Date();
   const pad = (n: number) => n.toString().padStart(2, '0');
@@ -60,14 +62,13 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
       
       if (coverImageFile && coverImageFile.size > 0) {
         const options = {
-          maxSizeMB: 1, // সর্বোচ্চ 1MB তে কম্প্রেস করবে
-          maxWidthOrHeight: 1920, // ডাইমেনশন লিমিট
-          useWebWorker: true, // ব্রাউজার ফ্রিজ হওয়া রোধ করবে
+          maxSizeMB: 1, 
+          maxWidthOrHeight: 1920, 
+          useWebWorker: true, 
         };
         
         try {
           const compressedFile = await imageCompression(coverImageFile, options);
-          // 📌 অরিজিনাল বড় ফাইলের বদলে কম্প্রেস করা ফাইলটি ফর্মে সেট করে দিচ্ছি
           formData.set("coverImage", compressedFile, compressedFile.name);
         } catch (compressionError) {
           console.error("Image compression failed:", compressionError);
@@ -129,7 +130,7 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Category</label>
               <select name="category" defaultValue={editPost?.category || "Technology"} key={editPost ? editPost._id + 'cat' : 'new-cat'} className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-colors cursor-pointer">
@@ -149,7 +150,6 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
               </select>
             </div>
 
-            {/* 📌 New Publish Date Field */}
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-wider text-gray-500 flex items-center gap-1">
                 <Calendar className="w-3.5 h-3.5"/> Publish Date
@@ -160,6 +160,22 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
                 defaultValue={formatDateTimeLocal(editPost?.createdAt)}
                 key={editPost ? editPost._id + 'date' : 'new-date'}
                 className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-colors cursor-pointer" 
+              />
+            </div>
+
+            {/* 📌 New Total View Time Field */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 flex items-center gap-1" title="Set base reading time in minutes">
+                <Eye className="w-3.5 h-3.5"/> Total Read (Mins)
+              </label>
+              <input 
+                type="number" 
+                name="totalViewTime"
+                min="0"
+                defaultValue={editPost?.totalViewTime || 0}
+                key={editPost ? editPost._id + 'view' : 'new-view'}
+                placeholder="e.g. 50"
+                className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-sm rounded-xl px-4 py-3 outline-none focus:border-blue-500 transition-colors" 
               />
             </div>
           </div>
@@ -293,7 +309,6 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
             {filteredPosts.map((post) => (
               <div key={post._id} className="group bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 rounded-xl p-3 flex gap-3 relative overflow-hidden transition-all hover:border-gray-300 dark:hover:border-gray-700 hover:shadow-sm">
                 
-                {/* 📌 Image is now 16:9 ratio (aspect-video) */}
                 {post.coverImage ? (
                   <img src={post.coverImage} alt={post.title} className="w-28 aspect-video rounded-lg object-cover border border-gray-200 dark:border-gray-800 shrink-0" />
                 ) : (
@@ -304,12 +319,13 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
                 
                 <div className="flex-1 min-w-0 flex flex-col justify-center">
                   <h4 className="text-sm font-bold text-black dark:text-white truncate" title={post.title}>{post.title}</h4>
-                  <div className="flex items-center gap-2 mt-1">
+                  <div className="flex items-center gap-2 mt-1 flex-wrap">
                     <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
                       {post.category || "Uncategorized"}
                     </span>
-                    <span className="text-[10px] text-gray-500 flex items-center gap-1">
-                      <Clock className="w-3 h-3"/> {post.readingTime || "1 min"}
+                    {/* 📌 লিস্টে টোটাল ভিউ টাইম দেখানো হলো */}
+                    <span className="text-[10px] text-gray-500 flex items-center gap-1 font-semibold" title="Total accumulated reading time">
+                      <Eye className="w-3 h-3 text-blue-500"/> {post.totalViewTime || 0}m
                     </span>
                   </div>
                 </div>
