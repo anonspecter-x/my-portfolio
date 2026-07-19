@@ -5,11 +5,26 @@ import {
   Terminal, Code2, Cpu, Rocket, ArrowRight, 
   Database, Layers, Activity, MonitorSmartphone, 
   Zap, GitPullRequest, Settings, Server, ShieldCheck,
-  Globe, Braces
+  Globe, Braces, Award, ExternalLink
 } from "lucide-react";
 import Link from "next/link";
+import { useState, useEffect, useRef } from "react";
 
-export default function AboutClient() {
+interface Certificate {
+  _id: string;
+  title: string;
+  issuerName: string;
+  issuerLogo?: string;
+  certificateImage?: string;
+  credentialUrl?: string;
+  certificateId?: string;
+}
+
+interface AboutClientProps {
+  certificates?: Certificate[];
+}
+
+export default function AboutClient({ certificates = [] }: AboutClientProps) {
   // 📌 TypeScript Error Fix
   const fadeUp: any = {
     hidden: { opacity: 0, y: 40 },
@@ -21,9 +36,62 @@ export default function AboutClient() {
     visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
   };
 
+  // ==========================================
+  // 🎓 CERTIFICATES AUTO-SCROLL LOGIC
+  // ==========================================
+  const infiniteCertificates = certificates && certificates.length > 0 ? [...certificates, ...certificates, ...certificates, ...certificates] : [];
+  const certScrollerRef = useRef<HTMLDivElement>(null);
+  const [isCertInteracting, setIsCertInteracting] = useState(false);
+  const certScrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const scroller = certScrollerRef.current;
+    if (!scroller || infiniteCertificates.length === 0) return;
+
+    let animationId: number;
+    const scroll = () => {
+      if (!isCertInteracting) {
+        scroller.scrollLeft += 1; 
+        if (scroller.scrollLeft >= scroller.scrollWidth / 2) {
+          scroller.scrollLeft -= scroller.scrollWidth / 2;
+        }
+      }
+      animationId = requestAnimationFrame(scroll);
+    };
+
+    animationId = requestAnimationFrame(scroll);
+    return () => cancelAnimationFrame(animationId);
+  }, [isCertInteracting, infiniteCertificates.length]);
+
+  const handleCertInteractionStart = () => {
+    setIsCertInteracting(true);
+    if (certScrollTimeout.current) clearTimeout(certScrollTimeout.current);
+  };
+
+  const handleCertInteractionEnd = () => {
+    if (certScrollTimeout.current) clearTimeout(certScrollTimeout.current);
+    certScrollTimeout.current = setTimeout(() => {
+      setIsCertInteracting(false);
+    }, 800);
+  };
+
   return (
     <main className="min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] pt-32 pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto overflow-hidden selection:bg-blue-500/30">
       
+      {/* 🌟 Custom CSS for Blob Animations */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes blob-bounce {
+          0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
+          50% { transform: translateY(-20px) scale(1.1); opacity: 1; }
+        }
+        .animate-blob {
+          animation: blob-bounce 7s infinite ease-in-out;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+      `}} />
+
       {/* ================= 1. THE GRAND HERO & MY PHOTO SECTION ================= */}
       <motion.section 
         initial="hidden" 
@@ -33,23 +101,19 @@ export default function AboutClient() {
       >
         <div className="xl:col-span-7 flex flex-col justify-center">
           
-          {/* 📌 Header Badge (w-fit যুক্ত করা হয়েছে) */}
           <motion.div variants={fadeUp} className="inline-flex items-center w-fit gap-2 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-xs font-semibold mb-6 text-gray-600 dark:text-gray-400">
             <Terminal className="w-3.5 h-3.5" /> Engineer. Architect. Creator.
           </motion.div>
           
-          {/* 📌 Hero Title */}
           <motion.h1 variants={fadeUp} className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-black dark:text-white leading-[1.1] mb-6">
             Engineering scalable <br className="hidden md:block" />
             <span className="text-gray-400">realities</span> and systems.
           </motion.h1>
           
-          {/* 📌 Hero Description */}
           <motion.p variants={fadeUp} className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mb-10">
             Hi, I'm <strong className="text-black dark:text-white">Md Nazmus Shakib</strong>. A Senior Full-Stack Developer obsessed with crafting digital ecosystems that balance stunning aesthetics with absolute, uncompromising performance.
           </motion.p>
 
-          {/* 📌 Stats */}
           <motion.div variants={fadeUp} className="flex items-center gap-6">
             <div className="flex flex-col">
               <span className="text-4xl font-black text-black dark:text-white">6+</span>
@@ -68,7 +132,6 @@ export default function AboutClient() {
           </motion.div>
         </div>
 
-        {/* 📸 MY PHOTO CONTAINER */}
         <motion.div variants={fadeUp} className="xl:col-span-5 relative perspective-1000">
           <div 
             onClick={() => window.dispatchEvent(new Event("trigger-easter-egg"))}
@@ -95,25 +158,30 @@ export default function AboutClient() {
         </motion.div>
       </motion.section>
 
-      {/* ================= 2. THE ENGINEERING MANIFESTO (আগের ডিজাইন ফিরিয়ে দেওয়া হলো) ================= */}
+      {/* ================= 2. THE ENGINEERING MANIFESTO (Glassmorphism Effect applied) ================= */}
       <motion.section 
         initial="hidden" 
         whileInView="visible" 
         viewport={{ once: true, margin: "-100px" }} 
         variants={stagger} 
-        className="mb-32 md:mb-48 bg-black dark:bg-white text-white dark:text-black rounded-[3rem] p-10 md:p-20 relative overflow-hidden"
+        className="mb-32 md:mb-48 relative w-full rounded-[2rem] md:rounded-[3rem] p-10 md:p-20 overflow-hidden bg-black/5 dark:bg-white/5 backdrop-blur-2xl border border-black/10 dark:border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.05)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.3)]"
       >
+        {/* 🌟 Blob Animation for a slow breathing effect on the glassmorphism blurs */}
+        <div className="absolute top-[-20%] left-[-10%] w-72 h-72 bg-blue-400/20 dark:bg-blue-600/20 rounded-full blur-[80px] pointer-events-none animate-blob"></div>
+        <div className="absolute bottom-[-20%] right-[-10%] w-72 h-72 bg-purple-400/20 dark:bg-purple-600/20 rounded-full blur-[80px] pointer-events-none animate-blob animation-delay-2000"></div>
+
         <div className="absolute top-0 right-0 p-10 opacity-10">
-          <Braces className="w-64 h-64" />
+          <Braces className="w-64 h-64 text-black dark:text-white" />
         </div>
+        
         <div className="relative z-10 max-w-4xl">
-          <motion.h2 variants={fadeUp} className="text-sm font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-6">
+          <motion.h2 variants={fadeUp} className="text-sm font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-6">
             The Developer Manifesto
           </motion.h2>
-          <motion.h3 variants={fadeUp} className="text-3xl md:text-5xl font-extrabold tracking-tight leading-snug mb-10">
+          <motion.h3 variants={fadeUp} className="text-3xl md:text-5xl font-extrabold tracking-tight leading-snug mb-10 text-black dark:text-white">
             I refuse to build software that merely "works". It must be intuitive, resilient, and blazingly fast.
           </motion.h3>
-          <motion.div variants={fadeUp} className="prose prose-lg dark:prose-invert prose-p:text-gray-300 dark:prose-p:text-gray-700 leading-relaxed max-w-none">
+          <motion.div variants={fadeUp} className="prose prose-lg dark:prose-invert prose-p:text-gray-700 dark:prose-p:text-gray-300 leading-relaxed max-w-none">
             <p>
               In an era where attention spans are measured in milliseconds, bloated code and sluggish interfaces are unacceptable. I approach software engineering as an art form built strictly on logic. 
             </p>
@@ -289,7 +357,103 @@ export default function AboutClient() {
         </motion.div>
       </motion.section>
 
-      {/* ================= 6. FINAL CTA SECTION ================= */}
+      {/* ================= 6. CERTIFICATES SECTION ================= */}
+      {certificates && certificates.length > 0 && (
+        <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={stagger} className="mb-32 md:mb-48 border-t border-gray-200/50 dark:border-gray-800/50 pt-20">
+          <div className="mb-12 md:mb-16 text-center">
+            <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 md:mb-6 text-black dark:text-white">
+              Professional Credentials
+            </motion.h2>
+            <motion.p variants={fadeUp} className="text-sm md:text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              My continuous learning journey and technical validations through global platforms.
+            </motion.p>
+          </div>
+
+          <div 
+            ref={certScrollerRef}
+            onMouseEnter={handleCertInteractionStart}
+            onMouseLeave={handleCertInteractionEnd}
+            onTouchStart={handleCertInteractionStart}
+            onTouchEnd={handleCertInteractionEnd}
+            className="flex relative w-full overflow-x-auto [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)] pt-4 pb-12 gap-5 md:gap-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {infiniteCertificates.map((cert, idx) => (
+              <div 
+                key={`cert-${cert._id || idx}-${idx}`} 
+                className="w-[280px] md:w-[360px] shrink-0 group relative bg-white dark:bg-[#050505] border border-gray-100 dark:border-white/5 rounded-3xl p-3 shadow-sm hover:shadow-xl dark:hover:shadow-[0_8px_30px_-15px_rgba(255,255,255,0.05)] transition-all duration-500 flex flex-col hover:-translate-y-2"
+              >
+                <div className="relative z-10">
+                  <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-gray-100 dark:bg-[#0a0a0a] border border-gray-200/50 dark:border-white/5 flex items-center justify-center">
+                    {cert.certificateImage ? (
+                      <img 
+                        src={cert.certificateImage} 
+                        alt={cert.title} 
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                      />
+                    ) : (
+                      <Award className="w-12 h-12 text-gray-300 dark:text-gray-800" />
+                    )}
+                  </div>
+
+                  <div className="absolute -bottom-5 left-4 w-12 h-12 rounded-[12px] bg-white shadow-md flex items-center justify-center z-20 group-hover:-translate-y-1 transition-transform duration-300">
+                    {cert.issuerLogo ? (
+                      <img 
+                        src={cert.issuerLogo} 
+                        alt={cert.issuerName} 
+                        className="w-full h-full rounded-[8px] object-contain bg-white p-0.5" 
+                      />
+                    ) : (
+                      <Award className="w-6 h-6 text-gray-400" />
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex flex-col flex-1 pt-9 px-2 pb-2">
+                  <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-1.5">
+                    {cert.issuerName}
+                  </span>
+                  
+                  <h3 className="font-bold text-lg leading-tight text-black dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
+                    {cert.title}
+                  </h3>
+
+                  <div className="mt-auto pt-6">
+                    {cert.credentialUrl ? (
+                      <a 
+                        href={cert.credentialUrl} 
+                        target="_blank" 
+                        rel="noreferrer" 
+                        className="flex items-center justify-between w-full text-xs font-bold text-black dark:text-white bg-gray-50 dark:bg-[#111] hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black py-3 px-4 rounded-xl border border-gray-200/50 dark:border-white/5 transition-colors group/link"
+                      >
+                        Verify Credential 
+                        <ExternalLink className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
+                      </a>
+                    ) : cert.certificateId ? (
+                      <div className="flex items-center justify-between w-full text-xs font-bold text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-[#111] py-3 px-4 rounded-xl border border-gray-100 dark:border-gray-800/50 cursor-default">
+                        <span className="truncate mr-2">ID: {cert.certificateId}</span>
+                        <ShieldCheck className="w-4 h-4 text-blue-500 shrink-0" />
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between w-full text-xs font-bold text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-[#111] py-3 px-4 rounded-xl border border-gray-100 dark:border-gray-800/50 cursor-default">
+                        Internally Verified
+                        <ShieldCheck className="w-4 h-4 text-blue-500 shrink-0" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <motion.div variants={fadeUp} className="mt-8 md:mt-12 flex justify-center w-full relative z-10">
+            <Link href="/certificates" className="group flex items-center gap-2 px-6 md:px-8 py-3 md:py-4 bg-gray-50 dark:bg-[#111] text-black dark:text-white font-semibold text-sm md:text-base rounded-full hover:bg-gray-100 dark:hover:bg-[#222] transition-all border border-gray-200 dark:border-white/10">
+              View All Certificates <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" />
+            </Link>
+          </motion.div>
+        </motion.section>
+      )}
+
+      {/* ================= 7. FINAL CTA SECTION ================= */}
       <motion.section 
         initial="hidden" 
         whileInView="visible" 
