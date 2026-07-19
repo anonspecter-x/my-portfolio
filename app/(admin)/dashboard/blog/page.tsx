@@ -16,11 +16,11 @@ async function getPosts() {
     content: post.content,
     coverImage: post.coverImage,
     slug: post.slug,
-    // 📌 SEO Data
+    // 📌 SEO ডাটা
     seoTitle: post.seoTitle || "",
     seoDescription: post.seoDescription || "",
     seoKeywords: post.seoKeywords || "",
-    // 📌 Advanced Data (Including Reading Time)
+    // 📌 নতুন যুক্ত হওয়া অ্যাডভান্সড ডাটা
     status: post.status || "published",
     category: post.category || "Technology",
     tags: post.tags || [],

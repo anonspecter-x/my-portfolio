@@ -23,20 +23,16 @@ export function generateMetadata(): Metadata {
   };
 }
 
-async function getBlogData() {
+async function getPosts() {
   try {
     const client = await MongoClient.connect(process.env.MONGODB_URI as string);
     const db = client.db();
     
     // 📌 শুধুমাত্র পাবলিশড পোস্টগুলো আনা হচ্ছে এবং ডেট অনুযায়ী সর্ট করা হচ্ছে
     const posts = await db.collection("posts").find({ status: "published" }).sort({ createdAt: -1 }).toArray();
-    
-    // 📌 সেটিংস থেকে ডেভেলপারের প্রোফাইল ইনফরমেশন ফেচ করা হচ্ছে
-    const settings = await db.collection("settings").findOne({});
-    
     await client.close();
     
-    const formattedPosts = posts.map(post => ({
+    return posts.map(post => ({
       _id: post._id.toString(),
       title: post.title,
       slug: post.slug,
@@ -50,24 +46,14 @@ async function getBlogData() {
         year: 'numeric'
       }) : "Recently",
     }));
-
-    // 📌 প্রোফাইল অবজেক্ট তৈরি
-    const authorProfile = {
-      name: settings?.developerName || "Md Nazmus Shakib",
-      role: settings?.developerRole || "Full Stack Developer",
-      photo: settings?.developerPhoto || "",
-      description: settings?.seoDescription || "Read my latest articles, tutorials, and thoughts on modern web development.",
-    };
-
-    return { posts: formattedPosts, authorProfile };
   } catch (error) {
-    console.error("Failed to fetch blog data:", error);
-    return { posts: [], authorProfile: null };
+    console.error("Failed to fetch posts:", error);
+    return [];
   }
 }
 
 export default async function BlogPage() {
-  const { posts, authorProfile } = await getBlogData();
+  const posts = await getPosts();
 
-  return <BlogClient posts={posts} authorProfile={authorProfile} />;
+  return <BlogClient posts={posts} />;
 }
