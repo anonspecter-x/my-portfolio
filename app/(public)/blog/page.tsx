@@ -23,37 +23,49 @@ export function generateMetadata(): Metadata {
   };
 }
 
-async function getPosts() {
+async function getBlogData() {
   try {
     const client = await MongoClient.connect(process.env.MONGODB_URI as string);
     const db = client.db();
     
-    // 📌 শুধুমাত্র পাবলিশড পোস্টগুলো আনা হচ্ছে এবং ডেট অনুযায়ী সর্ট করা হচ্ছে
-    const posts = await db.collection("posts").find({ status: "published" }).sort({ createdAt: -1 }).toArray();
+    // 📌 পোস্ট এবং সেটিংস একই সাথে ফেচ করা হচ্ছে
+    const postsData = await db.collection("posts").find({ status: "published" }).sort({ createdAt: -1 }).toArray();
+    const settingsData = await db.collection("settings").findOne({});
+    
     await client.close();
     
-    return posts.map(post => ({
+    const posts = postsData.map(post => ({
       _id: post._id.toString(),
       title: post.title,
       slug: post.slug,
       coverImage: post.coverImage || null,
       category: post.category || "Uncategorized",
       readingTime: post.readingTime || "1 min read",
-      // 📌 কাস্টম ডেট ফরম্যাট করা হচ্ছে
+      createdAtRaw: post.createdAt || new Date().toISOString(),
       createdAt: post.createdAt ? new Date(post.createdAt).toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
         year: 'numeric'
       }) : "Recently",
     }));
+
+    // 📌 সেটিংস থেকে আপনার প্রোফাইল ডেটা নেওয়া হচ্ছে
+    const authorInfo = {
+      name: settingsData?.developerName || "Md Nazmus Shakib",
+      role: settingsData?.developerRole || "Full Stack Developer",
+      photo: settingsData?.developerPhoto || null,
+      bio: settingsData?.seoDescription || "Dive into my latest thoughts, technical tutorials, and experiences as a Full Stack Developer building modern web applications."
+    };
+
+    return { posts, authorInfo };
   } catch (error) {
-    console.error("Failed to fetch posts:", error);
-    return [];
+    console.error("Failed to fetch blog data:", error);
+    return { posts: [], authorInfo: null };
   }
 }
 
 export default async function BlogPage() {
-  const posts = await getPosts();
+  const { posts, authorInfo } = await getBlogData();
 
-  return <BlogClient posts={posts} />;
+  return <BlogClient posts={posts} authorInfo={authorInfo} />;
 }
