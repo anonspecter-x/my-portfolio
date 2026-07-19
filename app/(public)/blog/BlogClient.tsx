@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { Calendar, BookOpen, Clock, ArrowRight, Search, ChevronLeft, ChevronRight, User } from "lucide-react";
+import { Calendar, BookOpen, Clock, ArrowRight, Search, ChevronLeft, ChevronRight, User, X } from "lucide-react";
 
 interface Post {
   _id: string;
@@ -63,7 +63,8 @@ export default function BlogClient({ posts, authorInfo }: { posts: Post[], autho
   };
 
   return (
-    <main className="relative min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] pt-32 pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto overflow-hidden selection:bg-blue-500/30">
+    // 📌 FIXED: Removed 'overflow-hidden' and added 'overflow-x-clip' so 'sticky' works perfectly
+    <main className="relative min-h-screen bg-[#fafafa] dark:bg-[#030303] text-[#111] dark:text-[#f5f5f5] pt-32 pb-20 px-6 sm:px-8 md:px-12 max-w-[85rem] mx-auto overflow-x-clip selection:bg-blue-500/30">
       
       {/* 🎨 Animated Background Elements */}
       <motion.div 
@@ -95,20 +96,35 @@ export default function BlogClient({ posts, authorInfo }: { posts: Post[], autho
           </motion.p>
         </div>
 
-        {/* 🔍 Search Bar */}
-        <motion.div variants={fadeUp} className="w-full md:max-w-xs relative">
-          <input 
-            type="text" 
-            placeholder="Search articles..." 
-            value={searchQuery}
-            onChange={handleSearch}
-            className="w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-2xl py-3.5 px-5 pl-12 text-sm outline-none focus:border-blue-500 transition-colors shadow-sm text-black dark:text-white"
-          />
-          <Search className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+        {/* ================= 🔍 PREMIUM SEARCH BAR ================= */}
+        <motion.div variants={fadeUp} className="w-full md:max-w-sm relative group">
+          {/* Glowing Background on Hover */}
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
+          
+          <div className="relative flex items-center w-full bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 focus-within:border-blue-500 dark:focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10">
+            <Search className="w-5 h-5 text-gray-400 ml-4 shrink-0" />
+            <input 
+              type="text" 
+              placeholder="Search articles..." 
+              value={searchQuery}
+              onChange={handleSearch}
+              className="w-full bg-transparent py-3.5 px-3 text-sm outline-none text-black dark:text-white placeholder:text-gray-400 font-medium"
+            />
+            {/* Clear Button */}
+            {searchQuery && (
+              <button 
+                onClick={() => setSearchQuery("")}
+                className="mr-3 p-1 rounded-full text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         </motion.div>
       </motion.div>
 
       {/* ================= 🌟 MAIN GRID LAYOUT ================= */}
+      {/* 📌 Added 'items-start' to ensure columns don't stretch, allowing sticky to calculate space */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 relative items-start">
         
         {/* 📝 LEFT AREA: BLOG POSTS (Takes 2 Columns on Desktop) */}
@@ -168,7 +184,7 @@ export default function BlogClient({ posts, authorInfo }: { posts: Post[], autho
                           </div>
                         </div>
 
-                        {/* 📅 Meta Data (SEO Optimized Time Tag) */}
+                        {/* 📅 Meta Data */}
                         <div className="flex items-center gap-4 text-[13px] font-semibold text-gray-500 dark:text-gray-400 pt-5 border-t border-gray-100 dark:border-gray-800/60 mt-auto">
                           <time dateTime={post.createdAtRaw} className="flex items-center gap-1.5">
                             <Calendar className="w-4 h-4" /> 
@@ -226,8 +242,8 @@ export default function BlogClient({ posts, authorInfo }: { posts: Post[], autho
           )}
         </div>
 
-        {/* 👤 RIGHT AREA: PROFILE CARD (Takes 1 Column on Desktop, Goes to Bottom on Mobile) */}
-        {/* 📌 lg:sticky lg:top-32 h-fit অ্যাড করা হয়েছে যেন ডেস্কটপ মোডে এটি স্ক্রল করার সময় ফিক্সড থাকে */}
+        {/* ================= 👤 RIGHT AREA: FIXED PROFILE CARD ================= */}
+        {/* 📌 lg:sticky lg:top-32 h-fit will now work correctly since 'overflow-hidden' is removed from <main> */}
         <div className="lg:col-span-1 order-2 lg:sticky lg:top-32 h-fit z-10">
           <div className="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 rounded-[2rem] p-8 shadow-sm flex flex-col items-center text-center">
             
